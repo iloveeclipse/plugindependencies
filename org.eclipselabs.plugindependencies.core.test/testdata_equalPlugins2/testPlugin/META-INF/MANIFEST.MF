@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: com.company.itee.core; singleton:=true
+Bundle-Version: 99.0.0
+Bundle-Activator: com.company.itee.core.CorePlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.core.filesystem,
+ org.eclipse.core.expressions,
+ JSR305-ri;resolution:=optional
+Bundle-ActivationPolicy: lazy; exceptions="com.company.itee.core.internal.content"
+Export-Package: com.company.itee.core,
+ com.company.itee.core.concurrent,
+ com.company.itee.core.events,
+ com.company.itee.core.events.internal;
+  x-friends:="com.company.itee.svc.unoaccess,
+   com.company.itee.svc.unoaccess.tests,
+   com.company.itee.ui,
+   com.company.itee.ui.tests",
+ com.company.itee.core.internal;x-friends:="com.company.itee.core.tests,com.company.itee.core.legacy.tests",
+ com.company.itee.core.internal.log;x-friends:="com.company.itee.core.tests",
+ com.company.itee.core.internal.requests;x-friends:="com.company.itee.core.tests,com.company.itee.ui,com.company.itee.ui.tests",
+ com.company.itee.core.internal.responses;x-friends:="com.company.itee.core.tests,com.company.itee.ui",
+ com.company.itee.core.requests,
+ com.company.itee.core.responses,
+ com.company.itee.core.util,
+ org.eclipse.equinox.app;version="1.1"
+Bundle-ClassPath: lib/lib1.jar,lib/lib2.jar,lib3.jar
+Import-Package: org.eclipse.swt.widgets
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

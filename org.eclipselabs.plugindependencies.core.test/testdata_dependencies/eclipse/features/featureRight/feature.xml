@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.company.right"
+      label="%featureName"
+      version="1.6.0"
+      provider-name="%providerName">
+
+   <includes
+         id="org.eclipse.right.right"
+         version="3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8"/>
+
+   <plugin
+         id="org.company.corePlugin"
+         version="3.2.0.v2014"/>
+
+   <plugin
+         id="org.company.test.framework"
+         version="8.4.0.t2000"/>
+
+   <plugin
+         id="org.company.workcenter"
+         version="6.3.1"/>
+
+</feature>

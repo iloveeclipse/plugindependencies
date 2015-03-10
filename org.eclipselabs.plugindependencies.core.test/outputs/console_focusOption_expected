@@ -1,0 +1,101 @@
+Plugin: org.eclipse.core.runtime 3.7.0.v20110110
+Required Plugins:
+	org.eclipse.osgi [3.7.0,4.0.0)
+	-> org.eclipse.osgi 3.7.2.v20120110-1415
+	org.eclipse.equinox.common [3.5.0,4.0.0)
+	-> org.eclipse.equinox.common 3.6.0.v20110523
+	org.eclipse.core.jobs [3.2.0,4.0.0)
+	-> org.eclipse.core.jobs 3.5.101.v20120113-1953
+	org.eclipse.equinox.registry [3.4.0,4.0.0)
+	-> org.eclipse.equinox.registry 3.5.101.R37x_v20110810-1611
+	org.eclipse.equinox.preferences [3.4.0,4.0.0)
+	-> org.eclipse.equinox.preferences 3.4.2.v20120111-2020
+	org.eclipse.core.contenttype [3.3.0,4.0.0)
+	-> org.eclipse.core.contenttype 3.4.100.v20110423-0524
+	org.eclipse.core.runtime.compatibility.auth [3.2.0,4.0.0) *optional*
+	-> org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
+	org.eclipse.equinox.app 1.0.0
+	-> org.eclipse.equinox.app 1.3.100.v20110321
+Required Packages:
+	org.eclipse.core.internal.runtime.auth *dynamicImport*
+	->Package: org.eclipse.core.internal.runtime.auth
+		Exported By:
+		Plugin: org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
+
+Included in Feature:
+Required by Plugins:
+	org.eclipse.ant.core 3.2.302.v20120110-1739
+	org.eclipse.core.expressions 3.4.300.v20110228
+	org.eclipse.core.resources 3.7.101.v20120125-1505
+	org.eclipse.core.variables 3.2.500.v20110928-1503
+	org.eclipse.help 3.5.100.v20110426
+	org.eclipse.ui.workbench 3.7.1.v20120104-1859
+	org.eclipse.ui 3.7.0.v20110928-1505
+	com.company.itee.core 99.0.0
+	com.company.itee.maint.common 99.0.0
+	com.company.itee.svc.unoaccess 99.0.0
+Exported Packages:
+	org.eclipse.core.internal.preferences.legacy
+	org.eclipse.core.internal.runtime
+	org.eclipse.core.runtime 3.4.0
+Fragments:
+
+Feature: org.eclipse.cdt 8.0.2.201202111925
+Included Features:
+	org.eclipse.cdt.gdb 7.0.0.201202111925
+Included Plugins:
+Included in Features:
+
+Fragment: org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
+Required Plugins:
+Required Packages:
+Included in Feature:
+Required by Plugins:
+Exported Packages:
+	org.eclipse.swt.internal.accessibility.gtk
+	org.eclipse.swt.internal.cairo
+	org.eclipse.swt.internal.cde
+	org.eclipse.swt.internal.gnome
+	org.eclipse.swt.internal.gtk
+	org.eclipse.swt.internal.mozilla
+	org.eclipse.swt.internal.opengl.glx
+Fragment-Host:
+org.eclipse.swt 3.7.2.v3740f
+
+Plugin: org.eclipse.swt 3.7.2.v3740f
+Required Plugins:
+Required Packages:
+	org.eclipse.swt.accessibility2 *dynamicImport*
+	org.mozilla.xpcom *dynamicImport*
+Included in Feature:
+Required by Plugins:
+	org.eclipse.jface.databinding 1.5.0.I20100907-0800
+	org.eclipse.jface 3.7.0.v20110928-1505
+	org.eclipse.ui.workbench 3.7.1.v20120104-1859
+	org.eclipse.ui 3.7.0.v20110928-1505
+Exported Packages:
+	org.eclipse.swt
+	org.eclipse.swt.accessibility
+	org.eclipse.swt.awt
+	org.eclipse.swt.browser
+	org.eclipse.swt.custom
+	org.eclipse.swt.dnd
+	org.eclipse.swt.events
+	org.eclipse.swt.graphics
+	org.eclipse.swt.layout
+	org.eclipse.swt.opengl
+	org.eclipse.swt.printing
+	org.eclipse.swt.program
+	org.eclipse.swt.widgets
+	org.eclipse.swt.internal
+	org.eclipse.swt.internal.image
+	org.eclipse.swt.internal.theme
+Fragments:
+	org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
+
+Feature: org.eclipse.cdt.gdb 7.0.0.201202111925
+Included Features:
+Included Plugins:
+Included in Features:
+	org.eclipse.cdt 8.0.2.201202111925
+

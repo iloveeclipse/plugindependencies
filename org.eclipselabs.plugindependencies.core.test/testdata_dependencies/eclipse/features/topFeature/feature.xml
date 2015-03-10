@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.topFeature"
+      label="%featureName"
+      version="1.7.0.201306111332"
+      provider-name="%providerName">
+
+   <includes
+         id="org.example.left"
+         version="2.1.1.v20120113-1346"/>
+
+   <includes
+         id="org.company.right"
+         version="1.6.0"/>
+
+   <plugin
+         id="org.eclipse.plugin1"
+         version="2.0.0.201306111332"
+         os="linux"
+         arch="x86_64"/>
+         
+   <plugin
+         id="org.eclipse.core.net.win32.x86"
+         os="win32"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="1.0.100.I20110331-0827"
+         fragment="true"
+         unpack="false"/>
+         
+</feature>

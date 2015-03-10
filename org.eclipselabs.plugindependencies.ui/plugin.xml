@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%view.name"
+            icon="icons/tree_mode.gif"
+            category="org.eclipse.pde.ui"
+            class="org.eclipselabs.plugindependencies.ui.view.PluginTreeView"
+            id="org.eclipselabs.plugindependencies.ui.view.PluginTreeView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <viewShortcut
+               id="org.eclipselabs.plugindependencies.ui.view.PluginTreeView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <view
+               id="org.eclipselabs.plugindependencies.ui.view.PluginTreeView"
+               relationship="stack"
+               relative="org.eclipse.jdt.ui.PackageExplorer">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipselabs.plugindependencies.ui.view.TreePlugin"
+            class="org.eclipselabs.plugindependencies.ui.adapter.AdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipselabs.plugindependencies.ui.view.TreeFeature"
+            class="org.eclipselabs.plugindependencies.ui.adapter.AdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+       <factory
+            adaptableType="org.eclipselabs.plugindependencies.ui.view.TreePackage"
+            class="org.eclipselabs.plugindependencies.ui.adapter.AdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+</extension>
+</plugin>

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.company.test.framework
+Bundle-Version: 8.4.0.t2000
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package:  org.jdom2.transform,
+ org.jdom2.util,
+ org.jdom2.xpath,
+ org.jdom2.xpath.jaxen,
+ org.jdom2.xpath.util,
+ org.w3c.dom,
+ org.w3c.dom.html

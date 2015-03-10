@@ -1,0 +1,157 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Oliver Brösamle
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Oliver Brösamle - initial API and implementation and/or initial documentation
+ *    Andrey Loskutov <loskutov@gmx.de> - review, cleanup and bugfixes
+ *******************************************************************************/
+package org.eclipselabs.plugindependencies.core;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipselabs.plugindependencies.core.ManifestEntry;
+import org.eclipselabs.plugindependencies.core.StringUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestStringUtil {
+    String testString1;
+
+    String testString2;
+
+    String testString3;
+
+    String testString123;
+
+    String testString4;
+
+    String testString5;
+
+    String testString6;
+
+    String testString7;
+
+    String testString8;
+
+    String testString9;
+
+    String testString10;
+
+    List<String> resultList1;
+
+    List<String> resultList2;
+
+    List<String> resultList3;
+
+    List<ManifestEntry> resultList;
+
+    @Before
+    public void generateEnv() throws Exception {
+        testString1 = "bundle-version=\"[3.2.0,4.0.0)\"";
+        testString2 = "bundle-version=\"1.1.0\"";
+        testString3 = "bundle-version=\"(3.2.0,4.0.0]\"";
+        testString123 = "org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\",org.hamcrest.core;bundle-version=\"1.1.0\";visibility:=reexport,org.eclipse.core.resources;bundle-version=\"(3.2.0,4.0.0]\"";
+        testString4 = "This text is not important, its just a text without any vers-ion and some comma \"abc,abc\" in quotation mark";
+        testString5 = "bundle-version=4.11.0";
+        testString6 = "bundle-version=\"99.0.0\"";
+        testString7 = "version=3.3.1";
+        testString8 = "version=\"[2.4, 3.0)\"";
+        testString9 = "bundle-version=\"[3.2.0,4.                0.0)\"";
+        testString10 = "bundle-version=\"99              .0.0\"";
+        resultList1 = new ArrayList<>();
+        resultList1.add("org.eclipse.ui;bundle-version=\"[3.2.0,4.0.0)\"");
+        resultList1
+                .add("org.hamcrest.core;bundle-version=\"1.1.0\";visibility:=reexport");
+        resultList1.add("org.eclipse.core.resources;bundle-version=\"(3.2.0,4.0.0]\"");
+
+        resultList2 = new ArrayList<>();
+        resultList2.add(testString1);
+        resultList2.add(testString3);
+        resultList2.add(testString2);
+        resultList2.add(testString3);
+        resultList2.add(testString1);
+
+        resultList3 = new ArrayList<>();
+        resultList3.add("This text is not important");
+        resultList3
+                .add(" its just a text without any vers-ion and some comma \"abc,abc\" in quotation mark");
+    }
+
+    @After
+    public void undoMethod() throws Exception {
+        resultList1 = null;
+        resultList2 = null;
+    }
+
+    @Test
+    public void testGetVersionOfString() {
+        assertEquals("", StringUtil.extractVersionOrRange(null));
+        assertEquals("", StringUtil.extractVersionOrRange(""));
+        assertEquals("[3.2.0,4.0.0)", StringUtil.extractVersionOrRange(testString1));
+        assertEquals("1.1.0", StringUtil.extractVersionOrRange(testString2));
+        assertEquals("(3.2.0,4.0.0]", StringUtil.extractVersionOrRange(testString3));
+        assertEquals("", StringUtil.extractVersionOrRange(testString4));
+        assertEquals("4.11.0", StringUtil.extractVersionOrRange(testString5));
+        assertEquals("99.0.0", StringUtil.extractVersionOrRange(testString6));
+        assertEquals("3.3.1", StringUtil.extractVersionOrRange(testString7));
+        assertEquals("[2.4,3.0)", StringUtil.extractVersionOrRange(testString8));
+        assertEquals("[3.2.0,4.0.0)", StringUtil.extractVersionOrRange(testString9));
+        assertEquals("99.0.0", StringUtil.extractVersionOrRange(testString10));
+    }
+
+    @Test
+    public void testSplitString() {
+        assertEquals(resultList1, StringUtil.splitListOfEntries(testString123));
+        List<String> resultList5 = new ArrayList<>();
+        resultList5.add("");
+        assertEquals(resultList5, StringUtil.splitListOfEntries(""));
+        assertEquals(new ArrayList<>(), StringUtil.splitListOfEntries(null));
+
+        String test = testString1 + "," + testString3 + "," + testString2 + ","
+                + testString3 + "," + testString1;
+        assertEquals(resultList2, StringUtil.splitListOfEntries(test));
+        assertEquals(resultList3, StringUtil.splitListOfEntries(testString4));
+    }
+
+    @Test
+    public void testSplitIntoAttributes() {
+        resultList = new ArrayList<>();
+        resultList.add(new ManifestEntry(new String[] { "org.eclipse.ui",
+                "bundle-version=\"[3.2.0,4.0.0)\"" }));
+        resultList.add(new ManifestEntry(new String[] { "org.hamcrest.core",
+                "bundle-version=\"1.1.0\"", "visibility:=reexport" }));
+        resultList.add(new ManifestEntry(new String[] { "org.eclipse.core.resources",
+                "bundle-version=\"(3.2.0,4.0.0]\"" }));
+        assertEquals(resultList, StringUtil.splitInManifestEntries(testString123));
+        resultList.clear();
+        resultList.add(new ManifestEntry(new String[] { "" }));
+        assertEquals(resultList, StringUtil.splitInManifestEntries(""));
+        resultList.clear();
+        assertEquals(resultList, StringUtil.splitInManifestEntries(null));
+    }
+
+    @Test
+    public void testStringMultiply() {
+        assertEquals("", StringUtil.multiplyString("", 0));
+        assertEquals("", StringUtil.multiplyString("abc", 0));
+        assertEquals("abc", StringUtil.multiplyString("abc", 1));
+        assertEquals("abcabcabc", StringUtil.multiplyString("abc", 3));
+        assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                StringUtil.multiplyString("a", 400));
+    }
+}

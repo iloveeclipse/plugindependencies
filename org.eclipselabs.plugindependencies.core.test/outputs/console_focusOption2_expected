@@ -1,0 +1,95 @@
+Plugin: org.company.test.framework 8.4.0.t2000
+Required Plugins:
+Required Packages:
+	org.jdom2.transform
+	->Package: org.jdom2.transform
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.jdom2.util
+	->Package: org.jdom2.util
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.jdom2.xpath
+	->Package: org.jdom2.xpath
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.jdom2.xpath.jaxen
+	->Package: org.jdom2.xpath.jaxen
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.jdom2.xpath.util
+	->Package: org.jdom2.xpath.util
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.w3c.dom
+	->Package: org.w3c.dom
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+	org.w3c.dom.html
+	->Package: org.w3c.dom.html
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+Included in Feature:
+	org.company.right 1.6.0
+Required by Plugins:
+	org.eclipse.adv 1.2.3
+	org.company.corePlugin 3.2.0.v2014
+	org.company.workcenter 6.3.1
+Exported Packages:
+Fragments:
+
+Feature: org.company.right 1.6.0
+Included Features:
+	org.eclipse.right.right 3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8
+Included Plugins:
+	Plugin: org.company.corePlugin 3.2.0.v2014
+	Plugin: org.company.test.framework 8.4.0.t2000
+	Plugin: org.company.workcenter 6.3.1
+Included in Features:
+	org.eclipse.topFeature 1.7.0.201306111332
+
+Plugin: org.company.corePlugin 3.2.0.v2014
+Required Plugins:
+	org.company.test.framework 8.0.0
+	-> org.company.test.framework 8.4.0.t2000
+	org.company.workcenter (6.2,8.0.0]
+	-> org.company.workcenter 6.3.1
+	org.eclipse.equinox.core *optional*
+	-> org.eclipse.equinox.core 1.0.0
+Required Packages:
+	org.adv.core *optional*
+	->Package: org.adv.core 3.2.1
+		Exported By:
+		Fragment: org.eclipse.plugin1 2.0.0.201306111332
+
+Included in Feature:
+	org.company.right 1.6.0
+Required by Plugins:
+	org.eclipse.adv 1.2.3
+Exported Packages:
+Fragments:
+	org.eclipse.adv 1.2.3
+
+Plugin: org.company.workcenter 6.3.1
+Required Plugins:
+	org.company.test.framework
+	-> org.company.test.framework 8.4.0.t2000
+Required Packages:
+Included in Feature:
+	org.company.right 1.6.0
+Required by Plugins:
+	*optional* for org.eclipse.adv 1.2.3
+	org.company.corePlugin 3.2.0.v2014
+Exported Packages:
+	com.package.test 4.11.0
+	junit.framework 4.11.0
+	junit.runner 4.11.0
+Fragments:
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.example.left"
+      label="%featureName"
+      version="2.1.1.v20120113-1346"
+      provider-name="%providerName">
+
+   <plugin
+         id="org.eclipse.adv"
+         version="1.2.3"/>
+
+   <plugin
+         id="org.eclipse.adv.core"
+         version="4.0.1.v93_k"/>
+</feature>

@@ -1,0 +1,82 @@
+Plugin: org.eclipse.osgi.services 3.3.0.v20110513 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
+	Warning: Package not found: javax.servlet  *optional*
+	Warning: Package not found: javax.servlet.http  *optional*
+	Error: Package not found: javax.servlet  *dynamicImport*
+	Error: Package not found: javax.servlet.http  *dynamicImport*
+	Error: Package not found: javax.microedition.io  *dynamicImport*
+
+Plugin: org.eclipse.swt 3.7.2.v3740f testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
+	Error: Package not found: org.eclipse.swt.accessibility2  *dynamicImport*
+	Error: Package not found: org.mozilla.xpcom  *dynamicImport*
+Is Required By:
+	Plugin: org.eclipse.jface.databinding 1.5.0.I20100907-0800 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface.databinding_1.5.0.I20100907-0800.jar
+	Plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
+	Plugin: org.eclipse.ui.workbench 3.7.1.v20120104-1859 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
+	Plugin: org.eclipse.ui 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar
+
+
+Plugin: org.eclipse.osgi.services 3.3.0.v20110513 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
+	Error: Package not found: javax.servlet  *dynamicImport*
+	Error: Package not found: javax.servlet.http  *dynamicImport*
+	Error: Package not found: javax.microedition.io  *dynamicImport*
+
+Plugin: org.eclipse.swt 3.7.2.v3740f testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
+	Error: Package not found: org.eclipse.swt.accessibility2  *dynamicImport*
+	Error: Package not found: org.mozilla.xpcom  *dynamicImport*
+Is Required By:
+	Plugin: org.eclipse.jface.databinding 1.5.0.I20100907-0800 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface.databinding_1.5.0.I20100907-0800.jar
+	Plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
+	Plugin: org.eclipse.ui.workbench 3.7.1.v20120104-1859 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
+	Plugin: org.eclipse.ui 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar
+
+
+Feature: org.eclipse.cdt.gdb 7.0.0.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt.gdb_7.0.0.201202111925/feature.xml
+	Error: Plugin not found: org.eclipse.cdt.gdb 7.0.0.201202111925
+	Error: Plugin not found: org.eclipse.cdt.gdb.ui 7.0.0.201202111925
+Contained in Feature:
+	org.eclipse.cdt 8.0.2.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt_8.0.2.201202111925/feature.xml
+
+Feature: org.eclipse.cdt 8.0.2.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt_8.0.2.201202111925/feature.xml
+	Error: Feature not found: org.eclipse.cdt.platform 8.0.2.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.build 8.0.2.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.debug 7.1.1.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.dsf 4.0.1.201202111925
+
+Feature: org.eclipse.emf.mwe.sdk 1.3.4.v201409021027 testdata_OutputGeneration/eclipseRE/features/org.eclipse.emf.mwe.sdk_1.3.4.v201409021027/feature.xml
+	Error: Feature not found: org.eclipse.emf.mwe.core 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.ui 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.core.source 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.ui.source 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.doc 1.3.4.v201409021027
+
+Feature: org.eclipse.zest 1.5.1.201308190730 testdata_OutputGeneration/eclipseRE/features/org.eclipse.zest_1.5.1.201308190730/feature.xml
+	Error: Feature not found: org.eclipse.draw2d 3.9.1.201308190730
+	Error: Plugin not found: org.eclipse.zest.core 1.5.0.201308190730
+	Error: Plugin not found: org.eclipse.zest.layouts 1.1.0.201308190730
+
+
+Feature: org.eclipse.cdt.gdb 7.0.0.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt.gdb_7.0.0.201202111925/feature.xml
+	Error: Plugin not found: org.eclipse.cdt.gdb 7.0.0.201202111925
+	Error: Plugin not found: org.eclipse.cdt.gdb.ui 7.0.0.201202111925
+Contained in Feature:
+	org.eclipse.cdt 8.0.2.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt_8.0.2.201202111925/feature.xml
+
+Feature: org.eclipse.cdt 8.0.2.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt_8.0.2.201202111925/feature.xml
+	Error: Feature not found: org.eclipse.cdt.platform 8.0.2.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.build 8.0.2.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.debug 7.1.1.201202111925
+	Error: Feature not found: org.eclipse.cdt.gnu.dsf 4.0.1.201202111925
+
+Feature: org.eclipse.emf.mwe.sdk 1.3.4.v201409021027 testdata_OutputGeneration/eclipseRE/features/org.eclipse.emf.mwe.sdk_1.3.4.v201409021027/feature.xml
+	Error: Feature not found: org.eclipse.emf.mwe.core 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.ui 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.core.source 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.ui.source 1.3.4.v201409021027
+	Error: Feature not found: org.eclipse.emf.mwe.doc 1.3.4.v201409021027
+
+Feature: org.eclipse.zest 1.5.1.201308190730 testdata_OutputGeneration/eclipseRE/features/org.eclipse.zest_1.5.1.201308190730/feature.xml
+	Error: Feature not found: org.eclipse.draw2d 3.9.1.201308190730
+	Error: Plugin not found: org.eclipse.zest.core 1.5.0.201308190730
+	Error: Plugin not found: org.eclipse.zest.layouts 1.1.0.201308190730
+
+

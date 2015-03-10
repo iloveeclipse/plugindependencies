@@ -1,0 +1,10 @@
+testdata_dependencies/eclipse/plugins/plugin2:testdata_dependencies/eclipse/plugins/plugin2
+testdata_dependencies/eclipse/plugins/plugin2:testdata_dependencies/eclipse/plugins/plugin4
+testdata_dependencies/eclipse/plugins/plugin2:testdata_dependencies/eclipse/plugins/plugin5
+testdata_dependencies/eclipse/plugins/plugin2:testdata_dependencies/eclipse/plugins/plugin6
+testdata_dependencies/eclipse/plugins/plugin2:testdata_dependencies/eclipse/plugins/plugin7
+testdata_dependencies/eclipse/plugins/plugin3:testdata_dependencies/eclipse/plugins/plugin7
+testdata_dependencies/eclipse/plugins/plugin4:testdata_dependencies/eclipse/plugins/plugin5
+testdata_dependencies/eclipse/plugins/plugin4:testdata_dependencies/eclipse/plugins/plugin6
+testdata_dependencies/eclipse/plugins/plugin4:testdata_dependencies/eclipse/plugins/plugin7
+testdata_dependencies/eclipse/plugins/plugin6:testdata_dependencies/eclipse/plugins/plugin5

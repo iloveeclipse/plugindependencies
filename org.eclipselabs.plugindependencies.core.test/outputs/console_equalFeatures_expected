@@ -1,0 +1,4 @@
+FATAL Error: Two Features with equal Id and Version.
+org.eclipse.zest 1.5.1.201308190730
+testdata_equalFeatures/features/org.eclipse.zest/feature.xml
+testdata_equalFeatures/features/org.eclipse.zest_1.5.1.201308190730/feature.xml

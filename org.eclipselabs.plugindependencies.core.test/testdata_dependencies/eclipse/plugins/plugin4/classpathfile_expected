@@ -1,0 +1,4 @@
+testdata_dependencies/eclipse/company/eclipse/plugins/org.company.test.framework_99.0.0.jar
+testdata_dependencies/eclipse/company/eclipse/plugins/org.company.workcenter_99.0.0.jar
+testdata_dependencies/eclipse/company/eclipse/plugins/org.eclipse.equinox.core_99.0.0.jar
+testdata_dependencies/eclipse/internal/eclipse/plugins/org.eclipse.plugin1_99.0.0.jar

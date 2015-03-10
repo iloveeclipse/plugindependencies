@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.plugin1
+Bundle-Version: 2.0.0.201306111332
+Bundle-Localization: plugin
+Fragment-Host: host.not.found;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: plugin.not.found.test;version=1.1.1
+Export-Package: 
+ org.adv.core;version="3.2.1",
+ org.apache.html.dom,
+ org.apache.wml,
+ org.apache.wml.dom,
+ org.jdom2.transform,
+ org.jdom2.util,
+ org.jdom2.xpath,
+ org.jdom2.xpath.jaxen,
+ org.jdom2.xpath.util,
+ org.w3c.dom,
+ org.w3c.dom.html

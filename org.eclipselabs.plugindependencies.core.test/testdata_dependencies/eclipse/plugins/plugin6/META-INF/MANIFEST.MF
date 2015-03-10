@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.company.workcenter
+Bundle-Version: 6.3.1
+Bundle-Activator: com.company.itee.core.CorePlugin
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.company.test.framework;bundle-version:"8.0.0"
+Export-Package: 
+ com.package.test;version="4.11.0",
+ junit.framework;version="4.11.0",
+ junit.runner;version="4.11.0"

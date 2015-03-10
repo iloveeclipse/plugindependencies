@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.company.corePlugin
+Bundle-Version: 3.2.0.v2014
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.company.test.framework;bundle-version=8.0.0,
+ org.company.workcenter;bundle-version="(6.2,8.0.0]",org.eclipse.equinox.core;res
+ olution:=optional
+Import-Package: org.adv.core;resolution:="optional"

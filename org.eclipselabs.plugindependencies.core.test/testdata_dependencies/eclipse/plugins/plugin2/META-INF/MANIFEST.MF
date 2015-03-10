@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.adv
+Bundle-Version: 1.2.3
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Fragment-Host: org.company.corePlugin;bundle-version="3.0.0"
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.company.corePlugin,org.company.test.framework;bundle-version:"8.4.0.t2000",
+ org.company.workcenter;resolution:=optional
+Import-Package: org.apache.html.dom,
+ org.apache.wml,
+ org.apache.wml.dom

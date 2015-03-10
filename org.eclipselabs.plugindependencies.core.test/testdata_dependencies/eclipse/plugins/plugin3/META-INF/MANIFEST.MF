@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.eclipse.adv.core
+Bundle-Version: 4.0.1.v93_k
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.equinox.core;bundle-version="[1.0.0,2.0.0)"
+Export-Package: 
+ org.adv.core

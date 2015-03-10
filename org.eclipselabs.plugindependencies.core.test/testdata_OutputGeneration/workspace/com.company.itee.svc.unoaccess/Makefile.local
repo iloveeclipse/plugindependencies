@@ -1,0 +1,61 @@
+PROJECT_TYPE   = eclipse_plugin
+#PROJECT_TYPE   = eclipse_component_plugin
+#COMPONENT      = xoc.types.main
+#COMPONENT_XML  = if_types.xml
+
+CLOBBER_FILES_LOCAL = \
+                      lib/java_uno.jar \
+                      lib/juh.jar \
+                      lib/jurt.jar \
+                      lib/ridl.jar \
+                      lib/unoloader.jar \
+                      lib/SessionServiceManager.jar \
+                      lib/uno_types.jar \
+                      lib/generated_xoc_java_src.zip \
+                      lib/LocationResolver.jar \
+                      lib/SystemLoggerHelper.jar \
+                      lib/Exceptions.jar \
+                      lib/ate_cor_UdaAccess_src.zip \
+                      lib/ate_cor_UdaAccess.jar
+
+GENERATED_EXT_SYMLINKS = \
+   $(MODULE)/lib/java_uno.jar => \
+   $(XOC_UNO_JAVA_DIR)/java_uno.jar, \
+   $(MODULE)/lib/juh.jar => \
+   $(XOC_UNO_JAVA_DIR)/juh.jar, \
+   $(MODULE)/lib/jurt.jar => \
+   $(XOC_UNO_JAVA_DIR)/jurt.jar, \
+   $(MODULE)/lib/ridl.jar => \
+   $(XOC_UNO_JAVA_DIR)/ridl.jar, \
+   $(MODULE)/lib/unoloader.jar => \
+   $(XOC_UNO_JAVA_DIR)/unoloader.jar, \
+   $(MODULE)/lib/uno_types.jar => \
+   $(WORKSPACE)/IDL/IdlInterfaces.jar, \
+   $(MODULE)/lib/generated_xoc_java_src.zip => \
+   $(WORKSPACE)/IDL/generated_xoc_java_src.zip, \
+   $(MODULE)/lib/SessionServiceManager.jar => \
+   $(WORKSPACE)/services/session/SessionServiceManagerJava/SessionServiceManager.jar, \
+   $(MODULE)/lib/LocationResolver.jar => \
+   $(WORKSPACE)/services/misc/LocationResolverJava/LocationResolver.jar, \
+   $(MODULE)/lib/SystemLoggerHelper.jar => \
+   $(WORKSPACE)/services/misc/SystemLoggerHelperJava/SystemLoggerHelper.jar, \
+   $(MODULE)/lib/Exceptions.jar => \
+   $(WORKSPACE)/services/exception/Exceptions/Exceptions.jar, \
+   $(MODULE)/lib/ate_cor_UdaAccess.jar => \
+   $(WORKSPACE)/ate/cor/UniversalDataAccess/LanguageBinding/Java/ate_cor_UniversalDataAccess_LanguageBinding.jar, \
+   $(MODULE)/lib/ate_cor_UdaAccess_src.zip => \
+   $(WORKSPACE)/ate/cor/UniversalDataAccess/LanguageBinding/Java/ate_cor_UniversalDataAccess_LanguageBinding_src.zip
+
+NONDEFAULT_SHIPPABLE_TARGETS_DEPENDENCY = .build_93k_plugin
+
+#
+# Generate UNO documentation is now part of the IDL build
+#
+# See /vobs/zenith/workspace/CMF-tools/java_support/convertIdlToPseudoJava.sh
+# Output is under: /vobs/zenith/workspace/IDL/generated_xoc_java_src.zip
+
+EXTERNAL_TARGETS = 
+CLOBBER_DIRS_LOCAL = 
+
+SHIPPABLE_TARGETS = default
+

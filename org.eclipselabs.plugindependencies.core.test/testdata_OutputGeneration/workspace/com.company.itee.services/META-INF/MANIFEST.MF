@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: com.company.itee.services; singleton:=true
+Bundle-Version: 99.0.0
+Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.equinox.common,
+ org.eclipse.core.resources,
+ JSR305-ri;resolution:=optional
+Bundle-Localization: plugin
+Export-Package: com.company.itee.services,
+ com.company.itee.services.internal,
+ com.company.itee.services.listeners,
+ com.company.itee.services.types
