@@ -130,4 +130,15 @@ public class OSGIElement {
         }
         addToLog(logEntry.toString());
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[name=");
+        builder.append(name);
+        builder.append(", version=");
+        builder.append(version);
+        builder.append("]");
+        return builder.toString();
+    }
 }

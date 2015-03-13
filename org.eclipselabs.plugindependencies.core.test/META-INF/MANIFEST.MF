@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin dependencies test
+Bundle-SymbolicName: org.eclipselabs.plugindependencies.core.test
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.eclipselabs.plugindependencies.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipselabs.plugindependencies.core;bundle-version="1.0.0",
+ org.eclipselabs.plugindependencies.ui;bundle-version="1.0.0",
+ org.junit;bundle-version="4.10.0"

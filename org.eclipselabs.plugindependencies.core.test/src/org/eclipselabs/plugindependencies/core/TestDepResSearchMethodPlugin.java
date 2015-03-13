@@ -14,13 +14,9 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +42,7 @@ public class TestDepResSearchMethodPlugin {
         plugin1 = new Plugin("com.company.core", "3.4.5");
         plugin2 = new Plugin("com.company.core", "1.2.0");
         systemBundle = new Plugin("org.eclipse.osgi", "");
-        pluginSet = new HashSet<Plugin>();
+        pluginSet = new LinkedHashSet<Plugin>();
         pluginSet.add(new Plugin("org.eclipse.p1", "1.2.3"));
         pluginSet.add(new Plugin("org.eclipse.p2", "4.5.6"));
         pluginSet.add(new Plugin("com.example.itee.ate", "3.5.8"));
@@ -56,8 +52,8 @@ public class TestDepResSearchMethodPlugin {
         pluginSet.add(plugin1);
         pluginSet.add(plugin2);
         pluginSet.add(systemBundle);
-        packageSet = new HashSet<Package>();
-        featureSet = new HashSet<Feature>();
+        packageSet = new LinkedHashSet<Package>();
+        featureSet = new LinkedHashSet<Feature>();
     }
 
     @AfterClass
@@ -98,7 +94,7 @@ public class TestDepResSearchMethodPlugin {
     @Test
     public void testSearchPlugin() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        Set<Plugin> resultSet = new HashSet<Plugin>();
+        Set<Plugin> resultSet = new LinkedHashSet<Plugin>();
         ManifestEntry entry;
         resultSet.add(plugin1);
 

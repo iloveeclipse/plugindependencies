@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,12 +19,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.FeatureParser;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
-import org.eclipselabs.plugindependencies.core.PluginParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,9 +84,9 @@ public class TestDepResResolving {
 
     @Before
     public void setUp() throws Exception {
-        pluginSet = new HashSet<Plugin>();
-        packageSet = new HashSet<Package>();
-        featureSet = new HashSet<Feature>();
+        pluginSet = new LinkedHashSet<Plugin>();
+        packageSet = new LinkedHashSet<Package>();
+        featureSet = new LinkedHashSet<Feature>();
         PluginParser.readManifests("testdata_dependencies/eclipse/plugins", pluginSet,
                 packageSet);
         FeatureParser.readFeatures("testdata_dependencies/eclipse/features", featureSet);
@@ -321,16 +314,17 @@ public class TestDepResResolving {
         compareLog.clear();
         compareLog
                 .add("Warning: More than one Package found for org.adv.core  *optional*\n"
-                        + "\tPackage: org.adv.core\n"
-                        + "\t\tExported By:\n"
-                        + "\t\tPlugin: org.eclipse.adv.core 4.0.1.v93_k "
-                        + System.getProperty("user.dir")
-                        + "/testdata_dependencies/eclipse/plugins/plugin3\n"
                         + "\tPackage: org.adv.core 3.2.1\n"
                         + "\t\tExported By:\n"
                         + "\t\tFragment: org.eclipse.plugin1 2.0.0.201306111332 "
                         + System.getProperty("user.dir")
-                        + "/testdata_dependencies/eclipse/plugins/plugin1\n");
+                        + "/testdata_dependencies/eclipse/plugins/plugin1\n"
+                        + "\tPackage: org.adv.core\n"
+                        + "\t\tExported By:\n"
+                        + "\t\tPlugin: org.eclipse.adv.core 4.0.1.v93_k "
+                        + System.getProperty("user.dir")
+                        + "/testdata_dependencies/eclipse/plugins/plugin3\n");
+
         assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
         compareSetPlugin.clear();

@@ -14,13 +14,9 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,7 +38,7 @@ public class TestDepResSearchMethodFeature {
     public static void setUpBeforeClass() throws Exception {
         feature1 = new Feature("com.company.core", "3.4.5");
         feature2 = new Feature("com.company.core", "1.2.0");
-        featureSet = new HashSet<Feature>();
+        featureSet = new LinkedHashSet<Feature>();
         featureSet.add(new Feature("org.eclipse.p1", "1.2.3"));
         featureSet.add(new Feature("org.eclipse.p2", "4.5.6"));
         featureSet.add(new Feature("com.example.itee.ate", "3.5.8"));
@@ -51,8 +47,8 @@ public class TestDepResSearchMethodFeature {
         featureSet.add(new Feature("com.company.tables", "9.2.0"));
         featureSet.add(feature1);
         featureSet.add(feature2);
-        packageSet = new HashSet<Package>();
-        pluginSet = new HashSet<Plugin>();
+        packageSet = new LinkedHashSet<Package>();
+        pluginSet = new LinkedHashSet<Plugin>();
     }
 
     @AfterClass

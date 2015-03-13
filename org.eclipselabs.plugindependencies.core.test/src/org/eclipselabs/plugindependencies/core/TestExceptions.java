@@ -11,19 +11,14 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
-import org.eclipselabs.plugindependencies.core.PluginParser;
 import org.junit.Test;
 
 /**
@@ -33,9 +28,9 @@ import org.junit.Test;
 public class TestExceptions {
     @Test
     public void testDoublePluginWarning() throws IOException {
-        Set<Plugin> plugins = new HashSet<>();
-        Set<Package> packages = new HashSet<>();
-        Set<Feature> features = new HashSet<>();
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        Set<Package> packages = new LinkedHashSet<>();
+        Set<Feature> features = new LinkedHashSet<>();
         String dir = "testdata_exceptions/plugins";
 
         PluginParser.readManifests(dir, plugins, packages);
@@ -65,12 +60,12 @@ public class TestExceptions {
         log.add("Warning: Plugin not found: de.itemis.statefullexer 1.0.0 *optional*");
         log.add("Warning: Plugin not found: org.eclipse.xtext.ecore 2.4.0 *optional*");
         log.add("Warning: More than one Plugin found for org.objectweb.asm [3.0.0,6.0.0) *optional*\n"
-                + "\torg.objectweb.asm 5.0.1.v201404251740 "
-                + System.getProperty("user.dir")
-                + "/testdata_exceptions/plugins/org.objectweb.asm_5.0.1.v201404251740.jar\n"
                 + "\torg.objectweb.asm 3.3.1.v201105211655 "
                 + System.getProperty("user.dir")
-                + "/testdata_exceptions/plugins/org.objectweb.asm_3.3.1.v201105211655.jar\n");
+                + "/testdata_exceptions/plugins/org.objectweb.asm_3.3.1.v201105211655.jar\n"
+                + "\torg.objectweb.asm 5.0.1.v201404251740 "
+                + System.getProperty("user.dir")
+                + "/testdata_exceptions/plugins/org.objectweb.asm_5.0.1.v201404251740.jar\n");
         log.add("Error: Package not found: org.apache.log4j ");
 
         assertEquals(log.toString(), orgExpect.getLog().toString());

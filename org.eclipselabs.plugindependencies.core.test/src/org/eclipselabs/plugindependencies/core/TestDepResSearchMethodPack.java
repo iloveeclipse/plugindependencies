@@ -15,13 +15,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,7 +40,7 @@ public class TestDepResSearchMethodPack {
     public static void setUpBeforeClass() throws Exception {
         package1 = new Package("com.company.core", "3.4.5");
         package2 = new Package("com.company.core", "1.2.0");
-        packageSet = new HashSet<Package>();
+        packageSet = new LinkedHashSet<Package>();
         packageSet.add(new Package("org.eclipse.p1", "1.2.3"));
         packageSet.add(new Package("org.eclipse.p2", "4.5.6"));
         packageSet.add(new Package("com.example.itee.ate", "3.5.8"));
@@ -53,8 +49,8 @@ public class TestDepResSearchMethodPack {
         packageSet.add(new Package("com.company.tables", "9.2.0"));
         packageSet.add(package1);
         packageSet.add(package2);
-        pluginSet = new HashSet<Plugin>();
-        featureSet = new HashSet<Feature>();
+        pluginSet = new LinkedHashSet<Plugin>();
+        featureSet = new LinkedHashSet<Feature>();
     }
 
     @AfterClass
@@ -91,7 +87,7 @@ public class TestDepResSearchMethodPack {
     @Test
     public void testSearchPackage() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        Set<Package> resultSet = new HashSet<Package>();
+        Set<Package> resultSet = new LinkedHashSet<Package>();
         ManifestEntry entry;
 
         resultSet.add(package1);
