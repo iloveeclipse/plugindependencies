@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
-import org.eclipselabs.plugindependencies.core.PluginParser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -84,8 +83,7 @@ public class TestBuildFileGen {
         String args[] = new String[] { "-eclipsePaths", "testdata_dependencies/eclipse",
                 "-eclipseRoot", "testdata_dependencies/eclipse",
                 "-bundleVersion", "99.0.0", "-generateAllBuild",
-                "testdata_dependencies/eclipse/plugins", "company/eclipse/plugins", "-generateReqFile",
-                "testdata_dependencies/dependencies.txt" };
+                "testdata_dependencies/eclipse/plugins", "company/eclipse/plugins"};
 
         assertEquals(0, SecurityMan.runMain(args));
 
@@ -104,6 +102,15 @@ public class TestBuildFileGen {
             assertEquals(expectedOutputList.toString(), outputList.toString());
         }
 
+    }
+
+    @Test
+    public void testRequirementsFile() throws IOException {
+        String args[] = new String[] { "-eclipsePaths", "testdata_dependencies/eclipse",
+                "-generateReqFile", "testdata_dependencies/dependencies.txt" };
+
+        assertEquals(0, SecurityMan.runMain(args));
+
         String folder = "testdata_dependencies";
         File expect = new File(folder + "/dependencies_expected.txt");
         File act = new File(folder + "/dependencies.txt");
@@ -111,8 +118,7 @@ public class TestBuildFileGen {
                 StandardCharsets.UTF_8);
         expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files
-                .readAllLines(act.toPath(), StandardCharsets.UTF_8);
+        List<String> outputList = Files.readAllLines(act.toPath(), StandardCharsets.UTF_8);
         outputList = TestCLI.addNewlineToAllStrings(outputList);
 
         assertEquals(expectedOutputList.toString(), outputList.toString());
