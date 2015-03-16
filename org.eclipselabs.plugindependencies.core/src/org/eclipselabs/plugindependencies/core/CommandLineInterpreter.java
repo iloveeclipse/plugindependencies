@@ -11,16 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.MainClass.featureSet;
-import static org.eclipselabs.plugindependencies.core.MainClass.packageSet;
-import static org.eclipselabs.plugindependencies.core.MainClass.pluginSet;
-import static org.eclipselabs.plugindependencies.core.MainClass.printUnresolvedDependencies;
-import static org.eclipselabs.plugindependencies.core.MainClass.readInEclipseFolder;
-import static org.eclipselabs.plugindependencies.core.MainClass.resolveDependencies;
-import static org.eclipselabs.plugindependencies.core.MainClass.searchFeature;
-import static org.eclipselabs.plugindependencies.core.MainClass.searchPackage;
-import static org.eclipselabs.plugindependencies.core.MainClass.searchPlugin;
-import static org.eclipselabs.plugindependencies.core.MainClass.setJavaHome;
+import static org.eclipselabs.plugindependencies.core.MainClass.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -370,7 +361,10 @@ public class CommandLineInterpreter {
     public static int interpreteInput(String[] args) {
         Options option = null;
         int numOfArgs = args.length;
-
+        if(numOfArgs == 0){
+            printHelpPage();
+            return -1;
+        }
         for (int j = 0; j < numOfArgs; j++) {
             String argument = args[j];
             if (argument.startsWith("-")) {
