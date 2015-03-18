@@ -289,7 +289,7 @@ public class Plugin extends OSGIElement {
             }
         }
         if (packagesSize == 0) {
-            String errortype = optional.isEmpty() ? "Error: " : "Warning: ";
+            String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? "Error: " : "Warning: ";
             logEntry.append(errortype + "Package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
         }

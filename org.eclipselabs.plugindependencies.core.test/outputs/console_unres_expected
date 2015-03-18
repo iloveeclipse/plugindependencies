@@ -1,33 +1,19 @@
 Plugin: org.eclipse.osgi.services 3.3.0.v20110513 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 	Warning: Package not found: javax.servlet  *optional*
 	Warning: Package not found: javax.servlet.http  *optional*
-	Error: Package not found: javax.servlet  *dynamicImport*
-	Error: Package not found: javax.servlet.http  *dynamicImport*
-	Error: Package not found: javax.microedition.io  *dynamicImport*
+	Warning: Package not found: javax.servlet  *dynamicImport*
+	Warning: Package not found: javax.servlet.http  *dynamicImport*
+	Warning: Package not found: javax.microedition.io  *dynamicImport*
 
 Plugin: org.eclipse.swt 3.7.2.v3740f testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
-	Error: Package not found: org.eclipse.swt.accessibility2  *dynamicImport*
-	Error: Package not found: org.mozilla.xpcom  *dynamicImport*
+	Warning: Package not found: org.eclipse.swt.accessibility2  *dynamicImport*
+	Warning: Package not found: org.mozilla.xpcom  *dynamicImport*
 Is Required By:
 	Plugin: org.eclipse.jface.databinding 1.5.0.I20100907-0800 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface.databinding_1.5.0.I20100907-0800.jar
 	Plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
 	Plugin: org.eclipse.ui.workbench 3.7.1.v20120104-1859 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 	Plugin: org.eclipse.ui 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar
 
-
-Plugin: org.eclipse.osgi.services 3.3.0.v20110513 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
-	Error: Package not found: javax.servlet  *dynamicImport*
-	Error: Package not found: javax.servlet.http  *dynamicImport*
-	Error: Package not found: javax.microedition.io  *dynamicImport*
-
-Plugin: org.eclipse.swt 3.7.2.v3740f testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
-	Error: Package not found: org.eclipse.swt.accessibility2  *dynamicImport*
-	Error: Package not found: org.mozilla.xpcom  *dynamicImport*
-Is Required By:
-	Plugin: org.eclipse.jface.databinding 1.5.0.I20100907-0800 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface.databinding_1.5.0.I20100907-0800.jar
-	Plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
-	Plugin: org.eclipse.ui.workbench 3.7.1.v20120104-1859 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
-	Plugin: org.eclipse.ui 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar
 
 
 Feature: org.eclipse.cdt.gdb 7.0.0.201202111925 testdata_OutputGeneration/eclipseRE/features/org.eclipse.cdt.gdb_7.0.0.201202111925/feature.xml
