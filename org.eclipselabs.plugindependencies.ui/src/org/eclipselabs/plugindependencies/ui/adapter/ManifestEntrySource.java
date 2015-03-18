@@ -33,7 +33,7 @@ public class ManifestEntrySource implements IPropertySource {
 
     @Override
     public String toString() {
-        return entry.id + " " + entry.getVersion();
+        return entry.getName() + " " + entry.getVersion();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ManifestEntrySource implements IPropertySource {
     @Override
     public Object getPropertyValue(Object id) {
         if (id.equals("Name")) {
-            return entry.id;
+            return entry.getName();
         }
         if (id.equals("Version")) {
             return entry.getVersion();

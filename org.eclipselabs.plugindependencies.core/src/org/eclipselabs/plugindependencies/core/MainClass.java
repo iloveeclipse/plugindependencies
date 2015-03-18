@@ -40,7 +40,7 @@ public class MainClass {
         return ret.toString();
     }
 
-    private static String printLog(OSGIElement element, boolean showWarnings) {
+    private static String printLog(NamedElement element, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
         List<String> log = element.getLog();
         for (String logEntry : log) {

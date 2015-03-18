@@ -60,6 +60,10 @@ public class Plugin extends OSGIElement {
         this.requiredBy = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
     }
+    public Plugin(String symbName, String vers, boolean fragment) {
+        this(symbName, vers);
+        this.isFragment = fragment;
+    }
 
     public Set<Plugin> getRequiredBy() {
         return Collections.unmodifiableSet(requiredBy);
@@ -143,7 +147,7 @@ public class Plugin extends OSGIElement {
                 .splitInManifestEntries(expPackagesString);
         Package pack;
         for (ManifestEntry entry : entries) {
-            pack = new Package(entry.id, entry.getVersion());
+            pack = new Package(entry.getName(), entry.getVersion());
             pack.addExportPlugin(this);
             addExportedPackage(pack);
         }
@@ -271,15 +275,15 @@ public class Plugin extends OSGIElement {
 
     public void writePackageErrorLog(ManifestEntry requiredPackage, Set<Package> packages) {
         StringBuilder logEntry = new StringBuilder();
-        String name = requiredPackage.id.trim();
-        String version = requiredPackage.getVersion();
+        String rname = requiredPackage.getName();
+        String rversion = requiredPackage.getVersion();
         String optional = requiredPackage.isOptional() ? " *optional*" : "";
         String dynamicImport = requiredPackage.isDynamicImport() ? " *dynamicImport*"
                 : "";
         int packagesSize = packages.size();
         if (packagesSize > 1) {
             logEntry.append("Warning: More than one Package found for ");
-            logEntry.append(name + " " + version + optional + dynamicImport + "\n");
+            logEntry.append(rname + " " + rversion + optional + dynamicImport + "\n");
             for (Package pack : packages) {
                 logEntry.append("\t" + pack.getInformationLine());
             }
@@ -287,19 +291,15 @@ public class Plugin extends OSGIElement {
         if (packagesSize == 0) {
             String errortype = optional.isEmpty() ? "Error: " : "Warning: ";
             logEntry.append(errortype + "Package not found: ");
-            logEntry.append(name + " " + version + optional + dynamicImport);
+            logEntry.append(rname + " " + rversion + optional + dynamicImport);
         }
         addToLog(logEntry.toString());
     }
 
     @Override
     public int hashCode() {
-        String symbolicName = getName();
-        String version = getVersion();
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((symbolicName == null) ? 0 : symbolicName.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        int result = super.hashCode();
         result = prime * result + ((fragmentHost == null) ? 0 : fragmentHost.hashCode());
         result = prime * result + (isFragment ? 0 : 1);
         return result;
@@ -307,32 +307,13 @@ public class Plugin extends OSGIElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(!(obj instanceof Plugin)){
             return false;
         }
         Plugin other = (Plugin) obj;
-        String symbolicName = getName();
-        if (symbolicName == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!symbolicName.equals(other.getName())) {
-            return false;
-        }
-        String version = getVersion();
-        if (version == null) {
-            if (other.getVersion() != null) {
-                return false;
-            }
-        } else if (!version.equals(other.getVersion())) {
-            return false;
-        }
         if(isFragment != other.isFragment){
             return false;
         }
@@ -369,6 +350,14 @@ public class Plugin extends OSGIElement {
         if (plugin != null) {
             plugin.addRequiring(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        if(!isFragment) {
+            return super.toString();
+        }
+        return "<Fragment>" + super.toString();
     }
 
 }

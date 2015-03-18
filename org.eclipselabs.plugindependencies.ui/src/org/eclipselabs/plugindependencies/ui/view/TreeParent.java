@@ -13,6 +13,8 @@ package org.eclipselabs.plugindependencies.ui.view;
 
 import java.util.ArrayList;
 
+import org.eclipselabs.plugindependencies.core.NamedElement;
+
 /**
  * @author obroesam
  *
@@ -52,6 +54,14 @@ public class TreeParent {
 
     public TreeParent[] getChildren() {
         return children.toArray(new TreeParent[children.size()]);
+    }
+
+    static String getName(NamedElement elt) {
+        String version = elt.getVersion();
+        if(version.isEmpty()) {
+            return elt.getName();
+        }
+        return elt.getName() + " " + version;
     }
 
     @Override

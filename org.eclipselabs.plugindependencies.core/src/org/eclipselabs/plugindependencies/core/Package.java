@@ -18,10 +18,7 @@ import java.util.Set;
  * @author obroesam
  *
  */
-public class Package {
-    private final String name;
-
-    private final String version;
+public class Package extends NamedElement {
 
     private final Set<Plugin> exportedBy;
 
@@ -30,19 +27,10 @@ public class Package {
     private final Set<Plugin> reexportedBy;
 
     public Package(String name, String version) {
-        this.name = name;
-        this.version = version;
+        super(name, version);
         this.exportedBy = new LinkedHashSet<>();
         this.importedBy = new LinkedHashSet<>();
         this.reexportedBy = new LinkedHashSet<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getVersion() {
-        return version;
     }
 
     public String getInformationLine() {
@@ -156,14 +144,4 @@ public class Package {
         return true;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Package [name=");
-        builder.append(name);
-        builder.append(", version=");
-        builder.append(version);
-        builder.append("]");
-        return builder.toString();
-    }
 }

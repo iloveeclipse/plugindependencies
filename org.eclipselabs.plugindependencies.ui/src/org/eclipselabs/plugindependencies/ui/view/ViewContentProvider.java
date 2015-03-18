@@ -13,6 +13,7 @@ package org.eclipselabs.plugindependencies.ui.view;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -29,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipselabs.plugindependencies.core.Feature;
 import org.eclipselabs.plugindependencies.core.FeatureParser;
 import org.eclipselabs.plugindependencies.core.MainClass;
+import org.eclipselabs.plugindependencies.core.OutputCreator;
 import org.eclipselabs.plugindependencies.core.Package;
 import org.eclipselabs.plugindependencies.core.Plugin;
 import org.eclipselabs.plugindependencies.core.PluginParser;
@@ -179,6 +181,11 @@ public class ViewContentProvider implements ITreeContentProvider {
                 monitor.internalWorked(1);
                 monitor.subTask("Resolving dependencies");
                 MainClass.resolveDependencies();
+                Set<Plugin> allPlugins = MainClass.getPluginSet();
+                for (Plugin plugin : allPlugins) {
+                    OutputCreator.getResolvedPluginsRecursive(plugin);
+                }
+
                 monitor.internalWorked(1);
                 monitor.done();
                 PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {

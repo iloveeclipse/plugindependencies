@@ -185,11 +185,11 @@ public class DependencyResolver {
     private final String runningJavaHome = System.getProperty("java.home");
 
     public Package searchInJavaHomeJar(ManifestEntry requiredPackage) throws IOException {
-        if (requiredPackage == null || requiredPackage.id.isEmpty()) {
+        if (requiredPackage == null || requiredPackage.getName().isEmpty()) {
             return null;
         }
 
-        String packageName = requiredPackage.id.trim();
+        String packageName = requiredPackage.getName().trim();
         String javaHome = MainClass.getJavaHome();
 
         if (javaHome == null || javaHome.isEmpty()) {
@@ -239,7 +239,7 @@ public class DependencyResolver {
         if (requiredPlugin == null) {
             return new LinkedHashSet<Plugin>();
         }
-        String pluginName = requiredPlugin.id.trim();
+        String pluginName = requiredPlugin.getName().trim();
         String version = requiredPlugin.getVersion();
         Set<Plugin> ret = new LinkedHashSet<Plugin>();
 
@@ -263,7 +263,7 @@ public class DependencyResolver {
         if (entry == null) {
             return new LinkedHashSet<Feature>();
         }
-        String id = entry.id;
+        String id = entry.getName();
         String version = entry.getVersion();
         Set<Feature> ret = new LinkedHashSet<Feature>();
 

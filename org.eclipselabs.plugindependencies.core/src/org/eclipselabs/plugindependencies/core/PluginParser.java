@@ -85,20 +85,27 @@ public class PluginParser {
             if (plugin != null) {
                 plugin.setPath(pluginFile.getCanonicalPath());
                 if (!plugins.add(plugin)) {
-                    Logging.writeErrorOut("FATAL Error: Two Plugins with equal Symbolic Name and Version.");
-                    Logging.writeErrorOut(plugin.getName() + " " + plugin.getVersion());
                     List<String> equalPluginPaths = new ArrayList<>();
-                    equalPluginPaths.add(plugin.getPath());
                     for (Plugin plug : plugins) {
                         if (plug.equals(plugin)) {
+                            if(plugin.getPath().equals(plug.getPath())){
+                                continue;
+                            }
                             equalPluginPaths.add(plug.getPath());
                         }
                     }
-                    Collections.sort(equalPluginPaths);
-                    for (String path : equalPluginPaths) {
-                        Logging.writeErrorOut(path);
+                    if(!equalPluginPaths.isEmpty()){
+                        Logging.writeErrorOut("FATAL Error: Two Plugins with equal Symbolic Name and Version.");
+                        Logging.writeErrorOut(plugin.getName() + " " + plugin.getVersion());
+
+                        equalPluginPaths.add(plugin.getPath());
+                        Collections.sort(equalPluginPaths);
+                        for (String path : equalPluginPaths) {
+                            Logging.writeErrorOut(path);
+                        }
+                        return -1;
                     }
-                    return -1;
+                    return 0;
                 }
 
                 addToPackageList(packages, plugin);

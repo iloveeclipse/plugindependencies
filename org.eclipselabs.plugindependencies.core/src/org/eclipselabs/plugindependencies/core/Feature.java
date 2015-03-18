@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
@@ -44,7 +45,7 @@ public class Feature extends OSGIElement {
 
     public void addRequiredPlugins(NodeList requiredplugins) {
         for (int i = 0; i < requiredplugins.getLength(); i++) {
-            this.requiredPlugins.add(new ManifestEntry(requiredplugins.item(i)));
+            this.requiredPlugins.add(new ManifestEntry((Element)requiredplugins.item(i)));
         }
     }
 
@@ -54,7 +55,7 @@ public class Feature extends OSGIElement {
 
     public void addRequiredFeatures(NodeList requiredfeatures) {
         for (int i = 0; i < requiredfeatures.getLength(); i++) {
-            this.requiredFeatures.add(new ManifestEntry(requiredfeatures.item(i)));
+            this.requiredFeatures.add(new ManifestEntry((Element)requiredfeatures.item(i)));
         }
     }
 
@@ -79,44 +80,15 @@ public class Feature extends OSGIElement {
 
     @Override
     public int hashCode() {
-        String id = getName();
-        String version = getVersion();
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
-        return result;
+        return super.hashCode() + 0;
     }
 
     @Override
     public boolean equals(Object obj) {
-        String id = getName();
-        String version = getVersion();
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Feature other = (Feature) obj;
-        if (id == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!id.equals(other.getName())) {
-            return false;
-        }
-        if (version == null) {
-            if (other.getVersion() != null) {
-                return false;
-            }
-        } else if (!version.equals(other.getVersion())) {
-            return false;
-        }
-        return true;
+        return obj instanceof Feature;
     }
 
 }

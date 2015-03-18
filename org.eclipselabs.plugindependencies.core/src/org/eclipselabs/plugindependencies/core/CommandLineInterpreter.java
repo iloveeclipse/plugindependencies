@@ -529,7 +529,7 @@ public class CommandLineInterpreter {
             out.append("Required Plugins:\n");
             for (ManifestEntry requiredPlugin : plugin.getRequiredPlugins()) {
                 String sep = requiredPlugin.getVersion().isEmpty()? "" : " ";
-                out.append("\t" + requiredPlugin.id + sep + requiredPlugin.getVersion());
+                out.append("\t" + requiredPlugin.getName() + sep + requiredPlugin.getVersion());
                 if (requiredPlugin.isOptional()) {
                     out.append(" *optional*");
                 }
@@ -544,7 +544,7 @@ public class CommandLineInterpreter {
             out.append("Required Packages:\n");
             for (ManifestEntry requiredPackage : plugin.getRequiredPackages()) {
                 String sep = requiredPackage.getVersion().isEmpty()? "" : " ";
-                out.append("\t" + requiredPackage.id + sep + requiredPackage.getVersion());
+                out.append("\t" + requiredPackage.getName() + sep + requiredPackage.getVersion());
                 if (requiredPackage.isDynamicImport()) {
                     out.append(" *dynamicImport*");
                 }

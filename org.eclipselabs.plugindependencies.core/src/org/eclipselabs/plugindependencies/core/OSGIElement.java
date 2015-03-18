@@ -11,11 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,12 +20,7 @@ import java.util.Set;
  * @class OSGi_Element
  * This class is superclass of Feature and Plugin.
  */
-public class OSGIElement {
-    private final String name;
-
-    private final String version;
-
-    private final List<String> log;
+public abstract class OSGIElement extends NamedElement {
 
     private final Set<Plugin> resolvedPlugins;
 
@@ -37,29 +29,9 @@ public class OSGIElement {
     private String elementPath;
 
     public OSGIElement(String name, String version) {
-        this.name = name;
-        this.version = version;
-        this.log = new ArrayList<>();
+        super(name, version);
         this.resolvedPlugins = new LinkedHashSet<>();
         this.includedInFeatures = new LinkedHashSet<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    protected void addToLog(String note) {
-        if (!note.equals("")) {
-            log.add(note);
-        }
-    }
-
-    public List<String> getLog() {
-        return log;
     }
 
     public Set<Plugin> getResolvedPlugins() {
@@ -94,20 +66,19 @@ public class OSGIElement {
         this.elementPath = canonicalPath;
     }
 
-    public boolean matches(String id, String vers) {
-        return name.equals(id) && (version.equals(vers) || vers.isEmpty());
-    }
-
     public String getInformationLine() {
-        return this.name + " " + this.version + " " + this.elementPath;
+        if(version.isEmpty()){
+            return name + " " + elementPath;
+        }
+        return name + " " + version + " " + elementPath;
     }
 
     public void writeErrorLog(ManifestEntry requiredElement,
             Set<? extends OSGIElement> elements, String type) {
         StringBuilder logEntry = new StringBuilder();
-        String id = requiredElement.id.trim();
+        String id = requiredElement.getName().trim();
         String vers = requiredElement.getVersion();
-        String optional = requiredElement.isOptional() ? " *optional*" : "";
+        String optional = requiredElement.isOptional() ? " *optional*" : EMPTY_VERSION;
         int setSize = elements.size();
 
         if (setSize > 1) {
@@ -123,28 +94,5 @@ public class OSGIElement {
             logEntry.append(id + " " + vers + optional);
         }
         addToLog(logEntry.toString());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[name=");
-        builder.append(name);
-        builder.append(", version=");
-        builder.append(version);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    public static class NameComparator implements Comparator<OSGIElement>{
-
-        @Override
-        public int compare(OSGIElement o1, OSGIElement o2) {
-            if(o1.getClass() != o2.getClass()){
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
-            }
-            return o1.getName().compareTo(o2.getName());
-        }
-
     }
 }

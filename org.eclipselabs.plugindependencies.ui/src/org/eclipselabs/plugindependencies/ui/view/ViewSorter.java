@@ -21,6 +21,15 @@ public class ViewSorter extends ViewerComparator {
 
     @Override
     public int category(Object element) {
+        if(element instanceof TreePlugin){
+            TreePlugin elt = (TreePlugin) element;
+            if(elt.getName().equals("Features")){
+                return 0;
+            }
+            if(elt.getName().equals("Plugins")){
+                return 1;
+            }
+        } else
         if(element instanceof TreeParent){
             TreeParent elt = (TreeParent) element;
             if(elt.getName().equals("Features")){

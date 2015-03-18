@@ -89,7 +89,7 @@ public class OutputCreator {
         return dependencyPathList;
     }
 
-    private static Set<Plugin> getResolvedPluginsRecursive(Plugin plugin) {
+    public static Set<Plugin> getResolvedPluginsRecursive(Plugin plugin) {
         return computeResolvedPlugins(plugin);
     }
 

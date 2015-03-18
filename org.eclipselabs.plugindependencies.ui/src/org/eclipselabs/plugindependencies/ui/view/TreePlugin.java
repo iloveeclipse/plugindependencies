@@ -12,6 +12,7 @@
 package org.eclipselabs.plugindependencies.ui.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipselabs.plugindependencies.core.Feature;
 import org.eclipselabs.plugindependencies.core.Package;
@@ -22,14 +23,22 @@ import org.eclipselabs.plugindependencies.core.Plugin;
  *
  */
 public class TreePlugin extends TreeParent {
+
+    static final String REQUIRED_BY_PLUGINS = "Required by plugins";
+    static final String INCLUDED_IN_FEATURE = "Included in feature";
+    static final String EXPORTED_PACKAGES = "Exported packages";
+    static final String IMPORTED_PACKAGES = "Imported packages";
+    static final String ALL_REQUIRED_PLUGINS = "All required plugins";
+    static final String RESOLVED_PLUGINS = "Resolved plugins";
+
     private final Plugin plugin;
 
-    private final ArrayList<TreeParent> children;
+    private final List<TreeParent> children;
 
     private final TreeParent parent;
 
     public TreePlugin(Plugin plugin, TreeParent treeparent) {
-        super(plugin.getName() + " " + plugin.getVersion(), treeparent);
+        super(getName(plugin), treeparent);
         children = new ArrayList<>();
         this.plugin = plugin;
         this.parent = treeparent;
@@ -53,31 +62,43 @@ public class TreePlugin extends TreeParent {
     public TreeParent[] getChildren() {
         if (children.isEmpty()) {
             // Resolved Plugins
-            TreeParent resPlugins = new TreeParent("Resolved Plugins", this);
+            TreeParent resPlugins = new TreeParent(RESOLVED_PLUGINS, this);
             for (Plugin plug : plugin.getResolvedPlugins()) {
                 resPlugins.addChild(new TreePlugin(plug, resPlugins));
             }
             if (resPlugins.hasChildren()) {
                 this.addChild(resPlugins);
             }
-            // Exported Packages
-            TreeParent expPackages = new TreeParent("Exported Packages", this);
-            for (Package pack : plugin.getExportedPackages()) {
-                expPackages.addChild(new TreePackage(pack, expPackages));
+
+            // Resolved Plugins recursive
+            resPlugins = new TreeParent(ALL_REQUIRED_PLUGINS, this);
+            for (Plugin plug : plugin.getRecursiveResolvedPlugins()) {
+                resPlugins.addChild(new TreePlugin(plug, resPlugins));
             }
-            if (expPackages.hasChildren()) {
-                this.addChild(expPackages);
+            if (resPlugins.hasChildren()) {
+                this.addChild(resPlugins);
             }
+
             // Imported Packages
-            TreeParent impPackages = new TreeParent("Imported Packages", this);
+            TreeParent impPackages = new TreeParent(IMPORTED_PACKAGES, this);
             for (Package pack : plugin.getImportedPackages()) {
                 impPackages.addChild(new TreePackage(pack, impPackages));
             }
             if (impPackages.hasChildren()) {
                 this.addChild(impPackages);
             }
+
+            // Exported Packages
+            TreeParent expPackages = new TreeParent(EXPORTED_PACKAGES, this);
+            for (Package pack : plugin.getExportedPackages()) {
+                expPackages.addChild(new TreePackage(pack, expPackages));
+            }
+            if (expPackages.hasChildren()) {
+                this.addChild(expPackages);
+            }
+
             // Included in Features
-            TreeParent includedInFeature = new TreeParent("Included in Feature", this);
+            TreeParent includedInFeature = new TreeParent(INCLUDED_IN_FEATURE, this);
             for (Feature feature : plugin.getIncludedInFeatures()) {
                 includedInFeature.addChild(new TreeFeature(feature, includedInFeature));
             }
@@ -85,7 +106,7 @@ public class TreePlugin extends TreeParent {
                 this.addChild(includedInFeature);
             }
             // Required by Plugins
-            TreeParent requiredBy = new TreeParent("Required By Plugins", this);
+            TreeParent requiredBy = new TreeParent(REQUIRED_BY_PLUGINS, this);
             for (Plugin plug : plugin.getRequiredBy()) {
                 requiredBy.addChild(new TreePlugin(plug, requiredBy));
             }

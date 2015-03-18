@@ -91,13 +91,12 @@ public class StringUtil {
 
     public static String extractVersionOrRange(String versionString) {
         if (versionString == null) {
-            return "";
+            return NamedElement.EMPTY_VERSION;
         }
-        String version = "";
 
         int positionOfVersion = versionString.indexOf("version=");
         if (positionOfVersion == -1) {
-            return "";
+            return NamedElement.EMPTY_VERSION;
         }
 
         int versionStart = positionOfVersion + "version=".length();
@@ -112,9 +111,8 @@ public class StringUtil {
             versionEnd = versionString.length();
         }
 
-        version = versionString.substring(versionStart, versionEnd);
+        String version = versionString.substring(versionStart, versionEnd);
         version = version.replaceAll("\\s", "");
-
         return version;
     }
 

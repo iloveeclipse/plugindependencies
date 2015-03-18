@@ -194,7 +194,7 @@ public class TestPluginParser {
         checkForDoubleExport.add(plugin1);
 
         plugins = new LinkedHashSet<>();
-        plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0"));
+        plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0", true));
         plugins.addAll(checkForDoubleExport);
     }
 
