@@ -24,12 +24,12 @@ import org.eclipselabs.plugindependencies.core.Plugin;
  */
 public class TreePlugin extends TreeParent {
 
-    static final String REQUIRED_BY_PLUGINS = "Required by plugins";
-    static final String INCLUDED_IN_FEATURE = "Included in feature";
-    static final String EXPORTED_PACKAGES = "Exported packages";
-    static final String IMPORTED_PACKAGES = "Imported packages";
-    static final String ALL_REQUIRED_PLUGINS = "All required plugins";
-    static final String RESOLVED_PLUGINS = "Resolved plugins";
+    static final String RESOLVED_PLUGINS = "Requires";
+    static final String IMPORTED_PACKAGES = "Imports";
+    static final String ALL_REQUIRED_PLUGINS = "All dependencies";
+    static final String EXPORTED_PACKAGES = "Exports";
+    static final String INCLUDED_IN_FEATURE = "Included in";
+    static final String REQUIRED_BY_PLUGINS = "Required by";
 
     private final Plugin plugin;
 
