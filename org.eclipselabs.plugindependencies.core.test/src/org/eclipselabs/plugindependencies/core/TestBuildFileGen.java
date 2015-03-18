@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.After;
@@ -29,11 +31,11 @@ import org.junit.Test;
  *
  */
 public class TestBuildFileGen {
-    File pluginRootDir = new File("testdata_dependencies/eclipse/plugins");
+    Path pluginRootDir = Paths.get("testdata_dependencies/eclipse/plugins");
 
-    File[] pluginDirs = PluginParser.sortFiles(pluginRootDir.listFiles());
-
-    File workspace = new File("testdata_OutputGeneration/workspace");
+    File[] pluginDirs = PluginParser.sortFiles(pluginRootDir.toFile().listFiles());
+    Path root = Paths.get("testdata_OutputGeneration");
+    File workspace = new File(root.toFile(), "/workspace");
 
     File[] workspacePlugins = PluginParser.sortFiles(workspace.listFiles());
 
@@ -89,17 +91,16 @@ public class TestBuildFileGen {
 
         for (File plugin : pluginDirs) {
             String path = plugin.getCanonicalPath();
-            File expected = new File(path + "/classpathfile_expected");
-            File actual = new File(path + "/.classpath-gen");
-            List<String> expectedOutputList = Files.readAllLines(expected.toPath(),
-                    StandardCharsets.UTF_8);
+            Path expected = Paths.get(path, "/classpathfile_expected");
+            File actual = new File(path + "/.classpath.generated");
+            List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
             expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
-            List<String> outputList = Files.readAllLines(actual.toPath(),
-                    StandardCharsets.UTF_8);
+            List<String> outputList = Files.readAllLines(actual.toPath(), StandardCharsets.UTF_8);
             outputList = TestCLI.addNewlineToAllStrings(outputList);
 
-            assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
+                    expectedOutputList.toString(), outputList.toString());
         }
 
     }
@@ -112,16 +113,16 @@ public class TestBuildFileGen {
         assertEquals(0, SecurityMan.runMain(args));
 
         String folder = "testdata_dependencies";
-        File expect = new File(folder + "/dependencies_expected.txt");
-        File act = new File(folder + "/dependencies.txt");
-        List<String> expectedOutputList = Files.readAllLines(expect.toPath(),
-                StandardCharsets.UTF_8);
+        Path expected = Paths.get(folder, "dependencies_expected.txt");
+        Path act = Paths.get(folder, "dependencies.txt");
+        List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
         expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(act.toPath(), StandardCharsets.UTF_8);
+        List<String> outputList = Files.readAllLines(act, StandardCharsets.UTF_8);
         outputList = TestCLI.addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+        assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
+                expectedOutputList.toString(), outputList.toString());
     }
 
     @Test
@@ -138,34 +139,28 @@ public class TestBuildFileGen {
 
         for (File plugin : workspacePlugins) {
             String path = plugin.getCanonicalPath();
-            File expected = new File(path + "/classpathfile_expected");
-            File actual = new File(path + "/.classpath-gen");
-            List<String> expectedOutputList = Files.readAllLines(expected.toPath(),
-                    StandardCharsets.UTF_8);
+            Path expected = Paths.get(path, "classpathfile_expected");
+            Path actual = Paths.get(path, ".classpath.generated");
+            List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
             expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
-            List<String> outputList = Files.readAllLines(actual.toPath(),
-                    StandardCharsets.UTF_8);
+            List<String> outputList = Files.readAllLines(actual, StandardCharsets.UTF_8);
             outputList = TestCLI.addNewlineToAllStrings(outputList);
 
-            assertEquals("Expected file " + expected
-                    + "does not match actual one",
+            assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
                     expectedOutputList.toString(), outputList.toString());
         }
 
         String folder = "testdata_OutputGeneration";
-        File expect = new File(folder + "/dependencies_expected.txt");
+        Path expected = Paths.get(folder, "dependencies_expected.txt");
         File act = new File(folder + "/dependencies.txt");
-        List<String> expectedOutputList = Files.readAllLines(expect.toPath(),
-                StandardCharsets.UTF_8);
+        List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
         expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files
-                .readAllLines(act.toPath(), StandardCharsets.UTF_8);
+        List<String> outputList = Files.readAllLines(act.toPath(), StandardCharsets.UTF_8);
         outputList = TestCLI.addNewlineToAllStrings(outputList);
 
-        assertEquals("Expected file " + expect
-                + "does not match actual one",
+        assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
                 expectedOutputList.toString(), outputList.toString());
     }
 
@@ -182,7 +177,7 @@ public class TestBuildFileGen {
 
         String pluginFolder = "testdata_OutputGeneration/workspace/com.company.itee.maint.common";
         File expected = new File(pluginFolder + "/classpathfile_expected");
-        File actual = new File(pluginFolder + "/.classpath-gen");
+        File actual = new File(pluginFolder + "/.classpath.generated");
         List<String> expectedOutputList = Files.readAllLines(expected.toPath(),
                 StandardCharsets.UTF_8);
         expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);

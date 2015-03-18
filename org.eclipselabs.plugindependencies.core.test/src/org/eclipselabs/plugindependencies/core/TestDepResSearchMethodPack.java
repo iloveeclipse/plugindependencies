@@ -14,7 +14,6 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -123,15 +122,15 @@ public class TestDepResSearchMethodPack {
         ManifestEntry entry;
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
 
-        assertEquals(new HashSet<Package>(), depres.searchInPackageSet(null));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPackageSet(null).toString());
 
         entry = new ManifestEntry("", "");
-        assertEquals(new HashSet<Package>(), depres.searchInPackageSet(entry));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPackageSet(entry).toString());
 
         entry = new ManifestEntry("Package.can.not.be.found", "");
-        assertEquals(new HashSet<Package>(), depres.searchInPackageSet(entry));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPackageSet(entry).toString());
 
         entry = new ManifestEntry("com.company.core", "Wrong.Version.Format");
-        assertEquals(new HashSet<Package>(), depres.searchInPackageSet(entry));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPackageSet(entry).toString());
     }
 }

@@ -159,6 +159,19 @@ public class ManifestEntry {
     }
 
     @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ManifestEntry [id=");
+        builder.append(id);
+        builder.append(", attributes=");
+        builder.append(attributes);
+        builder.append(", version=");
+        builder.append(version);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

@@ -13,7 +13,6 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.*;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -75,20 +74,20 @@ public class TestDepResSearchMethodPlugin {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
         ManifestEntry entry;
 
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(null, false));
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(null, true));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, false).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, true).toString());
 
         entry = new ManifestEntry(new String[] { "" });
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, true));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, true).toString());
 
         entry = new ManifestEntry("Plugin.can.not.be.found", "");
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, true));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, true).toString());
 
         entry = new ManifestEntry("com.company.core", "Wrong.Version.Format");
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, true));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, true).toString());
     }
 
     @Test
@@ -122,23 +121,23 @@ public class TestDepResSearchMethodPlugin {
         entry = new ManifestEntry("com.company.core", "[1.2,2.0.0)");
         assertEquals(resultSet, depres.searchInPluginSet(entry, false));
 
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(null, false));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, false).toString());
 
         entry = new ManifestEntry(new String[] { "" });
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
 
         entry = new ManifestEntry("Plugin.can.not.be.found", "");
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
 
         entry = new ManifestEntry(new String[] { "com.company.core",
                 "version=\"Wrong.Version.Format\"" });
-        assertEquals(new HashSet<Plugin>(), depres.searchInPluginSet(entry, false));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
     }
 
     @Test
     public void testSystemBundle() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        Set<Plugin> resultSet = new HashSet<Plugin>();
+        Set<Plugin> resultSet = new LinkedHashSet<>();
         resultSet.add(systemBundle);
         ManifestEntry entry = new ManifestEntry("org.eclipse.osgi", "");
         ManifestEntry entry2 = new ManifestEntry("system.bundle", "");

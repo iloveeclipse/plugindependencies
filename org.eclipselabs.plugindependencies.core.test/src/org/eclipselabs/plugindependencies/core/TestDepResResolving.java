@@ -14,7 +14,6 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -134,8 +133,8 @@ public class TestDepResResolving {
 
     @Test
     public void testFeatureLinking() {
-        Set<Feature> compareSetFeature = new HashSet<Feature>();
-        Set<Plugin> compareSetPlugin = new HashSet<Plugin>();
+        Set<Feature> compareSetFeature = new LinkedHashSet<Feature>();
+        Set<Plugin> compareSetPlugin = new LinkedHashSet<Plugin>();
 
         Feature topFeat = getFeature("org.eclipse.topFeature", featureSet);
         Feature leftFeat = getFeature("org.example.left", featureSet);
@@ -148,7 +147,7 @@ public class TestDepResResolving {
         assertEquals(compareSetFeature, topFeat.getIncludedFeatures());
 
         compareSetPlugin.add(plugin1);
-        assertEquals(compareSetPlugin, topFeat.getResolvedPlugins());
+        assertEquals(compareSetPlugin.toString(), topFeat.getResolvedPlugins().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(topFeat);
@@ -156,7 +155,7 @@ public class TestDepResResolving {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
 
-        assertEquals(new HashSet<Feature>(), topFeat.getIncludedInFeatures());
+        assertEquals(new LinkedHashSet<Feature>().toString(), topFeat.getIncludedInFeatures().toString());
 
         // topFeature end
 
@@ -168,9 +167,9 @@ public class TestDepResResolving {
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin2);
         compareSetPlugin.add(plugin3);
-        assertEquals(compareSetPlugin, leftFeat.getResolvedPlugins());
+        assertEquals(compareSetPlugin.toString(), leftFeat.getResolvedPlugins().toString());
 
-        assertEquals(new HashSet<Feature>(), leftFeat.getIncludedFeatures());
+        assertEquals(new LinkedHashSet<Feature>().toString(), leftFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(leftFeat);
@@ -210,7 +209,7 @@ public class TestDepResResolving {
         compareSetPlugin.add(plugin7);
         assertEquals(compareSetPlugin, rightrightFeat.getResolvedPlugins());
 
-        assertEquals(new HashSet<Feature>(), rightrightFeat.getIncludedFeatures());
+        assertEquals(new LinkedHashSet<>().toString(), rightrightFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(rightrightFeat);
@@ -234,11 +233,11 @@ public class TestDepResResolving {
         compareLog.add("Error: Plugin not found: plugin.not.found.test 1.1.1");
         assertEquals(compareLog, forCompare.getLog());
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getResolvedPlugins());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
 
-        assertEquals(new HashSet<Package>(), forCompare.getImportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getRequiredBy());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredBy().toString());
 
         assertEquals("", forCompare.printRequiringThis());
 
@@ -258,7 +257,7 @@ public class TestDepResResolving {
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin1);
         for (Package pack : forCompare.getExportedPackages()) {
-            assertEquals(compareSetPlugin, pack.getExportedBy());
+            assertEquals(compareSetPlugin.toString(), pack.getExportedBy().toString());
         }
 
         // plugin2
@@ -284,12 +283,12 @@ public class TestDepResResolving {
         compareSetPlugin.add(plugin2);
 
         for (Package pack : forCompare.getImportedPackages()) {
-            assertEquals(compareSetPlugin, pack.getImportedBy());
+            assertEquals(compareSetPlugin.toString(), pack.getImportedBy().toString());
         }
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getRequiredBy());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredBy().toString());
 
-        assertEquals(new HashSet<Package>(), forCompare.getExportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
 
         // plugin3
         forCompare = getPlugin("org.eclipse.adv.core", pluginSet);
@@ -300,9 +299,9 @@ public class TestDepResResolving {
         compareSetPlugin.add(plugin7);
         assertEquals(compareSetPlugin, forCompare.getResolvedPlugins());
 
-        assertEquals(new HashSet<Package>(), forCompare.getImportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getRequiredBy());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredBy().toString());
 
         compareSetPackage.clear();
         compareSetPackage.add(package4);
@@ -314,16 +313,16 @@ public class TestDepResResolving {
         compareLog.clear();
         compareLog
                 .add("Warning: More than one Package found for org.adv.core  *optional*\n"
-                        + "\tPackage: org.adv.core 3.2.1\n"
-                        + "\t\tExported By:\n"
-                        + "\t\tFragment: org.eclipse.plugin1 2.0.0.201306111332 "
-                        + System.getProperty("user.dir")
-                        + "/testdata_dependencies/eclipse/plugins/plugin1\n"
                         + "\tPackage: org.adv.core\n"
                         + "\t\tExported By:\n"
                         + "\t\tPlugin: org.eclipse.adv.core 4.0.1.v93_k "
                         + System.getProperty("user.dir")
-                        + "/testdata_dependencies/eclipse/plugins/plugin3\n");
+                        + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv.core\n"
+                        + "\tPackage: org.adv.core 3.2.1\n"
+                        + "\t\tExported By:\n"
+                        + "\t\tFragment: org.eclipse.plugin1 2.0.0.201306111332 "
+                        + System.getProperty("user.dir")
+                        + "/testdata_dependencies/eclipse/plugins/org.eclipse.plugin1\n");
 
         assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
@@ -339,16 +338,16 @@ public class TestDepResResolving {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin2);
-        assertEquals(compareSetPlugin, forCompare.getRequiredBy());
+        assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
-        assertEquals(new HashSet<Package>(), forCompare.getExportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
 
         // plugin5
         forCompare = getPlugin("org.company.test.framework", pluginSet);
 
         assertTrue(forCompare.getLog().isEmpty());
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getResolvedPlugins());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
 
         compareSetPackage.clear();
         compareSetPackage.add(package5);
@@ -360,22 +359,25 @@ public class TestDepResResolving {
         compareSetPackage.add(package11);
         assertEquals(compareSetPackage, forCompare.getImportedPackages());
 
+        compareSetPlugin.clear();
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin6);
-        assertEquals(compareSetPlugin, forCompare.getRequiredBy());
+        compareSetPlugin.add(plugin2);
+        assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
-        String output = "Is Required By:\n" + "\tFragment: org.eclipse.adv 1.2.3 "
-                + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin2\n"
+        String output = "Is Required By:\n"
                 + "\tPlugin: org.company.corePlugin 3.2.0.v2014 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin4\n"
+                + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n"
                 + "\tPlugin: org.company.workcenter 6.3.1 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin6\n";
+                + "/testdata_dependencies/eclipse/plugins/org.company.workcenter\n"
+                + "\tFragment: org.eclipse.adv 1.2.3 "
+                + System.getProperty("user.dir")
+                + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
         assertEquals(output, forCompare.printRequiringThis());
 
-        assertEquals(new HashSet<Package>(), forCompare.getExportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
 
         // plugin6
         forCompare = getPlugin("org.company.workcenter", pluginSet);
@@ -384,45 +386,45 @@ public class TestDepResResolving {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin5);
-        assertEquals(compareSetPlugin, forCompare.getResolvedPlugins());
+        assertEquals(compareSetPlugin.toString(), forCompare.getResolvedPlugins().toString());
 
-        assertEquals(new HashSet<Package>(), forCompare.getImportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin2);
-        assertEquals(compareSetPlugin, forCompare.getRequiredBy());
+        assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
         String output2 = "Is Required By:\n"
-                + "\t*optional* for Fragment: org.eclipse.adv 1.2.3 "
-                + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin2\n"
                 + "\tPlugin: org.company.corePlugin 3.2.0.v2014 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin4\n";
+                + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n"
+                + "\t*optional* for Fragment: org.eclipse.adv 1.2.3 "
+                + System.getProperty("user.dir")
+                + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
         assertEquals(output2, forCompare.printRequiringThis());
 
         compareSetPackage.clear();
         compareSetPackage.add(package12);
         compareSetPackage.add(package13);
         compareSetPackage.add(package14);
-        assertEquals(compareSetPackage, forCompare.getExportedPackages());
+        assertEquals(compareSetPackage.toString(), forCompare.getExportedPackages().toString());
 
         // plugin7
         forCompare = getPlugin("org.eclipse.equinox.core", pluginSet);
 
         assertTrue(forCompare.getLog().isEmpty());
 
-        assertEquals(new HashSet<Plugin>(), forCompare.getResolvedPlugins());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
 
-        assertEquals(compareSetPackage, forCompare.getImportedPackages());
+        assertEquals(compareSetPackage.toString(), forCompare.getImportedPackages().toString());
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin3);
-        assertEquals(compareSetPlugin, forCompare.getRequiredBy());
+        assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
-        assertEquals(new HashSet<Package>(), forCompare.getExportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
     }
 
     @Test
@@ -441,10 +443,10 @@ public class TestDepResResolving {
         plugin = getPlugin("org.company.workcenter", pluginSet);
         exportedBy = "\t\tExported By:\n" + "\t\tPlugin: org.company.workcenter 6.3.1 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin6\n";
+                + "/testdata_dependencies/eclipse/plugins/org.company.workcenter\n";
         importedBy = "Imported By:\n" + "\tPlugin: org.eclipse.equinox.core 1.0.0 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin7\n";
+                + "/testdata_dependencies/eclipse/plugins/org.eclipse.equinox.core\n";
         for (Package pack2 : plugin.getExportedPackages()) {
             assertEquals(exportedBy, pack2.printExportedBy(0));
             assertEquals(importedBy, pack2.printImportedBy(0));
@@ -454,7 +456,7 @@ public class TestDepResResolving {
         importedBy = "Imported By:\n"
                 + "\t*optional* for Plugin: org.company.corePlugin 3.2.0.v2014 "
                 + System.getProperty("user.dir")
-                + "/testdata_dependencies/eclipse/plugins/plugin4\n";
+                + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n";
         for (Package pack3 : plugin.getImportedPackages()) {
             assertEquals(importedBy, pack3.printImportedBy(0));
         }

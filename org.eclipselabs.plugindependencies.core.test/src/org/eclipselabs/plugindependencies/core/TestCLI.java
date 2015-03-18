@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -357,29 +356,38 @@ public class TestCLI {
 
         List<String> newLineList = new ArrayList<>();
         for (String string : originalList) {
-
-            if (string.contains("$SOME_PATH$/")) {
-                string = string.replace("$SOME_PATH$/", "");
-            }
-
-            if (string.contains("org.eclipselabs.plugindependencies.core.test")) {
-                int pathBegin = string.indexOf('/');
-                if (pathBegin != -1) {
-                    Path path = Paths.get(string.substring(pathBegin));
-                    Path relativePath = testFolderPath.relativize(path);
-                    string = string.substring(0, pathBegin) + relativePath;
-                }
-                if (string.contains("org.eclipselabs.plugindependencies.core.test")) {
-                    pathBegin = string.indexOf(":/") + ":".length();
-                    if (pathBegin != -1) {
-                        Path path = Paths.get(string.substring(pathBegin));
-                        Path relativePath = testFolderPath.relativize(path);
-                        string = string.substring(0, pathBegin) + relativePath;
-                    }
-                }
-            }
-            newLineList.add(string + "\n");
+            string = truncate(testFolderPath, string);
+            newLineList.add(string);
         }
         return newLineList;
+    }
+
+    public static String truncate(Path testFolderPath, Path pathStr) throws IOException {
+        return truncate(testFolderPath, pathStr.toString());
+    }
+    public static String truncate(Path testFolderPath, String pathStr) throws IOException {
+        if (pathStr.contains("$SOME_PATH$/")) {
+            pathStr = pathStr.replace("$SOME_PATH$/", "");
+        }
+
+        if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
+            int pathBegin = pathStr.indexOf('/');
+            if (pathBegin != -1) {
+                Path path = Paths.get(pathStr.substring(pathBegin));
+                Path relativePath;
+                    relativePath = testFolderPath.toRealPath().relativize(path);
+                    pathStr = pathStr.substring(0, pathBegin) + relativePath;
+            }
+            if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
+                pathBegin = pathStr.indexOf(":/") + ":".length();
+                if (pathBegin != -1) {
+                    Path path = Paths.get(pathStr.substring(pathBegin));
+                    Path relativePath = testFolderPath.toRealPath().relativize(path);
+                    pathStr = pathStr.substring(0, pathBegin) + relativePath;
+                }
+            }
+        }
+        pathStr = pathStr + "\n";
+        return pathStr;
     }
 }

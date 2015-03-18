@@ -16,16 +16,11 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.Manifest;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
-import org.eclipselabs.plugindependencies.core.PluginParser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -87,7 +82,7 @@ public class TestPluginParser {
         orgEclipseEquinoxApp = new File(dirPath
                 + "/org.eclipse.equinox.app_1.3.100.v20110321.jar");
 
-        plugin6 = new File("testdata_dependencies/eclipse/plugins/plugin6");
+        plugin6 = new File("testdata_dependencies/eclipse/plugins/org.company.workcenter");
 
         ManifestEntry entry;
 
@@ -107,7 +102,7 @@ public class TestPluginParser {
         entry = new ManifestEntry("org.eclipse.swt.widgets", null);
         compareReqPackagesOfTestPlugin.add(entry);
 
-        expPackagesOfTestPlugin = new HashSet<Package>();
+        expPackagesOfTestPlugin = new LinkedHashSet<>();
         expPackagesOfTestPlugin.add(new Package("com.company.itee.core", ""));
         expPackagesOfTestPlugin.add(new Package("com.company.itee.core.concurrent", ""));
         expPackagesOfTestPlugin.add(new Package("com.company.itee.core.events", ""));
@@ -180,27 +175,27 @@ public class TestPluginParser {
                 "version=\"1.0.0\"", "dynamicImport" });
         compareReqPackagesOfOrgEclipseEqu.add(entry);
 
-        expPackagesOfOrgEclipseEqu = new HashSet<Package>();
+        expPackagesOfOrgEclipseEqu = new LinkedHashSet<>();
         expPackagesOfOrgEclipseEqu.add(new Package("org.eclipse.equinox.app", "1.1"));
         expPackagesOfOrgEclipseEqu
                 .add(new Package("org.eclipse.equinox.internal.app", ""));
         expPackagesOfOrgEclipseEqu
                 .add(new Package("org.osgi.service.application", "1.1"));
 
-        packages = new HashSet<Package>();
+        packages = new LinkedHashSet<>();
         packages.addAll(expPackagesOfTestPlugin);
         packages.addAll(expPackagesOfOrgEclipseEqu);
 
         plugin1 = new Plugin("com.company.itee.core", "99.0.0");
         plugin2 = new Plugin("org.eclipse.equinox.app", "1.3.100.v20110321");
 
-        checkForDoubleExport = new HashSet<Plugin>();
-        checkForDoubleExport.add(plugin1);
+        checkForDoubleExport = new LinkedHashSet<>();
         checkForDoubleExport.add(plugin2);
+        checkForDoubleExport.add(plugin1);
 
-        plugins = new HashSet<Plugin>();
-        plugins.addAll(checkForDoubleExport);
+        plugins = new LinkedHashSet<>();
         plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0"));
+        plugins.addAll(checkForDoubleExport);
     }
 
     @AfterClass
@@ -224,12 +219,12 @@ public class TestPluginParser {
 
     @Test
     public void testReadManifests() throws IOException {
-        pluginSet = new HashSet<Plugin>();
-        packageSet = new HashSet<Package>();
+        pluginSet = new LinkedHashSet<>();
+        packageSet = new LinkedHashSet<>();
 
         PluginParser.readManifests(dirPath, pluginSet, packageSet);
         assertEquals(packages, packageSet);
-        assertEquals(plugins, pluginSet);
+        assertEquals(plugins.toString(), pluginSet.toString());
 
         Package doubleExported = new Package("", "");
         for (Package pack : packageSet) {
@@ -239,7 +234,7 @@ public class TestPluginParser {
                 }
             }
         }
-        assertEquals(checkForDoubleExport, doubleExported.getExportedBy());
+        assertEquals(checkForDoubleExport.toString(), doubleExported.getExportedBy().toString());
 
         Plugin forPathCheck = new Plugin("", "");
         for (Plugin plugin : pluginSet) {
@@ -286,7 +281,7 @@ public class TestPluginParser {
         assertEquals("3.3.0", plugin.getVersion());
         assertEquals(compareReqPluginsOforgEclipseAnt, plugin.getRequiredPlugins());
         assertEquals(compareReqPackagesOforgEclipseAnt, plugin.getRequiredPackages());
-        assertEquals(new HashSet<Package>(), plugin.getExportedPackages());
+        assertEquals(new LinkedHashSet<>().toString(), plugin.getExportedPackages().toString());
         assertTrue(plugin.isFragment());
         assertEquals(fragmentHost, plugin.getFragmentHost());
     }
@@ -323,7 +318,7 @@ public class TestPluginParser {
         Plugin plugin = PluginParser.parseManifest(mf);
         assertEquals("org.company.workcenter", plugin.getName());
         assertEquals("6.3.1", plugin.getVersion());
-        Set<Package> exported = new HashSet<Package>();
+        Set<Package> exported = new LinkedHashSet<>();
         Package package1 = new Package("com.package.test", "4.11.0");
         Package package2 = new Package("junit.framework", "4.11.0");
         Package package3 = new Package("junit.runner", "4.11.0");
@@ -335,8 +330,8 @@ public class TestPluginParser {
 
     @Test
     public void testNull() throws IOException {
-        pluginSet = new HashSet<Plugin>();
-        packageSet = new HashSet<Package>();
+        pluginSet = new LinkedHashSet<>();
+        packageSet = new LinkedHashSet<>();
 
         PluginParser.readManifests(null, pluginSet, packageSet);
         assertTrue(pluginSet.isEmpty());
@@ -344,8 +339,8 @@ public class TestPluginParser {
 
     @Test
     public void testFolderDoesNotExist() throws IOException {
-        pluginSet = new HashSet<Plugin>();
-        packageSet = new HashSet<Package>();
+        pluginSet = new LinkedHashSet<>();
+        packageSet = new LinkedHashSet<>();
 
         PluginParser.readManifests("/folder/does/not/exist", pluginSet, packageSet);
         assertTrue(pluginSet.isEmpty());

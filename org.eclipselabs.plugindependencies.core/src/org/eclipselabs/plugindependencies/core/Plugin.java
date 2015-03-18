@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -38,7 +39,7 @@ public class Plugin extends OSGIElement {
 
     private List<String> bundleClassPath;
 
-    Set<Plugin> recursivResolvedPlugins;
+    private Set<Plugin> recursiveResolvedPlugins;
 
     private boolean isFragment;
 
@@ -58,11 +59,10 @@ public class Plugin extends OSGIElement {
         this.importedPackages = new LinkedHashSet<>();
         this.requiredBy = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
-        this.recursivResolvedPlugins = new LinkedHashSet<>();
     }
 
     public Set<Plugin> getRequiredBy() {
-        return requiredBy;
+        return Collections.unmodifiableSet(requiredBy);
     }
 
     void addRequiring(Plugin requires) {
@@ -98,8 +98,15 @@ public class Plugin extends OSGIElement {
         }
     }
 
+    public Version getHostVersion(){
+        if(!isFragment || fragmentHostEntry == null){
+            return null;
+        }
+        return new Version(fragmentHostEntry.getVersion());
+    }
+
     public List<ManifestEntry> getRequiredPlugins() {
-        return requiredPlugins;
+        return Collections.unmodifiableList(requiredPlugins);
     }
 
     public void setRequiredPlugins(String requplugins) {
@@ -107,7 +114,7 @@ public class Plugin extends OSGIElement {
     }
 
     public Set<Package> getImportedPackages() {
-        return importedPackages;
+        return Collections.unmodifiableSet(importedPackages);
     }
 
     public void addImportedPackage(Package importedPackage) {
@@ -116,7 +123,7 @@ public class Plugin extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredPackages() {
-        return requiredPackages;
+        return Collections.unmodifiableList(requiredPackages);
     }
 
     public void setRequiredPackages(String requPackages) {
@@ -124,7 +131,7 @@ public class Plugin extends OSGIElement {
     }
 
     public Set<Package> getExportedPackages() {
-        return exportedPackages;
+        return Collections.unmodifiableSet(exportedPackages);
     }
 
     private void addExportedPackage(Package exportedPackage) {
@@ -147,7 +154,7 @@ public class Plugin extends OSGIElement {
     }
 
     public List<String> getBundleClassPath() {
-        return bundleClassPath;
+        return Collections.unmodifiableList(bundleClassPath);
     }
 
     public void setBundleClassPath(String bundleClassPath) {
@@ -188,7 +195,7 @@ public class Plugin extends OSGIElement {
     }
 
     public Set<Plugin> getFragments() {
-        return fragments;
+        return Collections.unmodifiableSet(fragments);
     }
 
     public void addFragments(Plugin fragment) {
@@ -293,6 +300,8 @@ public class Plugin extends OSGIElement {
         int result = 1;
         result = prime * result + ((symbolicName == null) ? 0 : symbolicName.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((fragmentHost == null) ? 0 : fragmentHost.hashCode());
+        result = prime * result + (isFragment ? 0 : 1);
         return result;
     }
 
@@ -307,9 +316,8 @@ public class Plugin extends OSGIElement {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        String symbolicName = getName();
-        String version = getVersion();
         Plugin other = (Plugin) obj;
+        String symbolicName = getName();
         if (symbolicName == null) {
             if (other.getName() != null) {
                 return false;
@@ -317,6 +325,7 @@ public class Plugin extends OSGIElement {
         } else if (!symbolicName.equals(other.getName())) {
             return false;
         }
+        String version = getVersion();
         if (version == null) {
             if (other.getVersion() != null) {
                 return false;
@@ -324,6 +333,42 @@ public class Plugin extends OSGIElement {
         } else if (!version.equals(other.getVersion())) {
             return false;
         }
+        if(isFragment != other.isFragment){
+            return false;
+        }
+        if (fragmentHost == null) {
+            if (other.fragmentHost != null) {
+                return false;
+            }
+        } else if (!fragmentHost.equals(other.fragmentHost)) {
+            return false;
+        }
         return true;
     }
+
+    public Set<Plugin> getRecursiveResolvedPlugins() {
+        if(recursiveResolvedPlugins == null){
+            return Collections.emptySet();
+        }
+        return Collections.unmodifiableSet(recursiveResolvedPlugins);
+    }
+
+    public boolean addToRecursiveResolvedPlugins(Plugin plugin) {
+        if(recursiveResolvedPlugins == null){
+            recursiveResolvedPlugins = new LinkedHashSet<Plugin>();
+        }
+        if(plugin == null || this.equals(plugin)){
+            return false;
+        }
+        return recursiveResolvedPlugins.add(plugin);
+    }
+
+    @Override
+    public void addResolvedPlugin(Plugin plugin) {
+        super.addResolvedPlugin(plugin);
+        if (plugin != null) {
+            plugin.addRequiring(this);
+        }
+    }
+
 }

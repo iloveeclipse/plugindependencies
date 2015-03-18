@@ -12,6 +12,8 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,23 +63,17 @@ public class OSGIElement {
     }
 
     public Set<Plugin> getResolvedPlugins() {
-        return resolvedPlugins;
+        return Collections.unmodifiableSet(resolvedPlugins);
     }
 
-    public void addResolvedPlugin(Plugin resolvedPlugin) {
-        if (resolvedPlugin != null) {
-            getResolvedPlugins().add(resolvedPlugin);
-            if (this instanceof Feature) {
-                resolvedPlugin.addIncludingFeature((Feature) this);
-            }
-            if (this instanceof Plugin) {
-                resolvedPlugin.addRequiring((Plugin) this);
-            }
+    public void addResolvedPlugin(Plugin plugin) {
+        if (plugin != null) {
+            resolvedPlugins.add(plugin);
         }
     }
 
     public Set<Feature> getIncludedInFeatures() {
-        return includedInFeatures;
+        return Collections.unmodifiableSet(includedInFeatures);
     }
 
     protected void addIncludingFeature(Feature includingFeature) {
@@ -85,7 +81,6 @@ public class OSGIElement {
     }
 
     /**
-     *
      * @return full absolute (canonical) path in OS file system
      */
     public String getPath() {
@@ -93,7 +88,6 @@ public class OSGIElement {
     }
 
     /**
-     *
      * @param canonicalPath full absolute (canonical) path in OS file system
      */
     public void setPath(String canonicalPath) {
@@ -140,5 +134,17 @@ public class OSGIElement {
         builder.append(version);
         builder.append("]");
         return builder.toString();
+    }
+
+    public static class NameComparator implements Comparator<OSGIElement>{
+
+        @Override
+        public int compare(OSGIElement o1, OSGIElement o2) {
+            if(o1.getClass() != o2.getClass()){
+                return o1.getClass().getName().compareTo(o2.getClass().getName());
+            }
+            return o1.getName().compareTo(o2.getName());
+        }
+
     }
 }

@@ -144,13 +144,10 @@ public class DependencyResolver {
     public void searchHost(Plugin fragment) {
         ManifestEntry entry = fragment.getFragmentHost();
         Set<Plugin> resultSet = searchInPluginSet(entry, false);
-        Plugin fragmentHost = null;
         int setSize = resultSet.size();
 
         if (setSize >= 1) {
-            fragmentHost = getPluginWithHighestVersion(resultSet);
-        }
-        if (fragmentHost != null) {
+            Plugin fragmentHost = getPluginWithHighestVersion(resultSet);
             fragment.setFragHost(fragmentHost);
             fragmentHost.addFragments(fragment);
         }

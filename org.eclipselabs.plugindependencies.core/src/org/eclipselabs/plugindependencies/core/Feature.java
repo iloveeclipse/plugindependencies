@@ -12,6 +12,7 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +39,7 @@ public class Feature extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredPlugins() {
-        return requiredPlugins;
+        return Collections.unmodifiableList(requiredPlugins);
     }
 
     public void addRequiredPlugins(NodeList requiredplugins) {
@@ -48,7 +49,7 @@ public class Feature extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredFeatures() {
-        return requiredFeatures;
+        return Collections.unmodifiableList(requiredFeatures);
     }
 
     public void addRequiredFeatures(NodeList requiredfeatures) {
@@ -58,13 +59,21 @@ public class Feature extends OSGIElement {
     }
 
     public Set<Feature> getIncludedFeatures() {
-        return includedFeatures;
+        return Collections.unmodifiableSet(includedFeatures);
     }
 
     public void addIncludedFeatures(Set<Feature> includedFeatureSet) {
         this.includedFeatures.addAll(includedFeatureSet);
         for (Feature feature : includedFeatureSet) {
             feature.addIncludingFeature(this);
+        }
+    }
+
+    @Override
+    public void addResolvedPlugin(Plugin plugin) {
+        super.addResolvedPlugin(plugin);
+        if (plugin != null) {
+            plugin.addIncludingFeature(this);
         }
     }
 

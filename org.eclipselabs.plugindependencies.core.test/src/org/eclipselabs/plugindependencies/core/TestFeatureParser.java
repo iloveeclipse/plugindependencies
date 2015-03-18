@@ -14,16 +14,13 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.FeatureParser;
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -63,7 +60,7 @@ public class TestFeatureParser {
         orgEclipseZest = builder.parse(dirPath
                 + "/org.eclipse.zest_1.5.1.201308190730/feature.xml");
 
-        compareFeatureSet = new HashSet<Feature>();
+        compareFeatureSet = new LinkedHashSet<>();
         compareFeatureSet.add(new Feature("org.eclipse.cdt", "8.0.2.201202111925"));
         compareFeatureSet.add(new Feature("org.eclipse.cdt.gdb", "7.0.0.201202111925"));
         compareFeatureSet.add(new Feature("org.eclipse.zest", "1.5.1.201308190730"));
@@ -89,7 +86,7 @@ public class TestFeatureParser {
     @Test
     public void testReadFeatures() throws IOException, SAXException,
             ParserConfigurationException {
-        featureSet = new HashSet<Feature>();
+        featureSet = new LinkedHashSet<>();
         FeatureParser.readFeatures(dirPath, featureSet);
         assertEquals(compareFeatureSet, featureSet);
 
@@ -110,7 +107,7 @@ public class TestFeatureParser {
     @Test
     public void testReadFeaturesWrongArguments() throws IOException, SAXException,
             ParserConfigurationException {
-        featureSet = new HashSet<Feature>();
+        featureSet = new LinkedHashSet<>();
         FeatureParser.readFeatures(null, featureSet);
         assertTrue(featureSet.isEmpty());
 

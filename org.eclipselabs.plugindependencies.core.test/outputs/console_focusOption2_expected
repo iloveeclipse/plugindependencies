@@ -39,9 +39,9 @@ Required Packages:
 Included in Feature:
 	org.company.right 1.6.0
 Required by Plugins:
-	org.eclipse.adv 1.2.3
 	org.company.corePlugin 3.2.0.v2014
 	org.company.workcenter 6.3.1
+	org.eclipse.adv 1.2.3
 Exported Packages:
 Fragments:
 
@@ -85,8 +85,8 @@ Required Packages:
 Included in Feature:
 	org.company.right 1.6.0
 Required by Plugins:
-	*optional* for org.eclipse.adv 1.2.3
 	org.company.corePlugin 3.2.0.v2014
+	*optional* for org.eclipse.adv 1.2.3
 Exported Packages:
 	com.package.test 4.11.0
 	junit.framework 4.11.0

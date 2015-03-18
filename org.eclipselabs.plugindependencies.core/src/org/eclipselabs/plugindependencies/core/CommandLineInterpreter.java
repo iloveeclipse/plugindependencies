@@ -226,6 +226,7 @@ public class CommandLineInterpreter {
                             return result;
                         }
                     }
+                    resolveDependencies();
                     return 0;
                 } catch (IOException | SAXException | ParserConfigurationException e) {
                     Logging.writeErrorOut("Error while reading from folder " + Arrays.toString(args));
@@ -385,9 +386,6 @@ public class CommandLineInterpreter {
                         if (option.handle(argList.toArray(new String[argList.size()])) == -1) {
                             return -1;
                         }
-                    }
-                    if (option == Options.EclipsePaths) {
-                        resolveDependencies();
                     }
                 }
             }

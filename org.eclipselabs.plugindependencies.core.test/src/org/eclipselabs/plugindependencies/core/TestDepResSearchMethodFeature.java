@@ -13,7 +13,6 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.*;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -63,17 +62,17 @@ public class TestDepResSearchMethodFeature {
     @Test
     public void testSearchFeatureWrongPara() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        assertEquals(new HashSet<Feature>(), depres.searchInFeatureSet(null));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(null).toString());
 
         ManifestEntry featureEntry = new ManifestEntry("WrongElement", "");
-        assertEquals(new HashSet<Feature>(), depres.searchInFeatureSet(featureEntry));
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(featureEntry).toString());
     }
 
     @Test
     public void testSearchFeature() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
 
-        Set<Feature> resultSet = new HashSet<Feature>();
+        Set<Feature> resultSet = new LinkedHashSet<>();
 
         resultSet.add(feature1);
         String id = feature1.getName();

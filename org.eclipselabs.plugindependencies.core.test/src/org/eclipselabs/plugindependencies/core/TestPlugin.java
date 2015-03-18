@@ -15,13 +15,10 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.Package;
-import org.eclipselabs.plugindependencies.core.Plugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,7 +100,7 @@ public class TestPlugin {
     public void testSetExportedPackages() {
         plugin.setExportedPackages(exportedPackages);
 
-        Set<Package> expPack = new HashSet<Package>();
+        Set<Package> expPack = new LinkedHashSet<>();
         expPack.add(new Package("org.eclipse.core.internal.adapter", ""));
         expPack.add(new Package("org.eclipse.core.internal.registry", ""));
         expPack.add(new Package("org.eclipse.core.internal.registry.osgi", ""));
@@ -117,14 +114,14 @@ public class TestPlugin {
         Package reexportedPackage = new Package("org.pack.reexport", "");
         reexportedPackage.addReExportPlugin(plugin);
 
-        Set<Package> reexport = new HashSet<>();
+        Set<Package> reexport = new LinkedHashSet<>();
         reexport.add(reexportedPackage);
         expPack.add(reexportedPackage);
         plugin.addReexportedPackages(reexport);
 
         assertEquals(expPack, plugin.getExportedPackages());
 
-        Set<Plugin> packageReexporter = new HashSet<>();
+        Set<Plugin> packageReexporter = new LinkedHashSet<>();
         packageReexporter.add(plugin);
         assertEquals(packageReexporter, reexportedPackage.getReexportedBy());
     }

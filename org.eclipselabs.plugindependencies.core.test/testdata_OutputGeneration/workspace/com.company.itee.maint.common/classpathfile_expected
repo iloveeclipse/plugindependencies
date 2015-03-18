@@ -2,9 +2,11 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.jobs_3.5.101.v20120113-1953.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505/runtime_registry_compatibility.jar
+testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.preferences_3.4.2.v20120111-2020.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.contenttype_3.4.100.v20110423-0524.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.auth_3.2.200.v20110110.jar
@@ -16,6 +18,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.commands_3.6.0.I201
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.help_3.5.100.v20110426.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.expressions_3.4.300.v20110228.jar
+testdata_OutputGeneration/eclipseRE/plugins/com.ibm.icu_4.4.2.v20110823.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface.databinding_1.5.0.I20100907-0800.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.databinding.observable_1.4.0.I20110222-0800.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.databinding.property_1.4.0.I20110222-0800.jar
@@ -43,6 +46,3 @@ testdata_OutputGeneration/eclipseRE/plugins/org.apache.log4j_1.2.15.v20101207081
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.services_99.0.0.jar
 testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse/plugins/JSR305-ri_0.0.1.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.core_99.0.0.jar
-testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
-testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
-testdata_OutputGeneration/eclipseRE/plugins/com.ibm.icu_4.4.2.v20110823.jar
