@@ -71,21 +71,21 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -97,21 +97,21 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -133,8 +133,7 @@ public class TestCLI {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
         PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        Logging.setLogger(new Logging.SimpleLogger(out));
 
         assertEquals(0, SecurityMan.runMain(args));
 
@@ -158,22 +157,22 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
-        expectedOutputList.add(0, "\n");
-        expectedOutputList.add(0, "Unknown option\n");
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            expectedOutputList.add(0, "\n");
+            expectedOutputList.add(0, "Unknown option\n");
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -210,21 +209,21 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(-1, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -236,21 +235,21 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(-1, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -262,21 +261,21 @@ public class TestCLI {
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(-1, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -287,28 +286,28 @@ public class TestCLI {
                 "testdata_OutputGeneration/workspace", "-focus",
                 "org.eclipse.core.runtime,3.7.0", "org.eclipse.cdt",
                 "org.eclipse.swt.gtk.linux.x86_64", "org.eclipse.swt",
-                "org.eclipse.cdt.gdb" };
+        "org.eclipse.cdt.gdb" };
 
-         File expectedOutput = new File("outputs/console_focusOption_expected");
+        File expectedOutput = new File("outputs/console_focusOption_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_focusOption");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        try(PrintStream out = new PrintStream(outputFile);){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-         List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-         StandardCharsets.UTF_8);
-         expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-         assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -317,26 +316,25 @@ public class TestCLI {
                 "-focus", "org.company.test.framework", "org.company.right",
                 "org.company.corePlugin", "org.company.workcenter"};
 
-         File expectedOutput = new File("outputs/console_focusOption2_expected");
+        File expectedOutput = new File("outputs/console_focusOption2_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_focusOption2");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
         PrintStream out = new PrintStream(outputFile);
-        Logging.setErrorOut(out);
-        Logging.setStandardOut(out);
+        Logging.setLogger(new Logging.SimpleLogger(out));
 
         assertEquals(0, SecurityMan.runMain(args));
 
-         List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-         StandardCharsets.UTF_8);
-         expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                StandardCharsets.UTF_8);
+        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
         List<String> outputList = Files.readAllLines(outputFile.toPath(),
                 StandardCharsets.UTF_8);
         outputList = addNewlineToAllStrings(outputList);
 
-         assertEquals(expectedOutputList.toString(), outputList.toString());
+        assertEquals(expectedOutputList.toString(), outputList.toString());
     }
 
     public boolean removeDirectory(File dir) {
@@ -376,8 +374,8 @@ public class TestCLI {
             if (pathBegin != -1) {
                 Path path = Paths.get(pathStr.substring(pathBegin));
                 Path relativePath;
-                    relativePath = testFolderPath.toRealPath().relativize(path);
-                    pathStr = pathStr.substring(0, pathBegin) + relativePath;
+                relativePath = testFolderPath.toRealPath().relativize(path);
+                pathStr = pathStr.substring(0, pathBegin) + relativePath;
             }
             if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
                 pathBegin = pathStr.indexOf(":/") + ":".length();

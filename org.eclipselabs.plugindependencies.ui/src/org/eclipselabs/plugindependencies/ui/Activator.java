@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipselabs.plugindependencies.core.Logging;
+import org.eclipselabs.plugindependencies.core.Logging.AbstractLogger;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,6 +30,35 @@ public class Activator extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        Logging.setLogger(new AbstractLogger() {
+
+            @Override
+            public void warning(String message, Throwable... t) {
+                getLog().log(warningStatus(message, t));
+            }
+
+            @Override
+            public void error(String message, Throwable... t) {
+                getLog().log(errorStatus(message, t));
+            }
+
+            @Override
+            public void debug(String message, Throwable... t) {
+                getLog().log(debugStatus(message, t));
+            }
+        });
+    }
+
+    public IStatus errorStatus(String message, Throwable ... t) {
+        return new Status(IStatus.ERROR, getPluginId(), message, t.length > 0? t[0] : null);
+    }
+
+    public IStatus warningStatus(String message, Throwable ... t) {
+        return new Status(IStatus.WARNING, getPluginId(), message, t.length > 0? t[0] : null);
+    }
+
+    public IStatus debugStatus(String message, Throwable ... t) {
+        return new Status(IStatus.INFO, getPluginId(), message, t.length > 0? t[0] : null);
     }
 
     public static Activator getDefault() {

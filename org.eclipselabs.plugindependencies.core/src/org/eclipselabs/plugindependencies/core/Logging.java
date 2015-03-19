@@ -13,28 +13,81 @@ package org.eclipselabs.plugindependencies.core;
 
 import java.io.PrintStream;
 
+
 /**
  * @author obroesam
  *
  */
 public class Logging {
-    private static PrintStream standardOut = System.out;
 
-    private static PrintStream standardError = System.err;
-
-    public static void setErrorOut(PrintStream newError) {
-        standardError = newError;
-    }
-
-    public static void setStandardOut(PrintStream newOut) {
-        standardOut = newOut;
+    private static AbstractLogger logger;
+    {
+        setLogger(new SimpleLogger(System.out, System.err));
     }
 
     public static void writeStandardOut(String output) {
-        standardOut.println(output);
+        logger.debug(output);
     }
 
     public static void writeErrorOut(String output) {
-        standardError.println(output);
+        logger.error(output);
+    }
+
+    public static void setLogger(AbstractLogger logger){
+        Logging.logger = logger;
+    }
+
+    public static abstract class AbstractLogger {
+        final PrintStream out;
+        final PrintStream err;
+        public AbstractLogger() {
+            this(null, null);
+        }
+        public AbstractLogger(PrintStream out) {
+            this(out, out);
+        }
+        public AbstractLogger(PrintStream out, PrintStream err) {
+            super();
+            this.out = out;
+            this.err = err;
+        }
+        public abstract void error(String message, Throwable ... t);
+        public abstract void warning(String message, Throwable ... t);
+        public abstract void debug(String message, Throwable ... t);
+    }
+
+    public static class SimpleLogger extends AbstractLogger {
+
+        public SimpleLogger(PrintStream out) {
+            this(out, out);
+        }
+        public SimpleLogger(PrintStream out, PrintStream err) {
+            super(out, err);
+        }
+
+        @Override
+        public void error(String message, Throwable ... t) {
+            err.println(message);
+            if(t != null && t.length > 0){
+                t[0].printStackTrace(err);
+            }
+        }
+
+        @Override
+        public void warning(String message, Throwable ... t) {
+            out.println(message);
+            if(t != null && t.length > 0){
+                t[0].printStackTrace(out);
+            }
+        }
+
+        @Override
+        public void debug(String message, Throwable ... t) {
+            out.println(message);
+            if(t != null && t.length > 0){
+                t[0].printStackTrace(out);
+            }
+        }
+
     }
 }
