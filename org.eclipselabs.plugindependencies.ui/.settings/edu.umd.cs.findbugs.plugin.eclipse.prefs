@@ -1,3 +1,4 @@
 cacheClassData=false
+dontRemindAboutFullBuild=true
 eclipse.preferences.version=1
 runAnalysisAsExtraJob=true
