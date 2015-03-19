@@ -153,7 +153,7 @@ public class TestCLI {
     public void testWrongOption() throws IOException {
         String args[] = new String[] { "abc", "-NotValidOption" };
 
-        File expectedOutput = new File("outputs/console_wrongOption_expected");
+        File expectedOutput = new File("outputs/console_help_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_wrongOption");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
@@ -164,9 +164,10 @@ public class TestCLI {
 
         assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
+        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
         expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+        expectedOutputList.add(0, "\n");
+        expectedOutputList.add(0, "Unknown option\n");
 
         List<String> outputList = Files.readAllLines(outputFile.toPath(),
                 StandardCharsets.UTF_8);

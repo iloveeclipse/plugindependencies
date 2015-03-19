@@ -83,7 +83,7 @@ public class TestBuildFileGen {
     @Test
     public void testGeneration() throws IOException {
         String args[] = new String[] { "-eclipsePaths", "testdata_dependencies/eclipse",
-                "-eclipseRoot", "testdata_dependencies/eclipse",
+                "-deploymentRoot", "testdata_dependencies/eclipse",
                 "-bundleVersion", "99.0.0", "-generateAllBuild",
                 "testdata_dependencies/eclipse/plugins", "company/eclipse/plugins"};
 
@@ -130,7 +130,7 @@ public class TestBuildFileGen {
         String args[] = new String[] { "-eclipsePaths",
                 "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace", "-eclipseRoot",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
                 "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins",
                 "-generateReqFile", "testdata_OutputGeneration/dependencies.txt" };
@@ -169,7 +169,7 @@ public class TestBuildFileGen {
         String args[] = new String[] { "-eclipsePaths",
                 "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace", "-eclipseRoot",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
                 "-generateBuildFile", "com.company.itee.maint.common", "company/eclipse/plugins" };
 

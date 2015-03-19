@@ -64,7 +64,7 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-unresPlugin [w]" + "\t\t\t"
                         + "Prints unresolved plugins with error logs."
-                        + "With optional w, warnings can be enabled for printing.";
+                        + " With optional w, warnings can be enabled for printing.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -82,7 +82,7 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-unresFeature [w]" + "\t\t\t"
                         + "Prints unresolved features with error logs."
-                        + "With optional w, warnings can be enabled for printing.";
+                        + " With optional w, warnings can be enabled for printing.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -138,9 +138,9 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-generateReqFile file" + "\t\t"
                         + "Writes requirements of each plugin in the specified file."
-                        + "The file has the form pluginA:pluginB in each line."
-                        + "This just means pluginA depends on pluginB."
-                        + "The plugins are written in the file as canonical paths.";
+                        + " The file has the form pluginA:pluginB in each line."
+                        + " This just means pluginA depends on pluginB."
+                        + " The plugins are written in the file as canonical paths.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -159,9 +159,9 @@ public class CommandLineInterpreter {
                 String help = "-generateBuildFile sourceFolder [targetFolder]"
                         + "\t\t"
                         + "Generates the build file with all classpaths of the specified plugin."
-                        + "Optionally path to the extra plugins directory can be specified with targetFolder."
-                        + "Generated file is saved in the plugin folder."
-                        + "Eclipse root and bundle version have to be set before.";
+                        + " Optionally path to the extra plugins directory can be specified with targetFolder."
+                        + " Generated file is saved in the plugin folder."
+                        + " Eclipse root and bundle version have to be set before.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -180,9 +180,9 @@ public class CommandLineInterpreter {
                 String help = "-generateAllBuild sourceFolder [targetFolder]"
                         + "\t\t"
                         + "Generates a build file with all classpaths of every plugin in the specified folder."
-                        + "Optionally path to the extra plugins directory can be specified with targetFolder."
-                        + "Generated files are saved in each plugin folder."
-                        + "Eclipse root and bundle version have to be set before.";
+                        + " Optionally path to the extra plugins directory can be specified with targetFolder."
+                        + " Generated files are saved in each plugin folder."
+                        + " Eclipse root and bundle version have to be set before.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -211,7 +211,7 @@ public class CommandLineInterpreter {
                 String help = "-fullLog file"
                         + "\t\t\t"
                         + "Writes the full error log to the specified file."
-                        + "Warnings are included.";
+                        + " Warnings are included.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -238,9 +238,9 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-eclipsePaths folder1 folder2 ..."
                         + "\t"
-                        + "The plugin and feature folders are specified here (canonical paths)."
-                        + "Either eclipse folder with subfolders \"plugins\" and \"features\" "
-                        + "or a folder that is containing plugins is possible.";
+                        + "Eclipse target platform plugin and feature folders are specified here (canonical paths)."
+                        + " Either Eclipse folder with subfolders \"plugins\" and \"features\" "
+                        + "or a folder just containing plugins is possible.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -261,13 +261,13 @@ public class CommandLineInterpreter {
             }
         },
 
-        EclipseRoot("-eclipseRoot") {
+        EclipseRoot("-deploymentRoot") {
             @Override
             int handle(String... args) {
                 try {
                     OutputCreator.setEclipseRoot(args[0]);
                 } catch (IOException e) {
-                    Logging.writeErrorOut("Error resolving Eclipse root: " + Arrays.toString(args));
+                    Logging.writeErrorOut("Error resolving deployment root: " + Arrays.toString(args));
                     return -1;
                 }
                 return 0;
@@ -275,9 +275,9 @@ public class CommandLineInterpreter {
 
             @Override
             void printHelp(String arg) {
-                String help = "-eclipseRoot path" + "\t\t\t"
-                        + "Changes the Eclipse root path to the specified path."
-                        + "Default is empty string.";
+                String help = "-deploymentRoot path" + "\t\t\t"
+                        + "Changes the target deployment root path used for final plugins deployment to the specified path."
+                        + " Default is empty string.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -293,7 +293,7 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-bundleVersion version" + "\t\t\t"
                         + "Changes the default bundle version to the specified version."
-                        + "Default is 0.0.0.";
+                        + " Default is 0.0.0.";
                 Logging.writeStandardOut(help);
             }
         },
@@ -311,8 +311,8 @@ public class CommandLineInterpreter {
             void printHelp(String arg) {
                 String help = "-focus name[,version] name[,version]..." + "\t"
                         + "Focus on plugin/feature with given name."
-                        + "Optionally you can specify a version."
-                        + "It is possible to focus on more than one element.";
+                        + " Optionally you can specify a version."
+                        + " It is possible to focus on more than one element.";
                 Logging.writeStandardOut(help);
             }
         },
