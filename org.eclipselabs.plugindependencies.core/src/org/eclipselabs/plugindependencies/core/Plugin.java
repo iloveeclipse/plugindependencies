@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -181,8 +180,7 @@ public class Plugin extends OSGIElement {
                 Logging.writeErrorOut("Can not read Makefile.local.");
                 return null;
             }
-            try (BufferedReader makefileReader = new BufferedReader(new FileReader(
-                    makefileLocal))) {
+            try (FileReader makefileReader = new FileReader(makefileLocal)) {
                 Properties props = new Properties();
                 props.load(makefileReader);
                 targetDir = props.getProperty("ECLIPSE_DEST");
