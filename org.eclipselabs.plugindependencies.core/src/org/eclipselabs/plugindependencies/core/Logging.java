@@ -37,6 +37,10 @@ public class Logging {
         Logging.logger = logger;
     }
 
+    public static AbstractLogger getLogger() {
+        return logger;
+    }
+
     public static abstract class AbstractLogger {
         final PrintStream out;
         final PrintStream err;

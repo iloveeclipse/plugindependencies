@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,7 +37,7 @@ public class PluginParser {
      * Parsing is done through reading of Manifest located in each Plugin at
      * .../META-INF/MANIFEST.MF . Exported Packages are added to the package set.
      *
-     * @param pluginDirectoryPath
+     * @param rootDir
      *            Path to directory where Plugins are located
      * @param plugins
      *            Set to add the parsed Plugins
@@ -46,40 +46,33 @@ public class PluginParser {
      * @throws IOException
      *             Reading in file system throws IOException
      */
-    public static int readManifests(String pluginDirectoryPath, Set<Plugin> plugins,
+    public static int createPluginsAndAddToSet(File rootDir, Set<Plugin> plugins,
             Set<Package> packages) throws IOException {
 
-        if (pluginDirectoryPath == null) {
-            Logging.writeErrorOut("Given directory path is null");
-            return 1;
-        }
-        File rootDir = new File(pluginDirectoryPath);
         if (!rootDir.exists()) {
-            Logging.writeErrorOut("Given directory does not exist: "
-                    + pluginDirectoryPath);
+            Logging.writeErrorOut("Given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("Given directory is not a directory or is not readable: "
-                    + pluginDirectoryPath);
+            Logging.writeErrorOut("Given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         sortFiles(dirArray);
 
-        for (File pluginFile : dirArray) {
-            if (createPluginAndAddToSet(pluginFile, plugins, packages) != 0) {
+        for (File pluginOrDirectory : dirArray) {
+            if (createPluginAndAddToSet(pluginOrDirectory, plugins, packages) != 0) {
                 return -1;
             }
         }
         return 0;
     }
 
-    public static int createPluginAndAddToSet(File pluginFile, Set<Plugin> plugins,
+    public static int createPluginAndAddToSet(File pluginOrDirectory, Set<Plugin> plugins,
             Set<Package> packages) throws IOException {
         Plugin plugin;
-        Manifest manifest = getManifest(pluginFile);
+        Manifest manifest = getManifest(pluginOrDirectory);
         if (manifest == null) {
             return 0;
         }
@@ -87,7 +80,7 @@ public class PluginParser {
         if (plugin == null) {
             return 0;
         }
-        plugin.setPath(pluginFile.getCanonicalPath());
+        plugin.setPath(pluginOrDirectory.getCanonicalPath());
         if (plugins.add(plugin)) {
             addToPackageList(packages, plugin);
             return 0;
@@ -104,8 +97,7 @@ public class PluginParser {
         if(equalPluginPaths.isEmpty()) {
             return 0;
         }
-        Logging.writeErrorOut("FATAL Error: Two Plugins with equal Symbolic Name and Version.");
-        Logging.writeErrorOut(plugin.getName() + " " + plugin.getVersion());
+        Logging.writeErrorOut("Error: two plugins with equal symbolic name and version: " + plugin.getName() + " " + plugin.getVersion());
 
         equalPluginPaths.add(plugin.getPath());
         Collections.sort(equalPluginPaths);
@@ -211,34 +203,28 @@ public class PluginParser {
      * Gets the Manifest of the pluginFolder. pluginFolder could be folder or Jar Archive.
      * In both cases the Manifest is located at pluginFolder/META-INF/MANIFEST.MF .
      *
-     * @param pluginFolder
+     * @param pluginOrFolder
      *            Folder or Jar Archive in which the Manifest could be found
      * @return Manifest that is found in the folder or JAR Archive
      * @throws IOException
      *             From reading file system
      */
-    public static Manifest getManifest(File pluginFolder) throws IOException {
-        Manifest manifest = null;
-        if (pluginFolder.isHidden()) {
-            return null;
-        }
-        if (pluginFolder.isDirectory()) {
-            Path path = Paths.get(pluginFolder.getCanonicalPath(),
-                    "/META-INF/MANIFEST.MF");
+    public static Manifest getManifest(File pluginOrFolder) throws IOException {
+        if (pluginOrFolder.isDirectory()) {
+            if (pluginOrFolder.isHidden()) {
+                return null;
+            }
+            Path path = Paths.get(pluginOrFolder.getPath(), "/META-INF/MANIFEST.MF");
             if (path.toFile().exists()) {
-                try (BufferedInputStream stream = new BufferedInputStream(
-                        Files.newInputStream(path))) {
-                    manifest = new Manifest(stream);
+                try (InputStream stream = Files.newInputStream(path)) {
+                    return new Manifest(stream);
                 }
             }
-        } else {
-            if (pluginFolder.getCanonicalPath().endsWith(".jar")) {
-                try (JarFile jarfile = new JarFile(pluginFolder)) {
-                    manifest = jarfile.getManifest();
-                }
+        } else if (pluginOrFolder.getName().endsWith(".jar")) {
+            try (JarFile jarfile = new JarFile(pluginOrFolder)) {
+                return jarfile.getManifest();
             }
         }
-
-        return manifest;
+        return null;
     }
 }

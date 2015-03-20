@@ -1,4 +1,3 @@
-FATAL Error: Two Plugins with equal Symbolic Name and Version.
-org.eclipse.equinox.app 1.3.100.v20110321
+Error: two plugins with equal symbolic name and version: org.eclipse.equinox.app 1.3.100.v20110321
 testdata_equalPlugins2/org.eclipse.equinox.app.jar
 testdata_equalPlugins2/org.eclipse.equinox.app_1.3.100.v20110321.jar

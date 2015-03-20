@@ -13,6 +13,7 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -33,7 +34,7 @@ public class TestExceptions {
         Set<Feature> features = new LinkedHashSet<>();
         String dir = "testdata_exceptions/plugins";
 
-        PluginParser.readManifests(dir, plugins, packages);
+        PluginParser.createPluginsAndAddToSet(new File(dir), plugins, packages);
         DependencyResolver depres = new DependencyResolver(plugins, packages, features);
         Plugin orgExpect = new Plugin("", "");
         for (Plugin plugin : plugins) {

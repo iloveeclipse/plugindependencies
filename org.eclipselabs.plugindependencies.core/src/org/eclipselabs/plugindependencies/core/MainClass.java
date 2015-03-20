@@ -103,30 +103,54 @@ public class MainClass {
 
     public static int readInEclipseFolder(String eclipsePath) throws IOException,
             SAXException, ParserConfigurationException {
-        String pluginDir = eclipsePath + "/plugins";
-        String featureDir = eclipsePath + "/features";
-        if (new File(pluginDir).exists()) {
-            if (PluginParser.readManifests(pluginDir, pluginSet, packageSet) == -1) {
+        File root = new File(eclipsePath);
+        File pluginsDir = new File(root, "plugins");
+        boolean hasPlugins = false;
+        if (pluginsDir.exists()) {
+            if (PluginParser.createPluginsAndAddToSet(pluginsDir, pluginSet, packageSet) == -1) {
                 return -1;
             }
+            hasPlugins = true;
         }
-        if (new File(featureDir).exists()) {
-            if (FeatureParser.readFeatures(featureDir, featureSet) == -1) {
+        File featureDir = new File(root, "features");
+        boolean hasFeatures = false;
+        if (featureDir.exists()) {
+            if (FeatureParser.createFeaturesAndAddToSet(featureDir, featureSet) == -1) {
                 return -1;
             }
+            hasFeatures = true;
         }
-        if (PluginParser.readManifests(eclipsePath, pluginSet, packageSet) == -1) {
+        if(hasPlugins && hasFeatures){
+            File dropinsDir = new File(root, "dropins");
+            if (dropinsDir.exists()) {
+                return readInChildren(dropinsDir);
+            }
+        }
+        return readInChildren(root);
+    }
+
+    public static int readInChildren(File directory) throws IOException,
+        SAXException, ParserConfigurationException {
+        if (PluginParser.createPluginsAndAddToSet(directory, pluginSet, packageSet) == -1) {
             return -1;
         }
-        if (FeatureParser.readFeatures(eclipsePath, featureSet) == -1) {
+        if (FeatureParser.createFeaturesAndAddToSet(directory, featureSet) == -1) {
             return -1;
         }
         return 0;
     }
 
+    public static int readInPlugin(File directory) throws IOException {
+        return PluginParser.createPluginAndAddToSet(directory, pluginSet, packageSet);
+    }
+
+    public static int readInFeature(File directory) throws IOException,
+        SAXException, ParserConfigurationException {
+        return FeatureParser.createFeatureAndAddToSet(directory, featureSet);
+    }
+
     public static void resolveDependencies() {
-        DependencyResolver depres = new DependencyResolver(pluginSet, packageSet,
-                featureSet);
+        DependencyResolver depres = new DependencyResolver(pluginSet, packageSet, featureSet);
 
         for (Plugin plugin : pluginSet) {
             depres.resolvePluginDependency(plugin);

@@ -169,14 +169,13 @@ public class DependencyResolver {
         }
 
         if (ret.isEmpty()) {
-            Package p = null;
             try {
-                p = searchInJavaHomeJar(requiredPackage);
+                Package p = searchInJavaHomeJar(requiredPackage);
+                if (p != null) {
+                    ret.add(p);
+                }
             } catch (IOException e) {
-                Logging.writeErrorOut("Error while reading in JavaHome");
-            }
-            if (p != null) {
-                ret.add(p);
+                Logging.getLogger().error("Error while reading in JavaHome", e);
             }
         }
         return ret;

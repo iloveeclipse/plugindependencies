@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -31,13 +30,14 @@ import org.xml.sax.SAXException;
  *
  */
 public class FeatureParser {
+    static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
     /**
      * Parses all Features located in featureDirectoryPath and adds them to the features
      * Set. Features are parsed through the feature.xml file which is located in each
      * feature Folder.
      *
-     * @param featureDirectoryPath
+     * @param rootDir
      *            Path to Folder where Features are located
      * @param features
      *            Set to add the parsed Features
@@ -49,23 +49,16 @@ public class FeatureParser {
      *             if a DocumentBuilder cannot be created which satisfies the
      *             configuration requested.
      */
-    public static int readFeatures(String featureDirectoryPath, Set<Feature> features)
+    public static int createFeaturesAndAddToSet(File rootDir, Set<Feature> features)
             throws IOException, SAXException, ParserConfigurationException {
-        if (featureDirectoryPath == null) {
-            Logging.writeErrorOut("Given directory path is null");
-            return 1;
-        }
-        File rootDir = new File(featureDirectoryPath);
-        if (!rootDir.exists()) {
-            Logging.writeErrorOut("Given directory does not exist: "
-                    + featureDirectoryPath);
+        if (!rootDir.isDirectory()) {
+            Logging.writeErrorOut("Given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("Given directory is not a directory or is not readable: "
-                    + featureDirectoryPath);
+            Logging.writeErrorOut("Given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         PluginParser.sortFiles(dirArray);
@@ -80,39 +73,34 @@ public class FeatureParser {
 
     public static int createFeatureAndAddToSet(File featureFolder, Set<Feature> features)
             throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        if (featureFolder.isHidden()) {
-            return 0;
-        }
+
         String path = featureFolder.getCanonicalPath() + "/feature.xml";
         File featureXMLFile = new File(path);
         if (!featureXMLFile.exists()) {
             return 0;
         }
-        Feature feature = parseFeature(dBuilder.parse(featureXMLFile));
+
+        Feature feature = parseFeature(dbFactory.newDocumentBuilder().parse(featureXMLFile));
         if (feature == null) {
             return 0;
         }
         feature.setPath(path);
-        if (!features.add(feature)) {
-            Logging.writeErrorOut("FATAL Error: Two Features with equal Id and Version.");
-            Logging.writeErrorOut(feature.getName() + " "
-                    + feature.getVersion());
-            List<String> equalFeaturePaths = new ArrayList<>();
-            equalFeaturePaths.add(feature.getPath());
-            for (Feature feat : features) {
-                if (feat.equals(feature)) {
-                    equalFeaturePaths.add(feat.getPath());
-                }
-            }
-            Collections.sort(equalFeaturePaths);
-            for (String featurePath : equalFeaturePaths) {
-                Logging.writeErrorOut(featurePath);
-            }
-            return -1;
+        if (features.add(feature)) {
+            return 0;
         }
-        return 0;
+        Logging.writeErrorOut("Error: two features with equal id and version: " + feature.getName() + " " + feature.getVersion());
+        List<String> equalFeaturePaths = new ArrayList<>();
+        equalFeaturePaths.add(feature.getPath());
+        for (Feature feat : features) {
+            if (feat.equals(feature)) {
+                equalFeaturePaths.add(feat.getPath());
+            }
+        }
+        Collections.sort(equalFeaturePaths);
+        for (String featurePath : equalFeaturePaths) {
+            Logging.writeErrorOut(featurePath);
+        }
+        return -1;
     }
 
     /**

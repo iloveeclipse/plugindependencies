@@ -13,6 +13,7 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -87,7 +88,7 @@ public class TestFeatureParser {
     public void testReadFeatures() throws IOException, SAXException,
             ParserConfigurationException {
         featureSet = new LinkedHashSet<>();
-        FeatureParser.readFeatures(dirPath, featureSet);
+        FeatureParser.createFeaturesAndAddToSet(new File(dirPath), featureSet);
         assertEquals(compareFeatureSet, featureSet);
 
         Feature orgEclipseCdtFeat = new Feature("", "");
@@ -108,10 +109,15 @@ public class TestFeatureParser {
     public void testReadFeaturesWrongArguments() throws IOException, SAXException,
             ParserConfigurationException {
         featureSet = new LinkedHashSet<>();
-        FeatureParser.readFeatures(null, featureSet);
+        try {
+            FeatureParser.createFeaturesAndAddToSet(null, featureSet);
+            fail();
+        } catch (NullPointerException e) {
+            // expected
+        }
         assertTrue(featureSet.isEmpty());
 
-        FeatureParser.readFeatures("/folder/does/not/exist", featureSet);
+        FeatureParser.createFeaturesAndAddToSet(new File("/folder/does/not/exist"), featureSet);
         assertTrue(featureSet.isEmpty());
     }
 

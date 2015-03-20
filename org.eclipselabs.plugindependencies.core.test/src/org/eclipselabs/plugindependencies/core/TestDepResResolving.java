@@ -13,6 +13,7 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -86,9 +87,9 @@ public class TestDepResResolving {
         pluginSet = new LinkedHashSet<Plugin>();
         packageSet = new LinkedHashSet<Package>();
         featureSet = new LinkedHashSet<Feature>();
-        PluginParser.readManifests("testdata_dependencies/eclipse/plugins", pluginSet,
+        PluginParser.createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), pluginSet,
                 packageSet);
-        FeatureParser.readFeatures("testdata_dependencies/eclipse/features", featureSet);
+        FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), featureSet);
         featureLeft = new Feature("org.example.left", "2.1.1.v20120113-1346");
         featureRight = new Feature("org.company.right", "1.6.0");
         featureRR = new Feature("org.eclipse.right.right",

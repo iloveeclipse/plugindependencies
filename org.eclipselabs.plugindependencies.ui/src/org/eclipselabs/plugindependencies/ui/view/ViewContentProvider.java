@@ -13,27 +13,32 @@ package org.eclipselabs.plugindependencies.ui.view;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.ui.PlatformUI;
 import org.eclipselabs.plugindependencies.core.Feature;
-import org.eclipselabs.plugindependencies.core.FeatureParser;
 import org.eclipselabs.plugindependencies.core.MainClass;
 import org.eclipselabs.plugindependencies.core.OutputCreator;
 import org.eclipselabs.plugindependencies.core.Package;
 import org.eclipselabs.plugindependencies.core.Plugin;
-import org.eclipselabs.plugindependencies.core.PluginParser;
 import org.eclipselabs.plugindependencies.ui.Activator;
 import org.xml.sax.SAXException;
 
@@ -144,41 +149,70 @@ public class ViewContentProvider implements ITreeContentProvider {
     }
 
     private Job createResolveDependenciesJob() {
+
         return new Job("Reading target platform") {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-                monitor.beginTask(getName(), 3);
-                monitor.subTask("Reading plugins");
+                monitor.beginTask(getName(), 4);
+                monitor.subTask("Reading platform plugins");
                 MainClass.initVariables();
-                try {
-                    TargetBundle[] bundles = view.getCurrentShownTarget().getBundles();
+                TargetBundle[] bundles = view.getCurrentShownTarget().getBundles();
 
-                    for (TargetBundle bundle : bundles) {
-                        String pluginPath = bundle.getBundleInfo().getLocation()
-                                .getPath();
-                        PluginParser.createPluginAndAddToSet(new File(pluginPath),
-                                MainClass.getPluginSet(), MainClass.getPackageSet());
+                MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading plugins", null);
+                for (TargetBundle bundle : bundles) {
+                    URI location = bundle.getBundleInfo().getLocation();
+                    if(location == null){
+                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + bundle, null));
+                        continue;
                     }
-                } catch (IOException e) {
-                    return new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugins", e);
+                    String pluginPath = location.getPath();
+                    try {
+                        MainClass.readInPlugin(new File(pluginPath));
+                    } catch (IOException e) {
+                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
+                    }
                 }
                 monitor.internalWorked(1);
-                monitor.subTask("Reading features");
-                try {
-                    TargetFeature[] features = view.getCurrentShownTarget()
-                            .getAllFeatures();
-                    // TODO At the moment all the Features are read in, also when their
-                    // are not chosen in target platform
 
-                    for (TargetFeature feature : features) {
-                        String featurePath = feature.getLocation();
-                        FeatureParser.createFeatureAndAddToSet(new File(featurePath),
-                                MainClass.getFeatureSet());
+                monitor.subTask("Reading platform features");
+                TargetFeature[] features = view.getCurrentShownTarget().getAllFeatures();
+                // TODO At the moment all the Features are read in, also when their
+                // are not chosen in target platform
+
+                for (TargetFeature feature : features) {
+                    String featurePath = feature.getLocation();
+                    try {
+                        MainClass.readInFeature(new File(featurePath));
+                    } catch (IOException | SAXException | ParserConfigurationException e) {
+                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
                     }
-                } catch (IOException | SAXException | ParserConfigurationException e) {
-                    return new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading features", e);
                 }
                 monitor.internalWorked(1);
+
+                monitor.subTask("Reading workspace projects");
+                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+                for (IProject project : projects) {
+                    if(!project.isAccessible() || project.isHidden()){
+                        continue;
+                    }
+                    IPath location = project.getLocation();
+                    if(location == null){
+                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + project.getName(), null));
+                        continue;
+                    }
+                    try {
+                        IPluginModelBase model = PluginRegistry.findModel(project);
+                        if(model != null){
+                            MainClass.readInPlugin(location.toFile());
+                        } else {
+                            MainClass.readInFeature(location.toFile());
+                        }
+                    } catch (IOException | SAXException | ParserConfigurationException e) {
+                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));
+                    }
+                }
+                monitor.internalWorked(1);
+
                 monitor.subTask("Resolving dependencies");
                 MainClass.resolveDependencies();
                 Set<Plugin> allPlugins = MainClass.getPluginSet();
@@ -187,6 +221,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 }
 
                 monitor.internalWorked(1);
+
                 monitor.done();
                 PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
                     @Override
@@ -197,6 +232,9 @@ public class ViewContentProvider implements ITreeContentProvider {
                         view.refresh();
                     }
                 });
+                if(ms.getChildren().length > 0){
+                    return ms;
+                }
                 return Status.OK_STATUS;
             }
         };

@@ -222,7 +222,7 @@ public class TestPluginParser {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser.readManifests(dirPath, pluginSet, packageSet);
+        PluginParser.createPluginsAndAddToSet(new File(dirPath), pluginSet, packageSet);
         assertEquals(packages, packageSet);
         assertEquals(plugins.toString(), pluginSet.toString());
 
@@ -333,8 +333,12 @@ public class TestPluginParser {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser.readManifests(null, pluginSet, packageSet);
-        assertTrue(pluginSet.isEmpty());
+        try {
+            PluginParser.createPluginsAndAddToSet(null, pluginSet, packageSet);
+            fail();
+        } catch (NullPointerException e) {
+            // expected
+        }
     }
 
     @Test
@@ -342,7 +346,7 @@ public class TestPluginParser {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser.readManifests("/folder/does/not/exist", pluginSet, packageSet);
+        PluginParser.createPluginsAndAddToSet(new File("/folder/does/not/exist"), pluginSet, packageSet);
         assertTrue(pluginSet.isEmpty());
     }
 

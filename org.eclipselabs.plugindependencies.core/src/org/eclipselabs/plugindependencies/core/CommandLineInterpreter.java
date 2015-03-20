@@ -229,7 +229,7 @@ public class CommandLineInterpreter {
                     resolveDependencies();
                     return 0;
                 } catch (IOException | SAXException | ParserConfigurationException e) {
-                    Logging.writeErrorOut("Error while reading from folder " + Arrays.toString(args));
+                    Logging.getLogger().error("Error while reading from folder " + Arrays.toString(args), e);
                 }
                 return -1;
             }
@@ -267,7 +267,7 @@ public class CommandLineInterpreter {
                 try {
                     OutputCreator.setEclipseRoot(args[0]);
                 } catch (IOException e) {
-                    Logging.writeErrorOut("Error resolving deployment root: " + Arrays.toString(args));
+                    Logging.getLogger().error("Error resolving deployment root: " + Arrays.toString(args), e);
                     return -1;
                 }
                 return 0;
@@ -425,7 +425,7 @@ public class CommandLineInterpreter {
                 return -1;
             }
         } catch (IOException e) {
-            Logging.writeErrorOut("Error while writing dependencies-file to " + path);
+            Logging.getLogger().error("Error while writing dependencies-file to " + path, e);
             return -1;
         }
         return 0;
@@ -463,7 +463,7 @@ public class CommandLineInterpreter {
             }
             return 0;
         } catch (IOException e) {
-            Logging.writeErrorOut("Error while writing data to file.");
+            Logging.getLogger().error("Error while writing data to file.", e);
             return -1;
         }
     }
@@ -480,8 +480,7 @@ public class CommandLineInterpreter {
                     return -1;
                 }
             } catch (IOException e) {
-                Logging.writeErrorOut("Writing build file failed:");
-                Logging.writeErrorOut(plugin.getInformationLine());
+                Logging.getLogger().error("Writing build file failed:" + plugin.getInformationLine(), e);
                 return -1;
             }
             return 0;
@@ -499,8 +498,7 @@ public class CommandLineInterpreter {
                         return -1;
                     }
                 } catch (IOException e) {
-                    Logging.writeErrorOut("Writing build file failed:");
-                    Logging.writeErrorOut(plugin.getInformationLine());
+                    Logging.getLogger().error("Writing build file failed:" + plugin.getInformationLine(), e);
                     return -1;
                 }
             }
