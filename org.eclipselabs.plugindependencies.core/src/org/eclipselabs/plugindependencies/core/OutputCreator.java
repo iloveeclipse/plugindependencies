@@ -17,6 +17,7 @@ import static org.eclipselabs.plugindependencies.core.MainClass.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -246,8 +247,12 @@ public class OutputCreator {
         }
         List<String> bundleClassPathList = plugin.getBundleClassPath();
 
-        String pluginTargetFolder = eclipseFolder + "/" + targetDir
-                + "/" + plugin.getName() + "_" + bundleVersion;
+        String pluginTargetFolder;
+        if(Paths.get(targetFolder).toFile().exists()){
+            pluginTargetFolder = targetDir + "/" + plugin.getName() + "_" + bundleVersion;
+        } else {
+            pluginTargetFolder = eclipseFolder + "/" + targetDir + "/" + plugin.getName() + "_" + bundleVersion;
+        }
 
         if (bundleClassPathList.isEmpty() || bundleClassPathList.get(0).equals(".")) {
             ret.append(pluginTargetFolder + ".jar" + "\n");
