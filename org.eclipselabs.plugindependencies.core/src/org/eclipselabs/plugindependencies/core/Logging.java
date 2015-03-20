@@ -21,7 +21,7 @@ import java.io.PrintStream;
 public class Logging {
 
     private static AbstractLogger logger;
-    {
+    static {
         setLogger(new SimpleLogger(System.out, System.err));
     }
 
