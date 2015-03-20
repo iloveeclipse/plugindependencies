@@ -446,11 +446,11 @@ public class CommandLineInterpreter {
         File out = new File(path);
         try {
             if (out.exists() && !out.delete()) {
-                Logging.writeErrorOut("Can not delete file " + path);
+                Logging.writeErrorOut("Error: failed to delete file " + path);
                 return -1;
             }
             if (!out.createNewFile()) {
-                Logging.writeErrorOut("Can not create file " + path);
+                Logging.writeErrorOut("Error: failed to create file " + path);
                 return -1;
             }
 
@@ -480,30 +480,44 @@ public class CommandLineInterpreter {
                     return -1;
                 }
             } catch (IOException e) {
-                Logging.getLogger().error("Writing build file failed:" + plugin.getInformationLine(), e);
+                Logging.getLogger().error("Error: writing build file failed:" + plugin.getInformationLine(), e);
                 return -1;
             }
             return 0;
         }
-        Logging.writeErrorOut("Plugin with symbolic name " + pluginName + "not found.");
+        Logging.writeErrorOut("Error: plugin with symbolic name " + pluginName + "not found.");
         return -1;
     }
 
     private static int generateAllBuildFiles(String sourceDir) {
         OutputCreator.setSourceFolder(sourceDir);
+        if(pluginSet.isEmpty()){
+            Logging.getLogger().error("Error: generation failed: no plugins found, arguments: " + sourceDir);
+            return -1;
+        }
+        Logging.writeStandardOut("Starting to generate classpath files, platform size: " + pluginSet.size() + " plugins");
+        boolean success = true;
+        int generated = 0;
         for (Plugin plugin : pluginSet) {
             if (plugin.getPath().contains(sourceDir)) {
                 try {
                     if (OutputCreator.generateBuildFile(plugin) == -1) {
-                        return -1;
+                        success = false;
+                        Logging.getLogger().error("Error: generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine());
+                    } else {
+                        generated ++;
                     }
                 } catch (IOException e) {
-                    Logging.getLogger().error("Writing build file failed:" + plugin.getInformationLine(), e);
-                    return -1;
+                    success = false;
+                    Logging.getLogger().error("Error: generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine(), e);
                 }
             }
         }
-        return 0;
+        if(success) {
+            Logging.writeStandardOut("Successfully generated " + generated + " classpath files");
+            return 0;
+        }
+        return -1;
     }
 
     private static void printFocusedOSGIElement(String arg) {

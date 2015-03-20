@@ -49,16 +49,17 @@ public class OutputCreator {
             throws IOException {
         File out = new File(fileName);
         if (out.exists() && !out.delete()) {
-            Logging.writeErrorOut("Can not delete file " + fileName);
+            Logging.writeErrorOut("Error: can not delete file " + fileName);
             return -1;
         }
         if (!out.createNewFile()) {
-            Logging.writeErrorOut("Can not create File " + fileName);
+            Logging.writeErrorOut("Error: can not create File " + fileName);
             return -1;
         }
         try (FileWriter toFileOut = new FileWriter(out, false)) {
             toFileOut.write(toWrite.toString());
         }
+        Logging.writeStandardOut("\t" + fileName);
         return 0;
     }
 
