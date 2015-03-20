@@ -82,32 +82,35 @@ public class FeatureParser {
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        if (!featureFolder.isHidden()) {
-            String path = featureFolder.getCanonicalPath() + "/feature.xml";
-            File featureXMLFile = new File(path);
-            if (featureXMLFile.exists()) {
-                Feature feature = parseFeature(dBuilder.parse(featureXMLFile));
-                if (feature != null) {
-                    feature.setPath(path);
-                    if (!features.add(feature)) {
-                        Logging.writeErrorOut("FATAL Error: Two Features with equal Id and Version.");
-                        Logging.writeErrorOut(feature.getName() + " "
-                                + feature.getVersion());
-                        List<String> equalFeaturePaths = new ArrayList<>();
-                        equalFeaturePaths.add(feature.getPath());
-                        for (Feature feat : features) {
-                            if (feat.equals(feature)) {
-                                equalFeaturePaths.add(feat.getPath());
-                            }
-                        }
-                        Collections.sort(equalFeaturePaths);
-                        for (String featurePath : equalFeaturePaths) {
-                            Logging.writeErrorOut(featurePath);
-                        }
-                        return -1;
-                    }
+        if (featureFolder.isHidden()) {
+            return 0;
+        }
+        String path = featureFolder.getCanonicalPath() + "/feature.xml";
+        File featureXMLFile = new File(path);
+        if (!featureXMLFile.exists()) {
+            return 0;
+        }
+        Feature feature = parseFeature(dBuilder.parse(featureXMLFile));
+        if (feature == null) {
+            return 0;
+        }
+        feature.setPath(path);
+        if (!features.add(feature)) {
+            Logging.writeErrorOut("FATAL Error: Two Features with equal Id and Version.");
+            Logging.writeErrorOut(feature.getName() + " "
+                    + feature.getVersion());
+            List<String> equalFeaturePaths = new ArrayList<>();
+            equalFeaturePaths.add(feature.getPath());
+            for (Feature feat : features) {
+                if (feat.equals(feature)) {
+                    equalFeaturePaths.add(feat.getPath());
                 }
             }
+            Collections.sort(equalFeaturePaths);
+            for (String featurePath : equalFeaturePaths) {
+                Logging.writeErrorOut(featurePath);
+            }
+            return -1;
         }
         return 0;
     }

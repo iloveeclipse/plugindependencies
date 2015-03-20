@@ -80,38 +80,39 @@ public class PluginParser {
             Set<Package> packages) throws IOException {
         Plugin plugin;
         Manifest manifest = getManifest(pluginFile);
-        if (manifest != null) {
-            plugin = parseManifest(manifest);
-            if (plugin != null) {
-                plugin.setPath(pluginFile.getCanonicalPath());
-                if (!plugins.add(plugin)) {
-                    List<String> equalPluginPaths = new ArrayList<>();
-                    for (Plugin plug : plugins) {
-                        if (plug.equals(plugin)) {
-                            if(plugin.getPath().equals(plug.getPath())){
-                                continue;
-                            }
-                            equalPluginPaths.add(plug.getPath());
-                        }
-                    }
-                    if(!equalPluginPaths.isEmpty()){
-                        Logging.writeErrorOut("FATAL Error: Two Plugins with equal Symbolic Name and Version.");
-                        Logging.writeErrorOut(plugin.getName() + " " + plugin.getVersion());
-
-                        equalPluginPaths.add(plugin.getPath());
-                        Collections.sort(equalPluginPaths);
-                        for (String path : equalPluginPaths) {
-                            Logging.writeErrorOut(path);
-                        }
-                        return -1;
-                    }
-                    return 0;
+        if (manifest == null) {
+            return 0;
+        }
+        plugin = parseManifest(manifest);
+        if (plugin == null) {
+            return 0;
+        }
+        plugin.setPath(pluginFile.getCanonicalPath());
+        if (plugins.add(plugin)) {
+            addToPackageList(packages, plugin);
+            return 0;
+        }
+        List<String> equalPluginPaths = new ArrayList<>();
+        for (Plugin plug : plugins) {
+            if (plug.equals(plugin)) {
+                if(plugin.getPath().equals(plug.getPath())){
+                    continue;
                 }
-
-                addToPackageList(packages, plugin);
+                equalPluginPaths.add(plug.getPath());
             }
         }
-        return 0;
+        if(equalPluginPaths.isEmpty()) {
+            return 0;
+        }
+        Logging.writeErrorOut("FATAL Error: Two Plugins with equal Symbolic Name and Version.");
+        Logging.writeErrorOut(plugin.getName() + " " + plugin.getVersion());
+
+        equalPluginPaths.add(plugin.getPath());
+        Collections.sort(equalPluginPaths);
+        for (String path : equalPluginPaths) {
+            Logging.writeErrorOut(path);
+        }
+        return -1;
     }
 
     public static File[] sortFiles(File[] dirArray) {
