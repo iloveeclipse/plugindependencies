@@ -197,16 +197,17 @@ public class MainClass {
 
     }
 
-    private static int init(String[] args) {
+    public static int run(String[] args) {
         initVariables();
-
-        int status = CommandLineInterpreter.interpreteInput(args);
-        return status;
+        return CommandLineInterpreter.interpreteInput(args);
     }
 
     public static void main(String[] args) {
-        int status = init(args);
-
+        int status = run(args);
+        String name = MainClass.class.getClassLoader().getClass().getName();
+        if(name.contains("eclipse") || name.contains("osgi")){
+            return;
+        }
         System.exit(status);
     }
 }
