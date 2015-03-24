@@ -205,39 +205,58 @@ public class OutputCreator {
             throws IOException {
         StringBuilder classPathList = new StringBuilder();
         for (Plugin resolvedPlugin : resolvedPlugins) {
-            String classPaths = getClassPaths(resolvedPlugin);
+            String classPaths = getClassPaths(resolvedPlugin, false);
             if (classPaths == null) {
+                Logging.writeErrorOut("Error: can not resolve classpath for " + plugin);
                 return -1;
             }
             classPathList.append(classPaths);
         }
-
+        String classPaths = getClassPaths(plugin, true);
+        if (classPaths == null) {
+            Logging.writeErrorOut("Error: can not resolve classpath for " + plugin);
+            return -1;
+        }
+        classPathList.append(classPaths);
         return writeToFile(plugin.getPath() + "/.classpath.generated", classPathList);
     }
 
-    private static String getClassPaths(Plugin plugin) throws IOException {
+    private static String getClassPaths(Plugin plugin, boolean pluginLocalPaths) throws IOException {
         StringBuilder ret = new StringBuilder();
-        String fullClassPaths = plugin.getFullClassPaths();
-        if (fullClassPaths == null) {
-            String elementPath = plugin.getPath();
-            if (elementPath.contains(sourceFolder)) {
-                String targetLocation = getTargetLocation(plugin);
-                if (targetLocation == null) {
-                    return null;
-                }
-                ret.append(targetLocation);
-            } else if (elementPath.endsWith(".jar")) {
-                ret.append(elementPath + "\n");
-            } else {
-                for (String classpath : plugin.getBundleClassPath()) {
-                    ret.append(elementPath + "/" + classpath + "\n");
-                }
-            }
-            plugin.setFullClassPaths(ret.toString());
+        if(pluginLocalPaths){
+            // append possible libraries from the plugin itself
+            appendLocalClasspath(plugin, ret);
         } else {
-            ret.append(fullClassPaths);
+            String fullClassPaths = plugin.getFullClassPaths();
+            if (fullClassPaths == null) {
+                String elementPath = plugin.getPath();
+                if (elementPath.contains(sourceFolder)) {
+                    String targetLocation = getTargetLocation(plugin);
+                    if (targetLocation == null) {
+                        return null;
+                    }
+                    ret.append(targetLocation);
+                } else if (elementPath.endsWith(".jar")) {
+                    ret.append(elementPath + "\n");
+                } else {
+                    appendLocalClasspath(plugin, ret);
+                }
+                plugin.setFullClassPaths(ret.toString());
+            } else {
+                ret.append(fullClassPaths);
+            }
         }
         return ret.toString();
+    }
+
+    private static void appendLocalClasspath(Plugin plugin, StringBuilder ret) {
+        for (String classpath : plugin.getBundleClassPath()) {
+            if(".".equals(classpath)){
+                // skip plugin itself, if it has no other dependencies
+                continue;
+            }
+            ret.append(plugin.getPath() + "/" + classpath + "\n");
+        }
     }
 
     private static String getTargetLocation(Plugin plugin) throws IOException {

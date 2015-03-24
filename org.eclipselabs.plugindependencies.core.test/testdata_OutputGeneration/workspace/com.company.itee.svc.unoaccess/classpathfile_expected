@@ -22,3 +22,16 @@ testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse/plugins/JSR305-r
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.core_99.0.0.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/uno_types.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/java_uno.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/juh.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/jurt.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/ridl.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/external:lib/SessionServiceManager.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/SessionServiceManager.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/unoloader.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/SystemLoggerHelper.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/LocationResolver.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/ate_cor_UdaAccess.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/Exceptions.jar
+testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/UnoAccess.jar
