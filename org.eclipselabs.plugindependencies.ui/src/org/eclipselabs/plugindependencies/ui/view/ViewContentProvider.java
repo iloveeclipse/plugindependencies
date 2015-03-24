@@ -145,7 +145,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot.addChild(plugins);
         invisibleRoot.addChild(packages);
         invisibleRoot.addChild(features);
-        MainClass.initVariables();
+        MainClass.cleanup();
     }
 
     private Job createResolveDependenciesJob() {
@@ -155,7 +155,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             protected IStatus run(IProgressMonitor monitor) {
                 monitor.beginTask(getName(), 4);
                 monitor.subTask("Reading platform plugins");
-                MainClass.initVariables();
+                MainClass.cleanup();
                 TargetBundle[] bundles = view.getCurrentShownTarget().getBundles();
 
                 MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading plugins", null);

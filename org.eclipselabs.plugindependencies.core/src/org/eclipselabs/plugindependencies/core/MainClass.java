@@ -189,7 +189,7 @@ public class MainClass {
 
     static String javaHome;
 
-    public static void initVariables(){
+    public static void cleanup(){
         pluginSet = new LinkedHashSet<Plugin>();
         packageSet = new LinkedHashSet<Package>();
         featureSet = new LinkedHashSet<Feature>();
@@ -198,7 +198,7 @@ public class MainClass {
     }
 
     public static int run(String[] args) {
-        initVariables();
+        cleanup();
         return CommandLineInterpreter.interpreteInput(args);
     }
 
