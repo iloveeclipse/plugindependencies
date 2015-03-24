@@ -14,12 +14,12 @@ package org.eclipselabs.plugindependencies.core;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
  *
  */
 public class DependencyResolver {
+
+    private static final String ZERO_VERSION = "0.0.0";
+
     private final Set<Plugin> pluginSet;
 
     private final Set<Package> packageSet;
@@ -158,10 +161,9 @@ public class DependencyResolver {
 
     public Set<Package> searchInPackageSet(ManifestEntry requiredPackage) {
         if (requiredPackage == null) {
-            return new LinkedHashSet<Package>();
+            return Collections.emptySet();
         }
         Set<Package> ret = new LinkedHashSet<Package>();
-
         for (Package pack : packageSet) {
             if (requiredPackage.isMatching(pack)) {
                 ret.add(pack);
@@ -175,7 +177,7 @@ public class DependencyResolver {
                     ret.add(p);
                 }
             } catch (IOException e) {
-                Logging.getLogger().error("Error while reading in JavaHome", e);
+                Logging.getLogger().error("Error while reading libraries from java.home (" + MainClass.getJavaHome() + ").", e);
             }
         }
         return ret;
@@ -197,8 +199,7 @@ public class DependencyResolver {
         }
         File javaHomeLib = new File(javaHome + "/lib");
         if (!javaHomeLib.exists()) {
-            Logging.writeErrorOut("Specified JavaHome(" + javaHome
-                    + ") does not exist. Changing to " + runningJavaHome);
+            Logging.writeErrorOut("Error: specified java.home (" + javaHome + ") does not exist. Changing to " + runningJavaHome);
             javaHome = runningJavaHome;
             MainClass.setJavaHome(javaHome);
         }
@@ -207,12 +208,13 @@ public class DependencyResolver {
         if(jarList == null){
             return null;
         }
+        String packagePath = packageName.replace('.', '/') + "/";
         for (File jar : jarList) {
             try (JarFile jarfile = new JarFile(jar)) {
                 Enumeration<JarEntry> jarEntries = jarfile.entries();
                 while (jarEntries.hasMoreElements()) {
                     JarEntry entry = jarEntries.nextElement();
-                    if (entry.getName().contains(packageName.replace(".", "/") + "/")) {
+                    if (entry.getName().contains(packagePath)) {
                         Package p = new Package(packageName, "");
                         packageSet.add(p);
                         return p;
@@ -233,10 +235,9 @@ public class DependencyResolver {
         }
     }
 
-    public Set<Plugin> searchInPluginSet(ManifestEntry requiredPlugin,
-            boolean exactVersion) {
+    public Set<Plugin> searchInPluginSet(ManifestEntry requiredPlugin,  boolean exactVersion) {
         if (requiredPlugin == null) {
-            return new LinkedHashSet<Plugin>();
+            return Collections.emptySet();
         }
         String pluginName = requiredPlugin.getName().trim();
         String version = requiredPlugin.getVersion();
@@ -260,7 +261,7 @@ public class DependencyResolver {
 
     public Set<Feature> searchInFeatureSet(ManifestEntry entry) {
         if (entry == null) {
-            return new LinkedHashSet<Feature>();
+            return Collections.emptySet();
         }
         String id = entry.getName();
         String version = entry.getVersion();
@@ -274,59 +275,53 @@ public class DependencyResolver {
         return ret;
     }
 
-    static final String NUM = "[0-9]+([.][0-9]+)?([.][0-9]+)?([.][0-9a-zA-Z-_]+)?";
+    static final String VER_STR = "[0-9]+([.][0-9]+)?([.][0-9]+)?([.][0-9a-zA-Z-_]+)?";
 
-    static final Pattern NUMBER = Pattern.compile(NUM);
+    static final Pattern VERSION = Pattern.compile(VER_STR);
 
-    static final Pattern RANGE = Pattern.compile("[(|\\[]" + NUMBER + "[,]" + NUMBER
-            + "[)|\\]]");
+    static final Pattern RANGE = Pattern.compile("[(|\\[]" + VER_STR + "," + VER_STR + "[)|\\]]");
 
-    public static boolean isCompatibleVersion(String rangeOrLowerLimit,
-            String givenVersion) {
+    public static boolean isCompatibleVersion(String rangeOrLowerLimit,  String givenVersion) {
         if (rangeOrLowerLimit == null || givenVersion == null) {
             Logging.writeErrorOut("Version can not be null");
             return false;
         }
         if (givenVersion.isEmpty()) {
-            givenVersion = "0.0.0";
+            givenVersion = ZERO_VERSION;
+        } else {
+            if (!VERSION.matcher(givenVersion).matches()) {
+                return false;
+            }
         }
+        boolean isRange = false;
         if (rangeOrLowerLimit.isEmpty()) {
-            rangeOrLowerLimit = "0.0.0";
-        }
-
-        Matcher matchNumber = NUMBER.matcher(rangeOrLowerLimit);
-        Matcher matchRange = RANGE.matcher(rangeOrLowerLimit);
-
-        boolean isNumber = matchNumber.matches();
-        boolean isRange = matchRange.matches();
-
-        if (givenVersion.matches(NUM)) {
+            rangeOrLowerLimit = ZERO_VERSION;
+        } else {
+            isRange = RANGE.matcher(rangeOrLowerLimit).matches();
             if (isRange) {
                 return isVersionInRange(givenVersion, rangeOrLowerLimit);
             }
-
-            if (isNumber) {
-                return compareVersions(rangeOrLowerLimit, givenVersion) <= 0 ? true
-                        : false;
-            }
+        }
+        boolean isVersion = VERSION.matcher(rangeOrLowerLimit).matches();
+        if (isVersion) {
+            return compareVersions(rangeOrLowerLimit, givenVersion) <= 0 ? true : false;
         }
         return false;
     }
 
     private static boolean isVersionInRange(String version, String versionRange) {
         String lowerBorder = versionRange.split(",")[0];
-        String upperBorder = versionRange.split(",")[1];
-
         char leftBorderType = lowerBorder.charAt(0);
-        char rightBorderType = upperBorder.charAt(upperBorder.length() - 1);
-
         lowerBorder = lowerBorder.substring(1);
-        upperBorder = upperBorder.substring(0, upperBorder.length() - 1);
-
         int lowerBorderCheck = compareVersions(lowerBorder, version);
-        int upperBorderCheck = compareVersions(version, upperBorder);
 
         if (lowerBorderCheck < 0 || (lowerBorderCheck == 0 && leftBorderType == '[')) {
+
+            String upperBorder = versionRange.split(",")[1];
+            char rightBorderType = upperBorder.charAt(upperBorder.length() - 1);
+            upperBorder = upperBorder.substring(0, upperBorder.length() - 1);
+
+            int upperBorderCheck = compareVersions(version, upperBorder);
             if (upperBorderCheck < 0 || (upperBorderCheck == 0 && rightBorderType == ']')) {
                 return true;
             }
@@ -336,10 +331,10 @@ public class DependencyResolver {
 
     private static int compareVersions(String v1, String v2) {
         if (v1.isEmpty()) {
-            v1 = "0.0.0";
+            v1 = ZERO_VERSION;
         }
         if (v2.isEmpty()) {
-            v2 = "0.0.0";
+            v2 = ZERO_VERSION;
         }
         Version version1 = new Version(v1);
         Version version2 = new Version(v2);
