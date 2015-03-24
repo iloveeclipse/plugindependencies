@@ -210,19 +210,15 @@ public class PluginParser {
      *             From reading file system
      */
     public static Manifest getManifest(File pluginOrFolder) throws IOException {
-        if (pluginOrFolder.isDirectory()) {
-            if (pluginOrFolder.isHidden()) {
-                return null;
-            }
-            Path path = Paths.get(pluginOrFolder.getPath(), "/META-INF/MANIFEST.MF");
-            if (path.toFile().exists()) {
-                try (InputStream stream = Files.newInputStream(path)) {
-                    return new Manifest(stream);
-                }
-            }
-        } else if (pluginOrFolder.getName().endsWith(".jar")) {
+        if (pluginOrFolder.getName().endsWith(".jar")) {
             try (JarFile jarfile = new JarFile(pluginOrFolder)) {
                 return jarfile.getManifest();
+            }
+        }
+        Path path = Paths.get(pluginOrFolder.getPath(), "/META-INF/MANIFEST.MF");
+        if (path.toFile().exists() && !pluginOrFolder.isHidden()) {
+            try (InputStream stream = Files.newInputStream(path)) {
+                return new Manifest(stream);
             }
         }
         return null;
