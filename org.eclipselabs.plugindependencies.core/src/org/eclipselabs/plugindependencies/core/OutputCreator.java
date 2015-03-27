@@ -250,12 +250,16 @@ public class OutputCreator {
     }
 
     private static void appendLocalClasspath(Plugin plugin, StringBuilder ret) {
-        for (String classpath : plugin.getBundleClassPath()) {
-            if(".".equals(classpath)){
+        for (String path : plugin.getBundleClassPath()) {
+            if(".".equals(path)){
                 // skip plugin itself, if it has no other dependencies
                 continue;
             }
-            ret.append(plugin.getPath() + "/" + classpath + "\n");
+            if(isExternalPath(path)){
+                ret.append(path).append("\n");
+            } else {
+                ret.append(plugin.getPath()).append("/").append(path).append("\n");
+            }
         }
     }
 
@@ -274,14 +278,18 @@ public class OutputCreator {
             pluginTargetFolder = eclipseFolder + "/" + targetDir + "/" + plugin.getName() + "_" + bundleVersion;
         }
 
-        if (bundleClassPathList.isEmpty() || bundleClassPathList.get(0).equals(".")) {
+        if (bundleClassPathList.isEmpty()) {
             ret.append(pluginTargetFolder + ".jar" + "\n");
         } else {
             for (String path : bundleClassPathList) {
-                if (!path.contains("external:")) {
-                    ret.append(pluginTargetFolder + "/" + path + "\n");
+                if(isExternalPath(path)){
+                    ret.append(path + "\n");
                 } else {
-                    ret.append(resolveExternalPath(path) + "\n");
+                    if(path.equals(".")){
+                        ret.append(pluginTargetFolder).append(".jar").append("\n");
+                    } else {
+                        ret.append(pluginTargetFolder).append("/").append(path).append("\n");
+                    }
                 }
             }
         }
@@ -289,21 +297,8 @@ public class OutputCreator {
         return ret.toString();
     }
 
-    private static String resolveExternalPath(String path) {
-        int pathbegin = path.indexOf("external:") + "external:".length();
-        String extractedPath = path.substring(pathbegin);
-
-        if (extractedPath.contains("$")) {
-            int firstDollar = extractedPath.indexOf('$');
-            int secondDollar = extractedPath.lastIndexOf('$');
-            String envVariable = extractedPath.substring(firstDollar + 1, secondDollar);
-            String value = System.getenv(envVariable);
-            if(value == null){
-                value = "$" + envVariable + "$";
-            }
-            extractedPath = value + extractedPath.substring(secondDollar + 1);
-        }
-        return extractedPath;
+    private static boolean isExternalPath(String path) {
+        return path.startsWith("/") || path.startsWith("$");
     }
 
     public static void setSourceFolder(String sourceDir) {

@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.core;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.Set;
  *
  */
 public class Plugin extends OSGIElement {
+
+    private static final String EXTERNAL = "external:";
 
     private final Set<Plugin> requiredBy;
 
@@ -161,7 +164,35 @@ public class Plugin extends OSGIElement {
     }
 
     public void setBundleClassPath(String bundleClassPath) {
-        this.bundleClassPath = StringUtil.splitListOfEntries(bundleClassPath);
+        this.bundleClassPath = resolveExternalPath(StringUtil.splitListOfEntries(bundleClassPath));
+    }
+
+    private static List<String> resolveExternalPath(List<String> paths) {
+        List<String> filteredPaths = new ArrayList<>();
+        for (String path : paths) {
+            filteredPaths.add(resolveExternalPath(path));
+        }
+        return filteredPaths;
+    }
+
+    private static String resolveExternalPath(String path) {
+        if(!path.contains(EXTERNAL)){
+            return path;
+        }
+        int pathbegin = path.indexOf(EXTERNAL) + EXTERNAL.length();
+        String extractedPath = path.substring(pathbegin);
+
+        if (extractedPath.contains("$")) {
+            int firstDollar = extractedPath.indexOf('$');
+            int secondDollar = extractedPath.lastIndexOf('$');
+            String envVariable = extractedPath.substring(firstDollar + 1, secondDollar);
+            String value = System.getenv(envVariable);
+            if(value == null){
+                value = "$" + envVariable + "$";
+            }
+            extractedPath = value + extractedPath.substring(secondDollar + 1);
+        }
+        return extractedPath;
     }
 
     public String getFullClassPaths() {

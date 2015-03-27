@@ -365,9 +365,9 @@ public class TestCLI {
         return truncate(testFolderPath, pathStr.toString());
     }
     public static String truncate(Path testFolderPath, String pathStr) throws IOException {
-        if (pathStr.contains("$SOME_PATH$/")) {
-            pathStr = pathStr.replace("$SOME_PATH$/", "");
-        }
+//        if (pathStr.contains("$SOME_PATH$/")) {
+//            pathStr = pathStr.replace("$SOME_PATH$/", "");
+//        }
 
         if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
             int pathBegin = pathStr.indexOf('/');

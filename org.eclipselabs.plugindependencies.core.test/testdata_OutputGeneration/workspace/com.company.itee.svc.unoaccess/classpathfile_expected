@@ -27,7 +27,7 @@ testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/java_uno.
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/juh.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/jurt.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/ridl.jar
-testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/external:lib/SessionServiceManager.jar
+$SOME_PATH$/lib/SessionServiceManager.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/SessionServiceManager.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/unoloader.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess/lib/SystemLoggerHelper.jar

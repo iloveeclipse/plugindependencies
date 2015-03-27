@@ -34,7 +34,7 @@ testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/juh.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/jurt.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/ridl.jar
-lib/SessionServiceManager.jar
+$SOME_PATH$/lib/SessionServiceManager.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/SessionServiceManager.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/unoloader.jar
 testdata_OutputGeneration/company/eclipse/plugins/com.company.itee.svc.unoaccess_99.0.0/lib/SystemLoggerHelper.jar
