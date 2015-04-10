@@ -19,10 +19,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @author obroesam
@@ -91,89 +94,85 @@ public class OutputCreator {
         return dependencyPathList;
     }
 
-    public static Set<Plugin> getResolvedPluginsRecursive(Plugin plugin) {
-        return computeResolvedPlugins(plugin);
-    }
-
-    private static Set<Plugin> computeResolvedPlugins(Plugin plugin) {
-        if (plugin.getRecursiveResolvedPlugins() != Collections.EMPTY_SET) {
-            return plugin.getRecursiveResolvedPlugins();
-        }
-        for (Plugin pluginToVisit : plugin.getResolvedPlugins()) {
-            if(plugin.equals(pluginToVisit)){
-                continue;
-            }
-            plugin.addToRecursiveResolvedPlugins(pluginToVisit);
-            Set<Plugin> resolved = computeResolvedPlugins(pluginToVisit);
-            for (Plugin pl : resolved) {
-                plugin.addToRecursiveResolvedPlugins(pl);
-            }
-        }
-        if(plugin.isFragment() && plugin.getFragHost() != null){
-            // fragment inherits all dependencies from host
-            for (Plugin pluginToVisit : plugin.getFragHost().getResolvedPlugins()) {
-                if(plugin.equals(pluginToVisit)){
-                    continue;
-                }
-                plugin.addToRecursiveResolvedPlugins(pluginToVisit);
-                Set<Plugin> resolved = computeResolvedPlugins(pluginToVisit);
-                for (Plugin pl : resolved) {
-                    plugin.addToRecursiveResolvedPlugins(pl);
-                }
-            }
-        }
-
-        Set<Plugin> result = computeResolvedFragments(plugin);
-        for (Plugin pl : result) {
-            plugin.addToRecursiveResolvedPlugins(pl);
-        }
-        result = getPluginsForImportedPackages(plugin);
-        for (Plugin pl : result) {
-            plugin.addToRecursiveResolvedPlugins(pl);
-        }
-
-        // make sure we finished the iteration and replace the default empty set if no dependencies found
-        plugin.addToRecursiveResolvedPlugins(plugin);
-        return plugin.getRecursiveResolvedPlugins();
-    }
-
-    private static Set<Plugin> computeResolvedFragments(Plugin plugin) {
-        if(plugin.isFragment()){
-            return Collections.emptySet();
-        }
-        Set<Plugin> result = new LinkedHashSet<Plugin>();
-        for (Plugin fragment : plugin.getFragments()) {
-            if(plugin.equals(fragment) || result.contains(fragment)){
-                continue;
-            }
-            // ??? fragments of a plugin seems to be always added by PDE
-            result.add(fragment);
-            Set<Plugin> rpSet = computeResolvedPlugins(fragment);
-            result.addAll(rpSet);
-        }
-        result.remove(plugin);
-        return result;
-    }
-
     /**
-     * Return the given set with additional plugins which were required via
-     * "Import-Package" directives
+     * Stack element for resolving plugin dependencies. If {@link #toVisit} is empty, plugin is resolved.
      */
-    private static Set<Plugin> getPluginsForImportedPackages(Plugin plugin) {
-        // TODO throw away "duplicated" bundles with different versions, exporting same package
-        Set<Plugin> allExporting = new LinkedHashSet<Plugin>(); // new TreeSet<>(new OSGIElement.NameComparator());
-        for (Package imported : plugin.getImportedPackages()) {
-            Set<Plugin> exportedBy = imported.getExportedBy();
-            if(!exportedBy.isEmpty()) {
-                allExporting.addAll(exportedBy);
-            } else {
-                Set<Plugin> reexportedBy = imported.getReexportedBy();
-                allExporting.addAll(reexportedBy);
+    static class PluginElt {
+        static final Plugin DUMMY_PLUGIN = new Plugin("", NamedElement.EMPTY_VERSION);
+        static final PluginElt EMPTY = new PluginElt(null,  DUMMY_PLUGIN);
+        final Plugin plugin;
+        final PluginElt parent;
+
+        List<Plugin> toVisit;
+
+        public PluginElt(PluginElt parent, Plugin plugin) {
+            super();
+            this.parent = parent;
+            this.plugin = plugin;
+            toVisit = new LinkedList<>();
+            addDirectDependencies();
+        }
+
+        void setResolved(){
+            resolved(plugin);
+            plugin.setResolved();
+        }
+
+        void resolved(Plugin p){
+            toVisit.remove(p);
+            if(p.isFragment() && plugin.equals(p.getFragHost())){
+                // ignore own fragment
+            } else if(plugin != p){
+                plugin.addToRecursiveResolvedPlugins(p);
+                Set<Plugin> rr = p.getRecursiveResolvedPlugins();
+                for (Plugin child : rr) {
+                    plugin.addToRecursiveResolvedPlugins(child);
+                }
+            }
+
+            if(parent != null && parent != this){
+                parent.resolved(p);
             }
         }
-        // fragment inherits all dependencies from host
-        if(plugin.isFragment() && plugin.getFragHost() != null){
-            for (Package imported : plugin.getFragHost().getImportedPackages()) {
+
+        PluginElt next(){
+            if(toVisit.isEmpty()){
+                return EMPTY;
+            }
+            return new PluginElt(this, toVisit.remove(0));
+        }
+
+        void addToVisit(Plugin p){
+            if(p == null || plugin.equals(p)){
+                return;
+            }
+            if(!toVisit.contains(p)) {
+                toVisit.add(p);
+            }
+        }
+
+        void addToVisit(Collection<Plugin> plugins){
+            for (Plugin p : plugins) {
+                addToVisit(p);
+            }
+        }
+
+        void addDirectDependencies(){
+            for (Plugin pluginToVisit : plugin.getResolvedPlugins()) {
+                addToVisit(pluginToVisit);
+            }
+            if(plugin.isFragment()) {
+                addToVisit(plugin.getFragHost());
+            } else {
+                for (Plugin fragment : plugin.getFragments()) {
+                    // fragments can have extra dependencies we want to visit
+                    addToVisit(fragment);
+                }
+            }
+
+            // TODO throw away "duplicated" bundles with different versions, exporting same package
+            Set<Plugin> allExporting = new LinkedHashSet<Plugin>();
+            for (Package imported : plugin.getImportedPackages()) {
                 Set<Plugin> exportedBy = imported.getExportedBy();
                 if(!exportedBy.isEmpty()) {
                     allExporting.addAll(exportedBy);
@@ -182,17 +181,91 @@ public class OutputCreator {
                     allExporting.addAll(reexportedBy);
                 }
             }
+            // fragment inherits all dependencies from host
+            if(plugin.isFragment() && plugin.getFragHost() != null){
+                for (Package imported : plugin.getFragHost().getImportedPackages()) {
+                    Set<Plugin> exportedBy = imported.getExportedBy();
+                    if(!exportedBy.isEmpty()) {
+                        allExporting.addAll(exportedBy);
+                    } else {
+                        Set<Plugin> reexportedBy = imported.getReexportedBy();
+                        allExporting.addAll(reexportedBy);
+                    }
+                }
+            }
+            allExporting.remove(plugin);
+            addToVisit(allExporting);
         }
 
-        allExporting.remove(plugin);
-        Set<Plugin> result = new LinkedHashSet<Plugin>();
-        for (Plugin pl : allExporting) {
-            result.add(pl);
-            Set<Plugin> rpSet = computeResolvedPlugins(pl);
-            result.addAll(rpSet);
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[plugin=");
+            sb.append(plugin);
+            sb.append(", toVisit=");
+            sb.append(toVisit);
+            sb.append("]");
+            return sb.toString();
         }
-        result.remove(plugin);
-        return result;
+
+        @Override
+        public int hashCode() {
+            return plugin.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof PluginElt)) {
+                return false;
+            }
+            PluginElt other = (PluginElt) obj;
+            if (!plugin.equals(other.plugin)) {
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    public static Set<Plugin> getResolvedPluginsRecursive(final Plugin root) {
+        Stack<PluginElt> stack = new Stack<>();
+        stack.add(new PluginElt(null, root));
+        while (!stack.isEmpty()){
+            PluginElt current = stack.peek();
+            PluginElt next = current.next();
+
+            if(next == PluginElt.EMPTY) {
+                stack.pop();
+                // make sure we finished the iteration and replace the default empty set if no dependencies found
+                current.setResolved();
+                continue;
+            }
+
+            if(stack.contains(next)){
+                if(!next.plugin.isRecursiveResolved()){
+                    Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                    for (Plugin p : resolvedPlugins) {
+                        current.resolved(p);
+                    }
+                }
+                // avoid cyclic dependencies
+                continue;
+            }
+
+            if(root.containsRecursiveResolved(next.plugin)) {
+                Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                for (Plugin p : resolvedPlugins) {
+                    current.resolved(p);
+                }
+                current.resolved(next.plugin);
+            } else {
+                stack.push(next);
+            }
+        }
+        return root.getRecursiveResolvedPlugins();
     }
 
     public static int generateBuildFile(Plugin plugin) throws IOException {

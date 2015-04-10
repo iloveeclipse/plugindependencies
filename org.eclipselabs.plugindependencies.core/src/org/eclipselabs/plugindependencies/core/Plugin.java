@@ -360,17 +360,63 @@ public class Plugin extends OSGIElement {
         if(recursiveResolvedPlugins == null){
             return Collections.emptySet();
         }
-        return Collections.unmodifiableSet(recursiveResolvedPlugins);
+        if(recursiveResolvedPlugins instanceof LinkedHashSet){
+            return Collections.unmodifiableSet(recursiveResolvedPlugins);
+        }
+        return recursiveResolvedPlugins;
+    }
+
+    public boolean isRecursiveResolved() {
+         return recursiveResolvedPlugins != null && !(recursiveResolvedPlugins instanceof LinkedHashSet);
+    }
+
+    public boolean containsRecursiveResolved(Plugin p) {
+        if(recursiveResolvedPlugins == null){
+            return false;
+        }
+        return recursiveResolvedPlugins.contains(p);
     }
 
     public boolean addToRecursiveResolvedPlugins(Plugin plugin) {
-        if(recursiveResolvedPlugins == null){
-            recursiveResolvedPlugins = new LinkedHashSet<Plugin>();
-        }
         if(plugin == null || this.equals(plugin)){
             return false;
         }
+        if(recursiveResolvedPlugins == null){
+            recursiveResolvedPlugins = new LinkedHashSet<>();
+        }
+        if(recursiveResolvedPlugins.contains(plugin)){
+            return false;
+        }
+        if(isRecursiveResolved() && plugin.containsRecursiveResolved(this)){
+            recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
+            recursiveResolvedPlugins.add(plugin);
+            recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
+            return true;
+        }
         return recursiveResolvedPlugins.add(plugin);
+    }
+
+    public void setResolved(){
+        if(isRecursiveResolved()){
+            return;
+        }
+        if(isFragment()) {
+            if (fragmentHost != null) {
+                if (!fragmentHost.isRecursiveResolved()) {
+                    return;
+                }
+                addToRecursiveResolvedPlugins(fragmentHost);
+                Set<Plugin> hostPlugins = fragmentHost.getRecursiveResolvedPlugins();
+                for (Plugin hp : hostPlugins) {
+                    addToRecursiveResolvedPlugins(hp);
+                }
+            }
+        }
+        if(recursiveResolvedPlugins == null || recursiveResolvedPlugins.isEmpty()){
+            recursiveResolvedPlugins = Collections.emptySet();
+        } else {
+            recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
+        }
     }
 
     @Override

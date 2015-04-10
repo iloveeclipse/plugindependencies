@@ -1,5 +1,6 @@
 testdata_dependencies/eclipse/plugins/org.company.corePlugin:testdata_dependencies/eclipse/plugins/org.company.test.framework
 testdata_dependencies/eclipse/plugins/org.company.corePlugin:testdata_dependencies/eclipse/plugins/org.company.workcenter
+testdata_dependencies/eclipse/plugins/org.company.corePlugin:testdata_dependencies/eclipse/plugins/org.eclipse.adv
 testdata_dependencies/eclipse/plugins/org.company.corePlugin:testdata_dependencies/eclipse/plugins/org.eclipse.equinox.core
 testdata_dependencies/eclipse/plugins/org.company.corePlugin:testdata_dependencies/eclipse/plugins/org.eclipse.plugin1
 testdata_dependencies/eclipse/plugins/org.company.test.framework:testdata_dependencies/eclipse/plugins/org.eclipse.plugin1

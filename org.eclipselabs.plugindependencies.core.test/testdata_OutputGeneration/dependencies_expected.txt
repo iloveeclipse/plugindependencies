@@ -49,6 +49,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.expressions_3.4.300
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.expressions_3.4.300.v20110228.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.expressions_3.4.300.v20110228.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.jobs_3.5.101.v20120113-1953.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
@@ -56,7 +57,6 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x8
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
-testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.jobs_3.5.101.v20120113-1953.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
@@ -89,6 +89,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibili
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.jobs_3.5.101.v20120113-1953.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
@@ -132,7 +133,6 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.preferences_3.4.
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.preferences_3.4.2.v20120111-2020.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.jobs_3.5.101.v20120113-1953.jar
-testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.0.v20110505
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
@@ -170,7 +170,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-15
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
-testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/com.ibm.icu_4.4.2.v20110823.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ant.core_3.2.302.v20120110-1739.jar
@@ -199,6 +199,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibili
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/com.ibm.icu_4.4.2.v20110823.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ant.core_3.2.302.v20120110-1739.jar
@@ -227,7 +228,6 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v2012
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt.gtk.linux.x86_64_3.7.2.v3740f.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
-testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar:testdata_OutputGeneration/eclipseRE/plugins/com.ibm.icu_4.4.2.v20110823.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ant.core_3.2.302.v20120110-1739.jar

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,13 +32,10 @@ import org.junit.Test;
  *
  */
 public class TestBuildFileGen {
-    Path pluginRootDir = Paths.get("testdata_dependencies/eclipse/plugins");
 
-    File[] pluginDirs = PluginParser.sortFiles(pluginRootDir.toFile().listFiles());
-    Path root = Paths.get("testdata_OutputGeneration");
-    File workspace = new File(root.toFile(), "/workspace");
-
-    File[] workspacePlugins = PluginParser.sortFiles(workspace.listFiles());
+    private Path root;
+    private File workspace;
+    private File[] workspacePlugins;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -49,16 +47,16 @@ public class TestBuildFileGen {
         System.setSecurityManager(null);
     }
 
+    @Before
+    public void setup() {
+        root = Paths.get("testdata_OutputGeneration");
+        workspace = new File(root.toFile(), "/workspace");
+        workspacePlugins = PluginParser.sortFiles(workspace.listFiles());
+    }
+
     @After
     public void tearDown() throws Exception {
         int undeletedFiles = 0;
-        for (File plugin : pluginDirs) {
-            String path = plugin.getCanonicalPath();
-            File classpathfile = new File(path + "/.classpath-gen");
-            if (classpathfile.exists() && !classpathfile.delete()) {
-                undeletedFiles++;
-            }
-        }
         for (File plugin : workspacePlugins) {
             String path = plugin.getCanonicalPath();
             File classpathfile = new File(path + "/.classpath-gen");
@@ -80,50 +78,6 @@ public class TestBuildFileGen {
         }
     }
 
-    @Test
-    public void testGeneration() throws IOException {
-        String args[] = new String[] { "-eclipsePaths", "testdata_dependencies/eclipse",
-                "-deploymentRoot", "testdata_dependencies/eclipse",
-                "-bundleVersion", "99.0.0", "-generateAllBuild",
-                "testdata_dependencies/eclipse/plugins", "company/eclipse/plugins"};
-
-        assertEquals(0, SecurityMan.runMain(args));
-
-        for (File plugin : pluginDirs) {
-            String path = plugin.getCanonicalPath();
-            Path expected = Paths.get(path, "/classpathfile_expected");
-            File actual = new File(path + "/.classpath.generated");
-            List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
-            expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
-
-            List<String> outputList = Files.readAllLines(actual.toPath(), StandardCharsets.UTF_8);
-            outputList = TestCLI.addNewlineToAllStrings(outputList);
-
-            assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
-                    expectedOutputList.toString(), outputList.toString());
-        }
-
-    }
-
-    @Test
-    public void testRequirementsFile() throws IOException {
-        String args[] = new String[] { "-eclipsePaths", "testdata_dependencies/eclipse",
-                "-generateReqFile", "testdata_dependencies/dependencies.txt" };
-
-        assertEquals(0, SecurityMan.runMain(args));
-
-        String folder = "testdata_dependencies";
-        Path expected = Paths.get(folder, "dependencies_expected.txt");
-        Path act = Paths.get(folder, "dependencies.txt");
-        List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
-        expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
-
-        List<String> outputList = Files.readAllLines(act, StandardCharsets.UTF_8);
-        outputList = TestCLI.addNewlineToAllStrings(outputList);
-
-        assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
-                expectedOutputList.toString(), outputList.toString());
-    }
 
     @Test
     public void testBuildFileGeneration() throws IOException {
