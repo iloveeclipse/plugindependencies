@@ -391,6 +391,8 @@ public class Plugin extends OSGIElement {
             recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
             recursiveResolvedPlugins.add(plugin);
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
+            addToLog("Error: plugin has cycle with: " + plugin.getInformationLine());
+            plugin.addToLog("Error: plugin has cycle with: " + getInformationLine());
             return true;
         }
         return recursiveResolvedPlugins.add(plugin);
