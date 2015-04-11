@@ -238,7 +238,7 @@ public class CommandLineInterpreter {
                     resolveDependencies();
                     return 0;
                 } catch (IOException | SAXException | ParserConfigurationException e) {
-                    Logging.getLogger().error("Error while reading from folder " + Arrays.toString(args), e);
+                    Logging.getLogger().error("failed to read from: " + Arrays.toString(args), e);
                 }
                 return -1;
             }
@@ -276,7 +276,7 @@ public class CommandLineInterpreter {
                 try {
                     OutputCreator.setEclipseRoot(args[0]);
                 } catch (IOException e) {
-                    Logging.getLogger().error("Error resolving deployment root: " + Arrays.toString(args), e);
+                    Logging.getLogger().error(" failed to resolve deployment root: " + Arrays.toString(args), e);
                     return -1;
                 }
                 return 0;
@@ -434,7 +434,7 @@ public class CommandLineInterpreter {
                 return -1;
             }
         } catch (IOException e) {
-            Logging.getLogger().error("Error while writing dependencies-file to " + path, e);
+            Logging.getLogger().error("failed to write dependencies file to " + path, e);
             return -1;
         }
         return 0;
@@ -455,11 +455,11 @@ public class CommandLineInterpreter {
         File out = new File(path);
         try {
             if (out.exists() && !out.delete()) {
-                Logging.writeErrorOut("Error: failed to delete file " + path);
+                Logging.writeErrorOut("failed to delete file " + path);
                 return -1;
             }
             if (!out.createNewFile()) {
-                Logging.writeErrorOut("Error: failed to create file " + path);
+                Logging.writeErrorOut("failed to create file " + path);
                 return -1;
             }
 
@@ -472,7 +472,7 @@ public class CommandLineInterpreter {
             }
             return 0;
         } catch (IOException e) {
-            Logging.getLogger().error("Error while writing data to file.", e);
+            Logging.getLogger().error("failed to write: " + path, e);
             return -1;
         }
     }
@@ -489,19 +489,19 @@ public class CommandLineInterpreter {
                     return -1;
                 }
             } catch (IOException e) {
-                Logging.getLogger().error("Error: writing build file failed:" + plugin.getInformationLine(), e);
+                Logging.getLogger().error("writing build file failed:" + plugin.getInformationLine(), e);
                 return -1;
             }
             return 0;
         }
-        Logging.writeErrorOut("Error: plugin with symbolic name " + pluginName + "not found.");
+        Logging.writeErrorOut("plugin with symbolic name " + pluginName + "not found.");
         return -1;
     }
 
     private static int generateAllBuildFiles(String sourceDir) {
         OutputCreator.setSourceFolder(sourceDir);
         if(pluginSet.isEmpty()){
-            Logging.getLogger().error("Error: generation failed: no plugins found, arguments: " + sourceDir);
+            Logging.getLogger().error("generation failed: no plugins found, arguments: " + sourceDir);
             return -1;
         }
         Logging.writeStandardOut("Starting to generate classpath files, platform size: " + pluginSet.size() + " plugins");
@@ -512,13 +512,13 @@ public class CommandLineInterpreter {
                 try {
                     if (OutputCreator.generateBuildFile(plugin) == -1) {
                         success = false;
-                        Logging.getLogger().error("Error: generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine());
+                        Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine());
                     } else {
                         generated ++;
                     }
                 } catch (IOException e) {
                     success = false;
-                    Logging.getLogger().error("Error: generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine(), e);
+                    Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine(), e);
                 }
             }
         }

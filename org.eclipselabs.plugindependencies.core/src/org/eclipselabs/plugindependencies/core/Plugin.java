@@ -105,7 +105,7 @@ public class Plugin extends OSGIElement {
         if (entries.size() < 2) {
             this.fragmentHostEntry = entries.get(0);
         } else {
-            addToLog("Error: fragment has more than one host");
+            addErrorToLog("fragment has more than one host");
         }
     }
 
@@ -213,7 +213,7 @@ public class Plugin extends OSGIElement {
         if (targetDir == null) {
             File makefileLocal = new File(getPath() + "/Makefile.local");
             if (!makefileLocal.canRead()) {
-                Logging.writeErrorOut("Can not read Makefile.local.");
+                Logging.writeErrorOut("can't read: " + makefileLocal);
                 return null;
             }
             try (FileReader makefileReader = new FileReader(makefileLocal)) {
@@ -238,7 +238,8 @@ public class Plugin extends OSGIElement {
 
     public void addFragments(Plugin fragment) {
         if(isFragment()){
-            throw new IllegalStateException("Fragment can not have additional fragments!");
+            addErrorToLog("Fragment can't have additional fragments: " + fragment);
+            return;
         }
         this.fragments.add(fragment);
     }
@@ -319,14 +320,14 @@ public class Plugin extends OSGIElement {
                 : "";
         int packagesSize = packages.size();
         if (packagesSize > 1) {
-            logEntry.append("Warning: more than one package found for ");
+            logEntry.append(PREFIX_WARN).append("more than one package found for ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport + "\n");
             for (Package pack : packages) {
                 logEntry.append("\t" + pack.getInformationLine());
             }
         }
         if (packagesSize == 0) {
-            String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? "Error: " : "Warning: ";
+            String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? PREFIX_ERROR : PREFIX_WARN;
             logEntry.append(errortype + "package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
         }
@@ -400,8 +401,8 @@ public class Plugin extends OSGIElement {
             recursiveResolvedPlugins.add(plugin);
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
             if(!isFragmentOrHost(plugin)){
-                addToLog("Error: plugin has cycle with: " + plugin.getInformationLine());
-                plugin.addToLog("Error: plugin has cycle with: " + getInformationLine());
+                addErrorToLog("plugin has cycle with: " + plugin.getInformationLine());
+                plugin.addErrorToLog("plugin has cycle with: " + getInformationLine());
             }
             return;
         }

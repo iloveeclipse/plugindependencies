@@ -52,13 +52,13 @@ public class FeatureParser {
     public static int createFeaturesAndAddToSet(File rootDir, Set<Feature> features)
             throws IOException, SAXException, ParserConfigurationException {
         if (!rootDir.isDirectory()) {
-            Logging.writeErrorOut("Given directory does not exist: " + rootDir);
+            Logging.writeErrorOut("given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("Given directory is not a directory or is not readable: " + rootDir);
+            Logging.writeErrorOut("given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         PluginParser.sortFiles(dirArray);
@@ -88,7 +88,6 @@ public class FeatureParser {
         if (features.add(feature)) {
             return 0;
         }
-        Logging.writeErrorOut("Error: two features with equal id and version: " + feature.getName() + " " + feature.getVersion());
         List<String> equalFeaturePaths = new ArrayList<>();
         equalFeaturePaths.add(feature.getPath());
         for (Feature feat : features) {
@@ -96,10 +95,13 @@ public class FeatureParser {
                 equalFeaturePaths.add(feat.getPath());
             }
         }
+        StringBuilder output = new StringBuilder("two features with equal id and version: ")
+                .append(feature.getName()).append(" ").append(feature.getVersion());
         Collections.sort(equalFeaturePaths);
         for (String featurePath : equalFeaturePaths) {
-            Logging.writeErrorOut(featurePath);
+            output.append("\n").append(featurePath);
         }
+        Logging.writeErrorOut(output.toString());
         return -1;
     }
 

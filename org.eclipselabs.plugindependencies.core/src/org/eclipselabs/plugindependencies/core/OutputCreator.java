@@ -50,11 +50,11 @@ public class OutputCreator {
             throws IOException {
         File out = new File(fileName);
         if (out.exists() && !out.delete()) {
-            Logging.writeErrorOut("Error: can not delete file " + fileName);
+            Logging.writeErrorOut("can't delete file " + fileName);
             return -1;
         }
         if (!out.createNewFile()) {
-            Logging.writeErrorOut("Error: can not create File " + fileName);
+            Logging.writeErrorOut("can't create File " + fileName);
             return -1;
         }
         try (FileWriter toFileOut = new FileWriter(out, false)) {
@@ -288,14 +288,14 @@ public class OutputCreator {
         for (Plugin resolvedPlugin : resolvedPlugins) {
             String classPaths = getClassPaths(resolvedPlugin, false);
             if (classPaths == null) {
-                Logging.writeErrorOut("Error: can not resolve classpath for " + plugin);
+                Logging.writeErrorOut("can't resolve classpath for " + plugin);
                 return -1;
             }
             classPathList.append(classPaths);
         }
         String classPaths = getClassPaths(plugin, true);
         if (classPaths == null) {
-            Logging.writeErrorOut("Error: can not resolve classpath for " + plugin);
+            Logging.writeErrorOut("can't resolve classpath for " + plugin);
             return -1;
         }
         classPathList.append(classPaths);

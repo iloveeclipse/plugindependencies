@@ -19,6 +19,8 @@ import java.io.PrintStream;
  *
  */
 public class Logging {
+    public static final String PREFIX_ERROR = "Error: ";
+    public static final String PREFIX_WARN = "Warning: ";
 
     private static AbstractLogger logger;
     static {
@@ -71,6 +73,7 @@ public class Logging {
 
         @Override
         public void error(String message, Throwable ... t) {
+            err.print(PREFIX_ERROR);
             err.println(message);
             if(t != null && t.length > 0){
                 t[0].printStackTrace(err);
@@ -79,6 +82,7 @@ public class Logging {
 
         @Override
         public void warning(String message, Throwable ... t) {
+            err.print(PREFIX_WARN);
             out.println(message);
             if(t != null && t.length > 0){
                 t[0].printStackTrace(out);

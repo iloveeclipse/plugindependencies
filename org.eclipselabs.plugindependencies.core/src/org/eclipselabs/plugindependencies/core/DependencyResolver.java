@@ -177,13 +177,13 @@ public class DependencyResolver {
                     ret.add(p);
                 }
             } catch (IOException e) {
-                Logging.getLogger().error("Error while reading libraries from java.home (" + MainClass.getJavaHome() + ").", e);
+                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + MainClass.getJavaHome() + ").", e);
             }
         }
         return ret;
     }
 
-    private final String runningJavaHome = System.getProperty("java.home");
+    private final static String DEFAULT_JAVA_HOME = System.getProperty("java.home");
 
     public Package searchInJavaHomeJar(ManifestEntry requiredPackage) throws IOException {
         if (requiredPackage == null || requiredPackage.getName().isEmpty()) {
@@ -194,13 +194,13 @@ public class DependencyResolver {
         String javaHome = MainClass.getJavaHome();
 
         if (javaHome == null || javaHome.isEmpty()) {
-            javaHome = runningJavaHome;
+            javaHome = DEFAULT_JAVA_HOME;
             MainClass.setJavaHome(javaHome);
         }
         File javaHomeLib = new File(javaHome + "/lib");
         if (!javaHomeLib.exists()) {
-            Logging.writeErrorOut("Error: specified java.home (" + javaHome + ") does not exist. Changing to " + runningJavaHome);
-            javaHome = runningJavaHome;
+            Logging.writeErrorOut("specified $JAVA_HOME (" + javaHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
+            javaHome = DEFAULT_JAVA_HOME;
             MainClass.setJavaHome(javaHome);
         }
 
@@ -283,7 +283,7 @@ public class DependencyResolver {
 
     public static boolean isCompatibleVersion(String rangeOrLowerLimit,  String givenVersion) {
         if (rangeOrLowerLimit == null || givenVersion == null) {
-            Logging.writeErrorOut("Version can not be null");
+            Logging.writeErrorOut("version can't be null");
             return false;
         }
         if (givenVersion.isEmpty()) {

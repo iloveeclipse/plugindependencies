@@ -50,13 +50,13 @@ public class PluginParser {
             Set<Package> packages) throws IOException {
 
         if (!rootDir.exists()) {
-            Logging.writeErrorOut("Given directory does not exist: " + rootDir);
+            Logging.writeErrorOut("given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("Given directory is not a directory or is not readable: " + rootDir);
+            Logging.writeErrorOut("given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         sortFiles(dirArray);
@@ -97,13 +97,18 @@ public class PluginParser {
         if(equalPluginPaths.isEmpty()) {
             return 0;
         }
-        Logging.writeErrorOut("Error: two plugins with equal symbolic name and version: " + plugin.getName() + " " + plugin.getVersion());
+        StringBuilder output = new StringBuilder();
+        output.append("two plugins with equal symbolic name and version: ");
+        output.append(plugin.getName());
+        output.append(" ");
+        output.append(plugin.getVersion());
 
         equalPluginPaths.add(plugin.getPath());
         Collections.sort(equalPluginPaths);
         for (String path : equalPluginPaths) {
-            Logging.writeErrorOut(path);
+            output.append("\n").append(path);
         }
+        Logging.writeErrorOut(output.toString());
         return -1;
     }
 

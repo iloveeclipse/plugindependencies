@@ -82,14 +82,14 @@ public abstract class OSGIElement extends NamedElement {
         int setSize = elements.size();
 
         if (setSize > 1) {
-            logEntry.append("Warning: more than one " + type + " found for ");
+            logEntry.append(PREFIX_WARN).append("more than one " + type + " found for ");
             logEntry.append(id + " " + vers + optional + "\n");
             for (OSGIElement element : elements) {
                 logEntry.append("\t" + element.getInformationLine() + "\n");
             }
         }
         if (setSize == 0) {
-            String errortype = optional.isEmpty() ? "Error: " : "Warning: ";
+            String errortype = optional.isEmpty() ? PREFIX_ERROR : PREFIX_WARN;
             logEntry.append(errortype + type + " not found: ");
             logEntry.append(id + " " + vers + optional);
         }

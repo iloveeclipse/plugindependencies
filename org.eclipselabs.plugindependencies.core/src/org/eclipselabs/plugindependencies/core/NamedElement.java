@@ -20,6 +20,8 @@ public abstract class NamedElement {
     protected final String name;
     protected final String version;
     protected final List<String> log;
+    public static final String PREFIX_ERROR = Logging.PREFIX_ERROR;
+    public static final String PREFIX_WARN =  Logging.PREFIX_WARN;
 
     public static class NameComparator implements Comparator<OSGIElement>{
         @Override
@@ -86,13 +88,21 @@ public abstract class NamedElement {
     }
 
     protected void addErrorToLog(String note) {
-        if (note != null && !note.isEmpty() && !log.contains(note)) {
+        if (note == null || note.isEmpty()) {
+            return;
+        }
+        note = PREFIX_ERROR + note;
+        if (!log.contains(note)) {
             log.add(note);
         }
     }
 
     protected void addWarningToLog(String note) {
-        if (note != null && !note.isEmpty() && !log.contains(note)) {
+        if (note == null || note.isEmpty()) {
+            return;
+        }
+        note = PREFIX_WARN + note;
+        if (!log.contains(note)) {
             log.add(note);
         }
     }
