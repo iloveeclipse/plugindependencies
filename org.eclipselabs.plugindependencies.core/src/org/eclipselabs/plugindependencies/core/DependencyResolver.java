@@ -214,7 +214,7 @@ public class DependencyResolver {
                 while (jarEntries.hasMoreElements()) {
                     JarEntry entry = jarEntries.nextElement();
                     if (entry.getName().contains(packagePath)) {
-                        Package p = new Package(packageName, "");
+                        Package p = new Package(packageName, NamedElement.EMPTY_VERSION);
                         state.getPackageSet().add(p);
                         return p;
                     }

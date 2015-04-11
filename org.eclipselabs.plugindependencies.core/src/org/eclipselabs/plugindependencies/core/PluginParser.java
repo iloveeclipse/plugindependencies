@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -82,7 +81,7 @@ public class PluginParser {
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
         if (plugins.add(plugin)) {
-            addToPackageList(packages, plugin);
+            addExportedPackagesToSet(plugin, packages);
             return 0;
         }
         List<String> equalPluginPaths = new ArrayList<>();
@@ -123,19 +122,19 @@ public class PluginParser {
         return dirArray;
     }
 
-    private static void addToPackageList(Set<Package> packageList, Plugin plugin) {
+    private static void addExportedPackagesToSet(Plugin plugin, Set<Package> packageList) {
         for (Package exportedPackage : plugin.getExportedPackages()) {
             /*
              * Package is exported by another plugin, package has to be found in packages
              * and plugin must be added to exportPlugins of package
              */
             if (!packageList.add(exportedPackage)) {
-                Iterator<Package> packSet = packageList.iterator();
-                Package doubleExportedPackage = new Package("", "");
-                while (!doubleExportedPackage.equals(exportedPackage)) {
-                    doubleExportedPackage = packSet.next();
+                for (Package pack : packageList) {
+                    if(pack.equals(exportedPackage)){
+                        pack.addExportPlugin(plugin);
+                        break;
+                    }
                 }
-                doubleExportedPackage.addExportPlugin(plugin);
             }
         }
     }
