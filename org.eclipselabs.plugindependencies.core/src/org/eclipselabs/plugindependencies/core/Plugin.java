@@ -398,8 +398,10 @@ public class Plugin extends OSGIElement {
             recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
             recursiveResolvedPlugins.add(plugin);
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
-            addToLog("Error: plugin has cycle with: " + plugin.getInformationLine());
-            plugin.addToLog("Error: plugin has cycle with: " + getInformationLine());
+            if(!isFragmentOrHost(plugin)){
+                addToLog("Error: plugin has cycle with: " + plugin.getInformationLine());
+                plugin.addToLog("Error: plugin has cycle with: " + getInformationLine());
+            }
             return;
         }
         recursiveResolvedPlugins.add(plugin);
@@ -409,6 +411,13 @@ public class Plugin extends OSGIElement {
                 recursiveResolvedPlugins.add(child);
             }
         }
+    }
+
+    boolean isFragmentOrHost(Plugin other){
+        if(isFragment() && getFragHost() == other){
+            return true;
+        }
+        return other.isFragment() && other.getFragHost() == this;
     }
 
     public void setResolved(){
