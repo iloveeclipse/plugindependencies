@@ -20,12 +20,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * @author obroesam
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestExceptions extends BaseTest {
     @Test
     public void testDoublePluginWarning() throws IOException {

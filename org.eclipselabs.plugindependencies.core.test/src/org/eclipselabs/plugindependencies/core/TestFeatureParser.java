@@ -28,10 +28,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestFeatureParser  extends BaseTest {
     static String dirPath;
 

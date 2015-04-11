@@ -28,8 +28,11 @@ import java.util.jar.Manifest;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestPluginParser  extends BaseTest {
     Set<Plugin> pluginSet;
 

@@ -22,9 +22,12 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
-public class TestPlugin extends BaseTest{
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestPlugin extends BaseTest {
 
     Plugin plugin;
 

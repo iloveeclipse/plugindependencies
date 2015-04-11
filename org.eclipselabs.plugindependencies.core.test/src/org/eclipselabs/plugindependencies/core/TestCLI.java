@@ -27,12 +27,15 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * @author obroesam
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCLI extends BaseTest {
     static PrintStream console;
 
