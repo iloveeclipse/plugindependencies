@@ -14,10 +14,14 @@ package org.eclipselabs.plugindependencies.core;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -176,7 +180,7 @@ public class DependencyResolver {
                     ret.add(p);
                 }
             } catch (IOException e) {
-                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + MainClass.getJavaHome() + ").", e);
+                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + PlatformState.getJavaHome() + ").", e);
             }
         }
         return ret;
@@ -190,17 +194,17 @@ public class DependencyResolver {
         }
 
         String packageName = requiredPackage.getName().trim();
-        String javaHome = MainClass.getJavaHome();
+        String javaHome = PlatformState.getJavaHome();
 
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = DEFAULT_JAVA_HOME;
-            MainClass.setJavaHome(javaHome);
+            PlatformState.setJavaHome(javaHome);
         }
         File javaHomeLib = new File(javaHome + "/lib");
         if (!javaHomeLib.exists()) {
             Logging.writeErrorOut("specified $JAVA_HOME (" + javaHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
             javaHome = DEFAULT_JAVA_HOME;
-            MainClass.setJavaHome(javaHome);
+            PlatformState.setJavaHome(javaHome);
         }
 
         File[] jarList = javaHomeLib.listFiles(new JarFilter());
@@ -232,6 +236,132 @@ public class DependencyResolver {
             }
             return false;
         }
+    }
+
+    /**
+     * Stack element for resolving plugin dependencies. If {@link #toVisit} is empty, plugin is resolved.
+     */
+    static class PluginElt {
+        static final Plugin DUMMY_PLUGIN = new Plugin("", NamedElement.EMPTY_VERSION);
+        static final PluginElt EMPTY = new PluginElt(null,  DUMMY_PLUGIN);
+        final Plugin plugin;
+        final PluginElt parent;
+
+        List<Plugin> toVisit;
+
+        public PluginElt(PluginElt parent, Plugin plugin) {
+            super();
+            this.parent = parent;
+            this.plugin = plugin;
+            toVisit = new LinkedList<>();
+            addDirectDependencies();
+        }
+
+        void setResolved(){
+            plugin.setResolved();
+            resolved(plugin);
+        }
+
+        void resolved(Plugin p){
+            toVisit.remove(p);
+            if(plugin != p){
+                plugin.addToRecursiveResolvedPlugins(p);
+            }
+
+            if(parent != null && parent != this){
+                parent.resolved(p);
+            }
+        }
+
+        PluginElt next(){
+            if(toVisit.isEmpty()){
+                return EMPTY;
+            }
+            return new PluginElt(this, toVisit.remove(0));
+        }
+
+        void addToVisit(Plugin p){
+            if(p == null || plugin.equals(p)){
+                return;
+            }
+            if(!toVisit.contains(p)) {
+                toVisit.add(p);
+            }
+        }
+
+        void addToVisit(Collection<Plugin> plugins){
+            for (Plugin p : plugins) {
+                addToVisit(p);
+            }
+        }
+
+        void addDirectDependencies(){
+            for (Plugin pluginToVisit : plugin.getResolvedPlugins()) {
+                addToVisit(pluginToVisit);
+            }
+            if(plugin.isFragment()) {
+                addToVisit(plugin.getHost());
+            } else {
+                for (Plugin fragment : plugin.getFragments()) {
+                    // fragments can have extra dependencies we want to visit
+                    addToVisit(fragment);
+                }
+            }
+
+            // TODO throw away "duplicated" bundles with different versions, exporting same package
+            Set<Plugin> allExporting = new LinkedHashSet<>();
+            addPluginsForImportedPackages(plugin, allExporting);
+            // fragment inherits all dependencies from host
+            if(plugin.isFragment() && plugin.getHost() != null){
+                addPluginsForImportedPackages(plugin.getHost(), allExporting);
+            }
+            allExporting.remove(plugin);
+            addToVisit(allExporting);
+        }
+
+        static void addPluginsForImportedPackages(Plugin p, Set<Plugin> allExporting) {
+            for (Package imported : p.getImportedPackages()) {
+                Set<Plugin> exportedBy = imported.getExportedBy();
+                if(!exportedBy.isEmpty()) {
+                    allExporting.addAll(exportedBy);
+                } else {
+                    Set<Plugin> reexportedBy = imported.getReexportedBy();
+                    allExporting.addAll(reexportedBy);
+                }
+            }
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[plugin=");
+            sb.append(plugin);
+            sb.append(", toVisit=");
+            sb.append(toVisit);
+            sb.append("]");
+            return sb.toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return plugin.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof PluginElt)) {
+                return false;
+            }
+            PluginElt other = (PluginElt) obj;
+            if (!plugin.equals(other.plugin)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
     public Set<Plugin> searchInPluginSet(ManifestEntry requiredPlugin,  boolean exactVersion) {
@@ -272,6 +402,75 @@ public class DependencyResolver {
             }
         }
         return ret;
+    }
+
+    public static void resolveDependencies() {
+        DependencyResolver depres = new DependencyResolver(PlatformState.getPluginSet(), PlatformState.getPackageSet(), PlatformState.getFeatureSet());
+    
+        for (Plugin plugin : PlatformState.getPluginSet()) {
+            depres.resolvePluginDependency(plugin);
+        }
+        for (Feature feature : PlatformState.getFeatureSet()) {
+            depres.resolveFeatureDependency(feature);
+        }
+        for (Plugin plugin : PlatformState.getPluginSet()) {
+            plugin.parsingDone();
+        }
+        for (Feature feature : PlatformState.getFeatureSet()) {
+            feature.parsingDone();
+        }
+    }
+
+    public static Set<Plugin> computeResolvedPluginsRecursive(final Plugin root) {
+        if(root.isRecursiveResolved()){
+            return root.getRecursiveResolvedPlugins();
+        }
+        Stack<DependencyResolver.PluginElt> stack = new Stack<>();
+        stack.add(new DependencyResolver.PluginElt(null, root));
+        while (!stack.isEmpty()){
+            DependencyResolver.PluginElt current = stack.peek();
+            DependencyResolver.PluginElt next = current.next();
+
+            if(next == DependencyResolver.PluginElt.EMPTY) {
+                stack.pop();
+                // make sure we finished the iteration and replace the default empty set if no dependencies found
+                current.setResolved();
+                continue;
+            }
+
+            if(stack.contains(next)){
+                if(!next.plugin.isRecursiveResolved()){
+                    Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                    for (Plugin p : resolvedPlugins) {
+                        current.resolved(p);
+                    }
+                }
+                // avoid cyclic dependencies
+                continue;
+            }
+
+            if(root.containsRecursiveResolved(next.plugin)) {
+                Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                for (Plugin p : resolvedPlugins) {
+                    current.resolved(p);
+                }
+                current.resolved(next.plugin);
+            } else {
+                stack.push(next);
+            }
+        }
+        Set<Plugin> rrp = root.getRecursiveResolvedPlugins();
+        for (Plugin plugin : rrp) {
+            if(!plugin.isRecursiveResolved()){
+                if(plugin.isFragment()){
+                    plugin.setResolved();
+                }
+            }
+            if(!plugin.isRecursiveResolved()) {
+                throw new IllegalStateException("Unable to resolve: " + plugin);
+            }
+        }
+        return rrp;
     }
 
     static final String VER_STR = "[0-9]+([.][0-9]+)?([.][0-9]+)?([.][0-9a-zA-Z-_]+)?";

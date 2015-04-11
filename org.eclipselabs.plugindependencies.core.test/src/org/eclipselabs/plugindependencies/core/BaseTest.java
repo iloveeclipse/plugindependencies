@@ -18,6 +18,6 @@ public class BaseTest {
 
     @After
     public void tearDown() throws Exception {
-        MainClass.cleanup();
+        PlatformState.cleanup();
     }
 }
