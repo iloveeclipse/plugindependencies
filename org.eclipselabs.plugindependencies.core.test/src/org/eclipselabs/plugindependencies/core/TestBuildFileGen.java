@@ -89,10 +89,31 @@ public class TestBuildFileGen extends BaseTest {
                 "testdata_OutputGeneration/workspace", "-deploymentRoot",
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
                 "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins",
-                "-generateReqFile", "testdata_OutputGeneration/dependencies.txt" };
+                "-generateReqFile", "testdata_OutputGeneration/dependencies.txt"
+                };
 
         assertEquals(0, SecurityMan.runMain(args));
 
+        checkBuildAndDepFileResult();
+    }
+
+    @Test
+    public void testBuildAndDepFileGeneration2() throws IOException {
+        String args[] = new String[] { "-eclipsePaths",
+                "testdata_OutputGeneration/eclipseRE",
+                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
+                "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-generateReqFile", "testdata_OutputGeneration/dependencies.txt",
+                "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins"
+                };
+
+        assertEquals(0, SecurityMan.runMain(args));
+
+        checkBuildAndDepFileResult();
+    }
+
+    private void checkBuildAndDepFileResult() throws IOException {
         for (File plugin : workspacePlugins) {
             String path = plugin.getCanonicalPath();
             Path expected = Paths.get(path, "classpathfile_expected");

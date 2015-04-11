@@ -87,6 +87,10 @@ public class Plugin extends OSGIElement {
         return isFragment;
     }
 
+    public boolean isHost() {
+        return !isFragment() && !fragments.isEmpty();
+    }
+
     void setFragment(boolean isFragment) {
         this.isFragment = isFragment;
     }
@@ -232,6 +236,9 @@ public class Plugin extends OSGIElement {
     }
 
     public void addFragments(Plugin fragment) {
+        if(isFragment()){
+            throw new IllegalStateException("Fragment can not have additional fragments!");
+        }
         this.fragments.add(fragment);
     }
 

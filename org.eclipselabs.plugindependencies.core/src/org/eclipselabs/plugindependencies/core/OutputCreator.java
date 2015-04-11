@@ -12,8 +12,6 @@
 
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.MainClass.*;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -70,6 +68,7 @@ public class OutputCreator {
         StringBuilder dependencyBuilder = new StringBuilder();
         List<String> sortedDependencyList;
 
+        Set<Plugin> pluginSet = MainClass.pluginSet;
         for (Plugin plugin : pluginSet) {
             sortedDependencyList = getSortedDependencyList(plugin);
             String elementPath = plugin.getPath();
@@ -86,6 +85,11 @@ public class OutputCreator {
         List<String> dependencyPathList = new ArrayList<>();
 
         dependencyList.addAll(getResolvedPluginsRecursive(plugin));
+
+        // build dependency file for given plugin should NOT contain it's fragments (recursive dep!)
+        if(plugin.isHost()){
+            dependencyList.removeAll(plugin.getFragments());
+        }
 
         for (Plugin dependsOn : dependencyList) {
             dependencyPathList.add(dependsOn.getPath());
@@ -120,12 +124,10 @@ public class OutputCreator {
 
         void resolved(Plugin p){
             toVisit.remove(p);
-            if(p.isFragment() && plugin.equals(p.getFragHost())){
-                // ignore own fragment
-            } else if(plugin != p){
+            if(plugin != p){
                 plugin.addToRecursiveResolvedPlugins(p);
-                Set<Plugin> rr = p.getRecursiveResolvedPlugins();
-                for (Plugin child : rr) {
+                Set<Plugin> rrp = p.getRecursiveResolvedPlugins();
+                for (Plugin child : rrp) {
                     plugin.addToRecursiveResolvedPlugins(child);
                 }
             }
@@ -171,8 +173,18 @@ public class OutputCreator {
             }
 
             // TODO throw away "duplicated" bundles with different versions, exporting same package
-            Set<Plugin> allExporting = new LinkedHashSet<Plugin>();
-            for (Package imported : plugin.getImportedPackages()) {
+            Set<Plugin> allExporting = new LinkedHashSet<>();
+            addPluginsForImportedPackages(plugin, allExporting);
+            // fragment inherits all dependencies from host
+            if(plugin.isFragment() && plugin.getFragHost() != null){
+                addPluginsForImportedPackages(plugin.getFragHost(), allExporting);
+            }
+            allExporting.remove(plugin);
+            addToVisit(allExporting);
+        }
+
+        static void addPluginsForImportedPackages(Plugin p, Set<Plugin> allExporting) {
+            for (Package imported : p.getImportedPackages()) {
                 Set<Plugin> exportedBy = imported.getExportedBy();
                 if(!exportedBy.isEmpty()) {
                     allExporting.addAll(exportedBy);
@@ -181,20 +193,6 @@ public class OutputCreator {
                     allExporting.addAll(reexportedBy);
                 }
             }
-            // fragment inherits all dependencies from host
-            if(plugin.isFragment() && plugin.getFragHost() != null){
-                for (Package imported : plugin.getFragHost().getImportedPackages()) {
-                    Set<Plugin> exportedBy = imported.getExportedBy();
-                    if(!exportedBy.isEmpty()) {
-                        allExporting.addAll(exportedBy);
-                    } else {
-                        Set<Plugin> reexportedBy = imported.getReexportedBy();
-                        allExporting.addAll(reexportedBy);
-                    }
-                }
-            }
-            allExporting.remove(plugin);
-            addToVisit(allExporting);
         }
 
         @Override
@@ -231,6 +229,9 @@ public class OutputCreator {
     }
 
     public static Set<Plugin> getResolvedPluginsRecursive(final Plugin root) {
+        if(root.isRecursiveResolved()){
+            return  root.getRecursiveResolvedPlugins();
+        }
         Stack<PluginElt> stack = new Stack<>();
         stack.add(new PluginElt(null, root));
         while (!stack.isEmpty()){
