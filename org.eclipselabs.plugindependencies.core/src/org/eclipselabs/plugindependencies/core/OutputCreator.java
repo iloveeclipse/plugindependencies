@@ -126,10 +126,6 @@ public class OutputCreator {
             toVisit.remove(p);
             if(plugin != p){
                 plugin.addToRecursiveResolvedPlugins(p);
-                Set<Plugin> rrp = p.getRecursiveResolvedPlugins();
-                for (Plugin child : rrp) {
-                    plugin.addToRecursiveResolvedPlugins(child);
-                }
             }
 
             if(parent != null && parent != this){

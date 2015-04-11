@@ -384,15 +384,15 @@ public class Plugin extends OSGIElement {
         return recursiveResolvedPlugins.contains(p);
     }
 
-    public boolean addToRecursiveResolvedPlugins(Plugin plugin) {
+    public void addToRecursiveResolvedPlugins(Plugin plugin) {
         if(plugin == null || this.equals(plugin)){
-            return false;
+            return;
         }
         if(recursiveResolvedPlugins == null){
             recursiveResolvedPlugins = new LinkedHashSet<>();
         }
         if(recursiveResolvedPlugins.contains(plugin)){
-            return false;
+            return;
         }
         if(isRecursiveResolved() && plugin.containsRecursiveResolved(this)){
             recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
@@ -400,9 +400,15 @@ public class Plugin extends OSGIElement {
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
             addToLog("Error: plugin has cycle with: " + plugin.getInformationLine());
             plugin.addToLog("Error: plugin has cycle with: " + getInformationLine());
-            return true;
+            return;
         }
-        return recursiveResolvedPlugins.add(plugin);
+        recursiveResolvedPlugins.add(plugin);
+        Set<Plugin> rrp = plugin.getRecursiveResolvedPlugins();
+        for (Plugin child : rrp) {
+            if(this != child) {
+                recursiveResolvedPlugins.add(child);
+            }
+        }
     }
 
     public void setResolved(){
@@ -415,10 +421,6 @@ public class Plugin extends OSGIElement {
                     return;
                 }
                 addToRecursiveResolvedPlugins(fragmentHost);
-                Set<Plugin> hostPlugins = fragmentHost.getRecursiveResolvedPlugins();
-                for (Plugin hp : hostPlugins) {
-                    addToRecursiveResolvedPlugins(hp);
-                }
             }
         }
         if(recursiveResolvedPlugins == null || recursiveResolvedPlugins.isEmpty()){
