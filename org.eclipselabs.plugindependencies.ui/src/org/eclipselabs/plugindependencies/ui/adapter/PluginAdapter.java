@@ -44,12 +44,16 @@ public class PluginAdapter implements IPropertySource {
 
         PropertyDescriptor name = new PropertyDescriptor("SymbolicName", "SymbolicName");
         name.setCategory("General");
+
         PropertyDescriptor version = new PropertyDescriptor("Version", "Version");
         version.setCategory("General");
+
         PropertyDescriptor path = new PropertyDescriptor("Path", "Path");
         path.setCategory("General");
+
         PropertyDescriptor log = new PropertyDescriptor("Log", "Log");
         log.setCategory("General");
+
         log.setLabelProvider(new LabelProvider() {
             @Override
             public String getText(Object element) {
@@ -65,30 +69,29 @@ public class PluginAdapter implements IPropertySource {
             }
         });
 
-        PropertyDescriptor reqPlugins = new PropertyDescriptor("RequiredPlugins",
-                "Required Plugins");
+        PropertyDescriptor reqPlugins = new PropertyDescriptor("RequiredPlugins", "Required Plugins");
         reqPlugins.setCategory("Requirements");
-        PropertyDescriptor reqPackages = new PropertyDescriptor("RequiredPackages",
-                "Required Packages");
+
+        PropertyDescriptor reqPackages = new PropertyDescriptor("RequiredPackages", "Required Packages");
         reqPackages.setCategory("Requirements");
-        PropertyDescriptor resPlugins = new PropertyDescriptor("ResolvedPlugins",
-                "Resolved Plugins");
+
+        PropertyDescriptor resPlugins = new PropertyDescriptor("ResolvedPlugins", "Resolved Plugins");
         resPlugins.setCategory("Resolution");
-        PropertyDescriptor resPackages = new PropertyDescriptor("ImportedPackages",
-                "Imported Packages");
+
+        PropertyDescriptor resPackages = new PropertyDescriptor("ImportedPackages", "Imported Packages");
         resPackages.setCategory("Resolution");
 
-        PropertyDescriptor expPackages = new PropertyDescriptor("ExportedPackages",
-                "Exported Packages");
+        PropertyDescriptor allDeps = new PropertyDescriptor("AllDependencies", "All Dependencies");
+        allDeps.setCategory("Resolution");
 
-        PropertyDescriptor requiredBy = new PropertyDescriptor("RequiredBy",
-                "Required By");
+        PropertyDescriptor expPackages = new PropertyDescriptor("ExportedPackages", "Exported Packages");
 
-        PropertyDescriptor includedIn = new PropertyDescriptor("IncludedIn",
-                "Included In");
+        PropertyDescriptor requiredBy = new PropertyDescriptor("RequiredBy", "Required By");
+
+        PropertyDescriptor includedIn = new PropertyDescriptor("IncludedIn", "Included In");
 
         Collections.addAll(list, name, version, path, log, reqPlugins, reqPackages,
-                resPackages, resPlugins, expPackages, requiredBy, includedIn);
+                resPackages, resPlugins, expPackages, requiredBy, includedIn, allDeps);
 
         return list.toArray(new IPropertyDescriptor[list.size()]);
     }
@@ -127,6 +130,9 @@ public class PluginAdapter implements IPropertySource {
         }
         if (id.equals("IncludedIn")) {
             return new IPropertySourceList(plugin.getIncludedInFeatures());
+        }
+        if (id.equals("AllDependencies")) {
+            return new IPropertySourceList(plugin.getRecursiveResolvedPlugins());
         }
         return null;
     }

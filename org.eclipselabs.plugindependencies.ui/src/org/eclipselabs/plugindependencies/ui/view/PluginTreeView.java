@@ -86,6 +86,10 @@ public class PluginTreeView extends ViewPart {
 
     private boolean disposed;
 
+    private Action showErrors;
+
+    private boolean showErrorsOnly;
+
     @Override
     public void createPartControl(Composite parent) {
         Filter filter = new Filter();
@@ -206,6 +210,7 @@ public class PluginTreeView extends ViewPart {
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(collapseAll);
         manager.add(showProperties);
+        manager.add(showErrors);
         manager.add(new Separator());
         if (drillDownAdapter != null) {
             drillDownAdapter.addNavigationActions(manager);
@@ -237,6 +242,21 @@ public class PluginTreeView extends ViewPart {
                 "org.eclipse.ui", "$nl$/icons/full/eview16/prop_ps.gif");
         showProperties.setImageDescriptor(propsImg);
 
+        showErrors = new Action() {
+            @Override
+            public void run() {
+                boolean toggle = !isShowErrorsOnly();
+                setChecked(toggle);
+                showErrors(toggle);
+            }
+
+        };
+        showErrors.setText("Show Errors Only");
+        showErrors.setToolTipText("Show Errors Only");
+        ImageDescriptor errImg = AbstractUIPlugin.imageDescriptorFromPlugin(
+                "org.eclipse.ui", "$nl$/icons/full/eview16/prop_ps.gif");
+        showErrors.setImageDescriptor(errImg);
+
         reloadTargets = new Action() {
             @Override
             public void run() {
@@ -257,6 +277,15 @@ public class PluginTreeView extends ViewPart {
 
             }
         };
+    }
+
+    protected void showErrors(boolean on) {
+        showErrorsOnly = on;
+        refresh();
+    }
+
+    boolean isShowErrorsOnly() {
+        return showErrorsOnly;
     }
 
     void refresh() {

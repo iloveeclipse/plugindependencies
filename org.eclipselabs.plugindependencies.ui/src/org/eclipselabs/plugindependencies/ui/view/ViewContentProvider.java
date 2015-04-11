@@ -126,8 +126,11 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot = new TreeParent("Parent", null);
         // Plugins
         TreeParent plugins = new TreeParent("Plugins", invisibleRoot);
+        boolean errorsOnly = view.isShowErrorsOnly();
         for (Plugin plugin : MainClass.getPluginSet()) {
-            plugins.addChild(new TreePlugin(plugin, plugins));
+            if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
+                plugins.addChild(new TreePlugin(plugin, plugins));
+            }
         }
         // Packages
         TreeParent packages = new TreeParent("Packages", invisibleRoot);
@@ -145,7 +148,6 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot.addChild(plugins);
         invisibleRoot.addChild(packages);
         invisibleRoot.addChild(features);
-        MainClass.cleanup();
     }
 
     private Job createResolveDependenciesJob() {

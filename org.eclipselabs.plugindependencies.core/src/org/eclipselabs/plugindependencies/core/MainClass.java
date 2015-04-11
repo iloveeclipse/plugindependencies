@@ -158,9 +158,14 @@ public class MainClass {
         for (Plugin plugin : pluginSet) {
             depres.resolvePluginDependency(plugin);
         }
-
         for (Feature feature : featureSet) {
             depres.resolveFeatureDependency(feature);
+        }
+        for (Plugin plugin : pluginSet) {
+            plugin.parsingDone();
+        }
+        for (Feature feature : featureSet) {
+            feature.parsingDone();
         }
     }
 

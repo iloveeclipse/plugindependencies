@@ -29,17 +29,19 @@ public class Plugin extends OSGIElement {
 
     private static final String EXTERNAL = "external:";
 
-    private final Set<Plugin> requiredBy;
-
-    private final Set<Package> exportedPackages;
+    private List<String> bundleClassPath;
 
     private List<ManifestEntry> requiredPlugins;
 
     private List<ManifestEntry> requiredPackages;
 
-    private final Set<Package> importedPackages;
+    private Set<Plugin> requiredBy;
 
-    private List<String> bundleClassPath;
+    private Set<Package> exportedPackages;
+
+    private Set<Package> importedPackages;
+
+    private Set<Plugin> fragments;
 
     private Set<Plugin> recursiveResolvedPlugins;
 
@@ -53,7 +55,6 @@ public class Plugin extends OSGIElement {
 
     private String fullClassPaths;
 
-    private final Set<Plugin> fragments;
 
     public Plugin(String symbName, String vers) {
         super(symbName, vers);
@@ -69,7 +70,7 @@ public class Plugin extends OSGIElement {
     }
 
     public Set<Plugin> getRequiredBy() {
-        return Collections.unmodifiableSet(requiredBy);
+        return requiredBy;
     }
 
     void addRequiring(Plugin requires) {
@@ -117,15 +118,15 @@ public class Plugin extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredPlugins() {
-        return Collections.unmodifiableList(requiredPlugins);
+        return requiredPlugins;
     }
 
     public void setRequiredPlugins(String requplugins) {
-        requiredPlugins = StringUtil.splitInManifestEntries(requplugins);
+        requiredPlugins = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requplugins));
     }
 
     public Set<Package> getImportedPackages() {
-        return Collections.unmodifiableSet(importedPackages);
+        return importedPackages;
     }
 
     public void addImportedPackage(Package importedPackage) {
@@ -134,29 +135,23 @@ public class Plugin extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredPackages() {
-        return Collections.unmodifiableList(requiredPackages);
+        return requiredPackages;
     }
 
     public void setRequiredPackages(String requPackages) {
-        requiredPackages = StringUtil.splitInManifestEntries(requPackages);
+        requiredPackages = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requPackages));
     }
 
     public Set<Package> getExportedPackages() {
-        return Collections.unmodifiableSet(exportedPackages);
-    }
-
-    private void addExportedPackage(Package exportedPackage) {
-        this.exportedPackages.add(exportedPackage);
+        return exportedPackages;
     }
 
     public void setExportedPackages(String expPackagesString) {
-        List<ManifestEntry> entries = StringUtil
-                .splitInManifestEntries(expPackagesString);
-        Package pack;
+        List<ManifestEntry> entries = StringUtil.splitInManifestEntries(expPackagesString);
         for (ManifestEntry entry : entries) {
-            pack = new Package(entry.getName(), entry.getVersion());
+            Package pack = new Package(entry.getName(), entry.getVersion());
             pack.addExportPlugin(this);
-            addExportedPackage(pack);
+            exportedPackages.add(pack);
         }
     }
 
@@ -165,11 +160,12 @@ public class Plugin extends OSGIElement {
     }
 
     public List<String> getBundleClassPath() {
-        return Collections.unmodifiableList(bundleClassPath);
+        return bundleClassPath;
     }
 
     public void setBundleClassPath(String bundleClassPath) {
-        this.bundleClassPath = resolveExternalPath(StringUtil.splitListOfEntries(bundleClassPath));
+        this.bundleClassPath = Collections.unmodifiableList(resolveExternalPath(
+                StringUtil.splitListOfEntries(bundleClassPath)));
     }
 
     private static List<String> resolveExternalPath(List<String> paths) {
@@ -233,12 +229,12 @@ public class Plugin extends OSGIElement {
     }
 
     public Set<Plugin> getFragments() {
-        return Collections.unmodifiableSet(fragments);
+        return fragments;
     }
 
     public void addFragments(Plugin fragment) {
         if(isFragment()){
-            addErrorToLog("Fragment can't have additional fragments: " + fragment);
+            addErrorToLog("fragment can't have additional fragments: " + fragment);
             return;
         }
         this.fragments.add(fragment);
@@ -396,16 +392,24 @@ public class Plugin extends OSGIElement {
         if(recursiveResolvedPlugins.contains(plugin)){
             return;
         }
-        if(isRecursiveResolved() && plugin.containsRecursiveResolved(this)){
-            recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
-            recursiveResolvedPlugins.add(plugin);
-            recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
-            if(!isFragmentOrHost(plugin)){
-                addErrorToLog("plugin has cycle with: " + plugin.getInformationLine());
-                plugin.addErrorToLog("plugin has cycle with: " + getInformationLine());
+        if(isRecursiveResolved()) {
+            if (plugin.containsRecursiveResolved(this)) {
+                recursiveResolvedPlugins = new LinkedHashSet<>(recursiveResolvedPlugins);
+                recursiveResolvedPlugins.add(plugin);
+                recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
+                if(!isFragmentOrHost(plugin)){
+                    addErrorToLog("plugin has cycle with: " + plugin.getInformationLine());
+                    plugin.addErrorToLog("plugin has cycle with: " + getInformationLine());
+                }
+            } else {
+                if(!isFragmentOrHost(plugin)){
+                    addErrorToLog("plugin has indirect cycle with: " + plugin.getInformationLine());
+                    plugin.addErrorToLog("plugin has indirect cycle with: " + getInformationLine());
+                }
             }
             return;
         }
+
         recursiveResolvedPlugins.add(plugin);
         Set<Plugin> rrp = plugin.getRecursiveResolvedPlugins();
         for (Plugin child : rrp) {
@@ -420,6 +424,15 @@ public class Plugin extends OSGIElement {
             return true;
         }
         return other.isFragment() && other.getHost() == this;
+    }
+
+    @Override
+    public void parsingDone() {
+        super.parsingDone();
+        requiredBy = requiredBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredBy);
+        fragments = fragments.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(fragments);
+        exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
+        importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
     }
 
     public void setResolved(){

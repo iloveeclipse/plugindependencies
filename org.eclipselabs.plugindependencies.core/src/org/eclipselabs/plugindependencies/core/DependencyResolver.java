@@ -78,9 +78,8 @@ public class DependencyResolver {
         feature.addIncludedFeatures(features);
     }
 
-    private void resolveRequiredPlugin(OSGIElement elementRequiresPlugin,
-            ManifestEntry requiredPlugin) {
-        boolean elementIsPlugin = elementRequiresPlugin instanceof Plugin;
+    private void resolveRequiredPlugin(OSGIElement elt, ManifestEntry requiredPlugin) {
+        boolean elementIsPlugin = elt instanceof Plugin;
         Plugin highVersionPlugin = null;
 
         Set<Plugin> plugins = searchInPluginSet(requiredPlugin, !elementIsPlugin);
@@ -90,17 +89,17 @@ public class DependencyResolver {
         }
 
         if (setSize != 1) {
-            elementRequiresPlugin.writeErrorLog(requiredPlugin, plugins, "plugin");
+            elt.writeErrorLog(requiredPlugin, plugins, "plugin");
         }
 
         if (highVersionPlugin != null) {
-            elementRequiresPlugin.addResolvedPlugin(highVersionPlugin);
+            elt.addResolvedPlugin(highVersionPlugin);
 
             if (requiredPlugin.isReexport()) {
                 Set<Package> reexportPackages = highVersionPlugin.getExportedPackages();
-                ((Plugin) elementRequiresPlugin).addReexportedPackages(reexportPackages);
+                ((Plugin) elt).addReexportedPackages(reexportPackages);
                 for (Package reexported : reexportPackages) {
-                    reexported.addReExportPlugin((Plugin) elementRequiresPlugin);
+                    reexported.addReExportPlugin((Plugin) elt);
                 }
             }
         }

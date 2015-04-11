@@ -22,9 +22,9 @@ import java.util.Set;
  */
 public abstract class OSGIElement extends NamedElement {
 
-    private final Set<Plugin> resolvedPlugins;
+    private Set<Plugin> resolvedPlugins;
 
-    private final Set<Feature> includedInFeatures;
+    private Set<Feature> includedInFeatures;
 
     private String elementPath;
 
@@ -34,8 +34,13 @@ public abstract class OSGIElement extends NamedElement {
         this.includedInFeatures = new LinkedHashSet<>();
     }
 
+    public void parsingDone(){
+        resolvedPlugins = Collections.unmodifiableSet(resolvedPlugins);
+        includedInFeatures = Collections.unmodifiableSet(includedInFeatures);
+    }
+
     public Set<Plugin> getResolvedPlugins() {
-        return Collections.unmodifiableSet(resolvedPlugins);
+        return resolvedPlugins;
     }
 
     public void addResolvedPlugin(Plugin plugin) {
@@ -45,7 +50,7 @@ public abstract class OSGIElement extends NamedElement {
     }
 
     public Set<Feature> getIncludedInFeatures() {
-        return Collections.unmodifiableSet(includedInFeatures);
+        return includedInFeatures;
     }
 
     protected void addIncludingFeature(Feature includingFeature) {

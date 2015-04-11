@@ -118,6 +118,24 @@ public abstract class NamedElement {
         return name.equals(id) && (version.equals(vers) || vers.isEmpty());
     }
 
+    public boolean hasWarnings(){
+        for (String string : log) {
+            if(string.startsWith(PREFIX_WARN)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasErrors(){
+        for (String string : log) {
+            if(string.startsWith(PREFIX_ERROR)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
