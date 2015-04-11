@@ -80,7 +80,7 @@ public abstract class NamedElement {
     }
 
     protected void addToLog(String note) {
-        if (note != null && !note.isEmpty()) {
+        if (note != null && !note.isEmpty() && !log.contains(note)) {
             log.add(note);
         }
     }
