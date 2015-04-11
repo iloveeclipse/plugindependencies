@@ -270,7 +270,7 @@ public class TestDepResResolving  extends BaseTest {
         // plugin2
         forCompare = getPlugin("org.eclipse.adv", pluginSet);
 
-        assertEquals(plugin4, forCompare.getFragHost());
+        assertEquals(plugin4, forCompare.getHost());
 
         assertTrue(forCompare.getLog().isEmpty());
 

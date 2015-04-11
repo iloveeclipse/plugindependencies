@@ -151,7 +151,7 @@ public class DependencyResolver {
 
         if (setSize >= 1) {
             Plugin fragmentHost = getPluginWithHighestVersion(resultSet);
-            fragment.setFragHost(fragmentHost);
+            fragment.setHost(fragmentHost);
             fragmentHost.addFragments(fragment);
         }
         if (setSize != 1) {

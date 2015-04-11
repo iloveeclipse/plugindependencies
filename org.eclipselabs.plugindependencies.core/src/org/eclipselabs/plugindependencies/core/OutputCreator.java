@@ -160,7 +160,7 @@ public class OutputCreator {
                 addToVisit(pluginToVisit);
             }
             if(plugin.isFragment()) {
-                addToVisit(plugin.getFragHost());
+                addToVisit(plugin.getHost());
             } else {
                 for (Plugin fragment : plugin.getFragments()) {
                     // fragments can have extra dependencies we want to visit
@@ -172,8 +172,8 @@ public class OutputCreator {
             Set<Plugin> allExporting = new LinkedHashSet<>();
             addPluginsForImportedPackages(plugin, allExporting);
             // fragment inherits all dependencies from host
-            if(plugin.isFragment() && plugin.getFragHost() != null){
-                addPluginsForImportedPackages(plugin.getFragHost(), allExporting);
+            if(plugin.isFragment() && plugin.getHost() != null){
+                addPluginsForImportedPackages(plugin.getHost(), allExporting);
             }
             allExporting.remove(plugin);
             addToVisit(allExporting);

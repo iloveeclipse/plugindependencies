@@ -47,7 +47,7 @@ public class Plugin extends OSGIElement {
 
     private ManifestEntry fragmentHostEntry;
 
-    private Plugin fragmentHost;
+    private Plugin host;
 
     private String targetDir;
 
@@ -62,6 +62,7 @@ public class Plugin extends OSGIElement {
         this.requiredBy = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
     }
+
     public Plugin(String symbName, String vers, boolean fragment) {
         this(symbName, vers);
         this.isFragment = fragment;
@@ -75,12 +76,12 @@ public class Plugin extends OSGIElement {
         this.requiredBy.add(requires);
     }
 
-    public Plugin getFragHost() {
-        return fragmentHost;
+    public Plugin getHost() {
+        return host;
     }
 
-    void setFragHost(Plugin fragHost) {
-        this.fragmentHost = fragHost;
+    void setHost(Plugin host) {
+        this.host = host;
     }
 
     public boolean isFragment() {
@@ -336,7 +337,7 @@ public class Plugin extends OSGIElement {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((fragmentHost == null) ? 0 : fragmentHost.hashCode());
+        result = prime * result + ((host == null) ? 0 : host.hashCode());
         result = prime * result + (isFragment ? 0 : 1);
         return result;
     }
@@ -353,11 +354,11 @@ public class Plugin extends OSGIElement {
         if(isFragment != other.isFragment){
             return false;
         }
-        if (fragmentHost == null) {
-            if (other.fragmentHost != null) {
+        if (host == null) {
+            if (other.host != null) {
                 return false;
             }
-        } else if (!fragmentHost.equals(other.fragmentHost)) {
+        } else if (!host.equals(other.host)) {
             return false;
         }
         return true;
@@ -414,10 +415,10 @@ public class Plugin extends OSGIElement {
     }
 
     boolean isFragmentOrHost(Plugin other){
-        if(isFragment() && getFragHost() == other){
+        if(isFragment() && getHost() == other){
             return true;
         }
-        return other.isFragment() && other.getFragHost() == this;
+        return other.isFragment() && other.getHost() == this;
     }
 
     public void setResolved(){
@@ -425,11 +426,11 @@ public class Plugin extends OSGIElement {
             return;
         }
         if(isFragment()) {
-            if (fragmentHost != null) {
-                if (!fragmentHost.isRecursiveResolved()) {
+            if (host != null) {
+                if (!host.isRecursiveResolved()) {
                     return;
                 }
-                addToRecursiveResolvedPlugins(fragmentHost);
+                addToRecursiveResolvedPlugins(host);
             }
         }
         if(recursiveResolvedPlugins == null || recursiveResolvedPlugins.isEmpty()){

@@ -609,7 +609,7 @@ public class CommandLineInterpreter {
             }
             if (plugin.isFragment()) {
                 out.append("Fragment-Host:\n");
-                Plugin fragmentHost = plugin.getFragHost();
+                Plugin fragmentHost = plugin.getHost();
                 out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
                         + "\n");
             } else {
