@@ -11,18 +11,16 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipselabs.plugindependencies.core.ManifestEntry;
-import org.eclipselabs.plugindependencies.core.StringUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestStringUtil {
+public class TestStringUtil extends BaseTest {
     String testString1;
 
     String testString2;
@@ -54,7 +52,7 @@ public class TestStringUtil {
     List<ManifestEntry> resultList;
 
     @Before
-    public void generateEnv() throws Exception {
+    public void setup() throws Exception {
         testString1 = "bundle-version=\"[3.2.0,4.0.0)\"";
         testString2 = "bundle-version=\"1.1.0\"";
         testString3 = "bundle-version=\"(3.2.0,4.0.0]\"";
@@ -85,10 +83,12 @@ public class TestStringUtil {
                 .add(" its just a text without any vers-ion and some comma \"abc,abc\" in quotation mark");
     }
 
+    @Override
     @After
-    public void undoMethod() throws Exception {
+    public void tearDown() throws Exception {
         resultList1 = null;
         resultList2 = null;
+        super.tearDown();
     }
 
     @Test

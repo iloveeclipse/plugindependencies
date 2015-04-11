@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -22,7 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestDepResSearchMethodPack {
+public class TestDepResSearchMethodPack extends BaseTest {
     static Set<Package> packageSet;
 
     static Set<Plugin> pluginSet;
@@ -61,9 +63,11 @@ public class TestDepResSearchMethodPack {
         featureSet = null;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         depres = null;
+        super.tearDown();
     }
 
     @Test

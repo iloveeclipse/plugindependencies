@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import org.junit.Test;
  * @author obroesam
  *
  */
-public class TestExceptions {
+public class TestExceptions extends BaseTest {
     @Test
     public void testDoublePluginWarning() throws IOException {
         Set<Plugin> plugins = new LinkedHashSet<>();

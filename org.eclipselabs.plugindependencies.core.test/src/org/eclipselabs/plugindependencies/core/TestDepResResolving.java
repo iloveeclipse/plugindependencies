@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestDepResResolving {
+public class TestDepResResolving  extends BaseTest {
     Feature featureLeft;
 
     Feature featureRight;
@@ -125,11 +126,13 @@ public class TestDepResResolving {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         pluginSet = null;
         packageSet = null;
         featureSet = null;
+        super.tearDown();
     }
 
     @Test

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.junit.Test;
  * @author obroesam
  *
  */
-public class TestBuildFileGen {
+public class TestBuildFileGen extends BaseTest {
 
     private Path root;
     private File workspace;
@@ -54,6 +54,7 @@ public class TestBuildFileGen {
         workspacePlugins = PluginParser.sortFiles(workspace.listFiles());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         int undeletedFiles = 0;
@@ -72,15 +73,16 @@ public class TestBuildFileGen {
         if (dependencies.exists() && !dependencies.delete()) {
             undeletedFiles++;
         }
+        super.tearDown();
+
         if (undeletedFiles != 0) {
             throw new Exception("Error while deleting files: " + undeletedFiles
                     + " not deleted");
         }
     }
 
-
     @Test
-    public void testBuildFileGeneration() throws IOException {
+    public void testBuildAndDepFileGeneration() throws IOException {
         String args[] = new String[] { "-eclipsePaths",
                 "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
@@ -104,6 +106,58 @@ public class TestBuildFileGen {
             assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
                     expectedOutputList.toString(), outputList.toString());
         }
+
+        String folder = "testdata_OutputGeneration";
+        Path expected = Paths.get(folder, "dependencies_expected.txt");
+        File act = new File(folder + "/dependencies.txt");
+        List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
+        expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
+
+        List<String> outputList = Files.readAllLines(act.toPath(), StandardCharsets.UTF_8);
+        outputList = TestCLI.addNewlineToAllStrings(outputList);
+
+        assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
+                expectedOutputList.toString(), outputList.toString());
+    }
+
+
+    @Test
+    public void testBuildFileGeneration() throws IOException {
+        String args[] = new String[] { "-eclipsePaths",
+                "testdata_OutputGeneration/eclipseRE",
+                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
+                "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins",
+                };
+
+        assertEquals(0, SecurityMan.runMain(args));
+
+        for (File plugin : workspacePlugins) {
+            String path = plugin.getCanonicalPath();
+            Path expected = Paths.get(path, "classpathfile_expected");
+            Path actual = Paths.get(path, ".classpath.generated");
+            List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
+            expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
+
+            List<String> outputList = Files.readAllLines(actual, StandardCharsets.UTF_8);
+            outputList = TestCLI.addNewlineToAllStrings(outputList);
+
+            assertEquals("Expected file " + TestCLI.truncate(root, expected) + " does not match actual one",
+                    expectedOutputList.toString(), outputList.toString());
+        }
+    }
+
+    @Test
+    public void testBuildFileDependencies() throws IOException {
+        String args[] = new String[] { "-eclipsePaths",
+                "testdata_OutputGeneration/eclipseRE",
+                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
+                "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-generateReqFile", "testdata_OutputGeneration/dependencies.txt" };
+
+        assertEquals(0, SecurityMan.runMain(args));
 
         String folder = "testdata_OutputGeneration";
         Path expected = Paths.get(folder, "dependencies_expected.txt");

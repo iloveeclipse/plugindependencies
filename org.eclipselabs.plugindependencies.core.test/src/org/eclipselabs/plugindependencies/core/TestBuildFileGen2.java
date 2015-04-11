@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import org.junit.Test;
  * @author obroesam
  *
  */
-public class TestBuildFileGen2 {
+public class TestBuildFileGen2 extends BaseTest {
 
     private Path pluginRootDir;
     private File[] pluginDirs;
@@ -55,6 +55,7 @@ public class TestBuildFileGen2 {
         pluginDirs = PluginParser.sortFiles(pluginRootDir.toFile().listFiles());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         int undeletedFiles = 0;
@@ -69,6 +70,9 @@ public class TestBuildFileGen2 {
         if (dependencies.exists() && !dependencies.delete()) {
             undeletedFiles++;
         }
+
+        super.tearDown();
+
         if (undeletedFiles != 0) {
             throw new Exception("Error while deleting files: " + undeletedFiles
                     + " not deleted");

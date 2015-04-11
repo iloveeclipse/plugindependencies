@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestPlugin {
+public class TestPlugin extends BaseTest{
 
     Plugin plugin;
 
@@ -41,9 +42,11 @@ public class TestPlugin {
         exportedPackages = "org.eclipse.core.internal.adapter;x-internal:=true,org.eclipse.core.internal.registry;x-friends:=\"org.eclipse.core.runtime\",org.eclipse.core.internal.registry.osgi;x-friends:=\"org.eclipse.core.runtime\",org.eclipse.core.internal.registry.spi;x-internal:=true,org.eclipse.core.runtime;registry=split;version=\"3.4.0\";mandatory:=registry,org.eclipse.core.runtime.dynamichelpers;version=\"3.4.0\",org.eclipse.core.runtime.spi;version=\"3.4.0\"";
     }
 
+    @Override
     @After
-    public void undoMethod() throws Exception {
+    public void tearDown() throws Exception {
         plugin = null;
+        super.tearDown();
     }
 
     @Test

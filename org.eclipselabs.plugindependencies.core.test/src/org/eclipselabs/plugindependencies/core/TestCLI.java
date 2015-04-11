@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,7 @@ import org.junit.Test;
  * @author obroesam
  *
  */
-public class TestCLI {
+public class TestCLI extends BaseTest {
     static PrintStream console;
 
     File tempDir;
@@ -49,6 +50,7 @@ public class TestCLI {
         System.setSecurityManager(new SecurityMan());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (!removeDirectory(tempDir)) {
@@ -56,6 +58,7 @@ public class TestCLI {
         }
         System.setSecurityManager(null);
         System.setOut(console);
+        super.tearDown();
     }
 
     @Test

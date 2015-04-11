@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestDepResSearchMethodFeature {
+public class TestDepResSearchMethodFeature  extends BaseTest {
     static Set<Package> packageSet;
 
     static Set<Plugin> pluginSet;

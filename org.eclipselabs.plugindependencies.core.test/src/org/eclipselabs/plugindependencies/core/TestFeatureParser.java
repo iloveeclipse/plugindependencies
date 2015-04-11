@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +32,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class TestFeatureParser {
+public class TestFeatureParser  extends BaseTest {
     static String dirPath;
 
     static Document orgEclipseCdt;
@@ -77,11 +80,13 @@ public class TestFeatureParser {
         compareFeatureSet = null;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         featureSet = null;
         entry = null;
         entry2 = null;
+        super.tearDown();
     }
 
     @Test

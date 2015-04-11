@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +30,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestPluginParser {
+public class TestPluginParser  extends BaseTest {
     Set<Plugin> pluginSet;
 
     Set<Package> packageSet;
@@ -211,10 +215,12 @@ public class TestPluginParser {
         plugin6 = null;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         pluginSet = null;
         packageSet = null;
+        super.tearDown();
     }
 
     @Test

@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestDepResIsRightVersion {
+public class TestDepResIsRightVersion  extends BaseTest {
     static String unimportant;
 
     static String version1;
