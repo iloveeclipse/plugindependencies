@@ -429,10 +429,18 @@ public class Plugin extends OSGIElement {
 
     @Override
     public String toString() {
-        if(!isFragment) {
-            return super.toString();
+        boolean resolved = isRecursiveResolved();
+        String rs;
+        if(resolved){
+            rs = " resolved";
+        } else {
+            rs = " unresolved";
         }
-        return "<Fragment>" + super.toString();
+
+        if(!isFragment) {
+            return super.toString() + rs;
+        }
+        return "<Fragment>" + super.toString() + rs;
     }
 
 }
