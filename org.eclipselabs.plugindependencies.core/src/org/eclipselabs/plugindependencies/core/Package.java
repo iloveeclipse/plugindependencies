@@ -35,7 +35,7 @@ public class Package extends NamedElement {
 
     public String getInformationLine() {
         String sep = getVersion().isEmpty()? "" : " ";
-        return "Package: " + getName() + sep + getVersion() + "\n" + printExportedBy(1);
+        return "package: " + getName() + sep + getVersion() + "\n" + printExportedBy(1);
     }
 
     public Set<Plugin> getExportedBy() {
@@ -71,14 +71,14 @@ public class Package extends NamedElement {
      */
     public String printExportedBy(int indentation) {
         StringBuilder out = new StringBuilder();
-        out.append("\t\tExported By:\n");
+        out.append("\t\texported by:\n");
         if (exportedBy.size() == 0) {
             out.append("\t\tJRE System Library");
             return out.toString();
         }
         for (Plugin plugin : exportedBy) {
             out.append("\t\t");
-            out.append(plugin.isFragment() ? "Fragment: " : "Plugin: ");
+            out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
             out.append(plugin.getInformationLine() + "\n");
         }
         return out.toString();
@@ -96,11 +96,11 @@ public class Package extends NamedElement {
         if (importedBy.size() == 0) {
             return out.toString();
         }
-        out.append("Imported By:\n");
+        out.append("imported by:\n");
         for (Plugin plugin : importedBy) {
             out.append("\t");
             out.append(plugin.isOptional(this) ? "*optional* for " : "");
-            out.append(plugin.isFragment() ? "Fragment: " : "Plugin: ");
+            out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
             out.append(plugin.getInformationLine() + "\n");
         }
         return out.toString();

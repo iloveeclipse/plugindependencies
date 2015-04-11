@@ -82,7 +82,7 @@ public abstract class OSGIElement extends NamedElement {
         int setSize = elements.size();
 
         if (setSize > 1) {
-            logEntry.append("Warning: More than one " + type + " found for ");
+            logEntry.append("Warning: more than one " + type + " found for ");
             logEntry.append(id + " " + vers + optional + "\n");
             for (OSGIElement element : elements) {
                 logEntry.append("\t" + element.getInformationLine() + "\n");

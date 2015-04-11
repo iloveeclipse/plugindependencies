@@ -73,7 +73,7 @@ public class DependencyResolver {
         Set<Feature> features;
         features = searchInFeatureSet(requiredFeature);
         if (features.size() != 1) {
-            feature.writeErrorLog(requiredFeature, features, "Feature");
+            feature.writeErrorLog(requiredFeature, features, "feature");
         }
         feature.addIncludedFeatures(features);
     }
@@ -90,7 +90,7 @@ public class DependencyResolver {
         }
 
         if (setSize != 1) {
-            elementRequiresPlugin.writeErrorLog(requiredPlugin, plugins, "Plugin");
+            elementRequiresPlugin.writeErrorLog(requiredPlugin, plugins, "plugin");
         }
 
         if (highVersionPlugin != null) {
@@ -155,7 +155,7 @@ public class DependencyResolver {
             fragmentHost.addFragments(fragment);
         }
         if (setSize != 1) {
-            fragment.writeErrorLog(entry, resultSet, "Fragment-Host");
+            fragment.writeErrorLog(entry, resultSet, "fragment host");
         }
     }
 

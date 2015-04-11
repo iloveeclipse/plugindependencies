@@ -141,7 +141,7 @@ public class TestPlugin extends BaseTest {
     @Test
     public void testSetMoreThanOneFragmentHost() {
         plugin.setFragmentHost("org.frag.host1,org.frag.host2");
-        assertEquals("Error: Fragment has more than one Host", plugin.getLog().get(0));
+        assertEquals("Error: fragment has more than one host", plugin.getLog().get(0));
     }
 
     @Test

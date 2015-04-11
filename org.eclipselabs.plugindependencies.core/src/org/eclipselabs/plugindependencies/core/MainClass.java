@@ -30,7 +30,7 @@ public class MainClass {
         for (OSGIElement element : elements) {
             List<String> log = element.getLog();
             if (!log.isEmpty() && (log.toString().contains("Error") || showWarnings)) {
-                ret.append(element instanceof Plugin ? "Plugin: " : "Feature: ");
+                ret.append(element instanceof Plugin ? "plugin: " : "feature: ");
                 ret.append(element.getInformationLine() + "\n");
                 ret.append(printLog(element, showWarnings));
                 ret.append(backtrace(element, 0));
@@ -86,7 +86,7 @@ public class MainClass {
         Set<Feature> containedIn = element.getIncludedInFeatures();
         StringBuilder ret = new StringBuilder();
         if (!containedIn.isEmpty()) {
-            ret.append(indent + "Contained in Feature:\n");
+            ret.append(indent + "contained in feature:\n");
         }
         for (Feature feat : containedIn) {
             ret.append(indent + "\t");

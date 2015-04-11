@@ -11,7 +11,16 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.MainClass.*;
+import static org.eclipselabs.plugindependencies.core.MainClass.featureSet;
+import static org.eclipselabs.plugindependencies.core.MainClass.packageSet;
+import static org.eclipselabs.plugindependencies.core.MainClass.pluginSet;
+import static org.eclipselabs.plugindependencies.core.MainClass.printUnresolvedDependencies;
+import static org.eclipselabs.plugindependencies.core.MainClass.readInEclipseFolder;
+import static org.eclipselabs.plugindependencies.core.MainClass.resolveDependencies;
+import static org.eclipselabs.plugindependencies.core.MainClass.searchFeature;
+import static org.eclipselabs.plugindependencies.core.MainClass.searchPackage;
+import static org.eclipselabs.plugindependencies.core.MainClass.searchPlugin;
+import static org.eclipselabs.plugindependencies.core.MainClass.setJavaHome;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -405,7 +414,7 @@ public class CommandLineInterpreter {
         ManifestEntry searchedPlugin = new ManifestEntry(pluginName, "");
         Set<Plugin> dependOn = searchPlugin(pluginSet, searchedPlugin);
         for (Plugin plugin : dependOn) {
-            Logging.writeStandardOut("Plugin: " + plugin.getInformationLine());
+            Logging.writeStandardOut("plugin: " + plugin.getInformationLine());
             Logging.writeStandardOut(plugin.printRequiringThis());
         }
     }
@@ -455,9 +464,9 @@ public class CommandLineInterpreter {
             }
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
-                errorLog.append("Feature error log:\n");
+                errorLog.append("feature error log:\n");
                 errorLog.append(printUnresolvedDependencies(featureSet, true));
-                errorLog.append("Plugin error log:\n");
+                errorLog.append("plugin error log:\n");
                 errorLog.append(printUnresolvedDependencies(pluginSet, true));
                 toFileOut.write(errorLog.toString());
             }
@@ -536,9 +545,9 @@ public class CommandLineInterpreter {
 
         for (Plugin plugin : foundPlugins) {
             StringBuilder out = new StringBuilder();
-            out.append(plugin.isFragment() ? "Fragment: " : "Plugin: ");
+            out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
             out.append(plugin.getName() + " " + plugin.getVersion() + "\n");
-            out.append("Required Plugins:\n");
+            out.append("required plugins:\n");
             for (ManifestEntry requiredPlugin : plugin.getRequiredPlugins()) {
                 String sep = requiredPlugin.getVersion().isEmpty()? "" : " ";
                 out.append("\t" + requiredPlugin.getName() + sep + requiredPlugin.getVersion());
@@ -553,7 +562,7 @@ public class CommandLineInterpreter {
                     }
                 }
             }
-            out.append("Required Packages:\n");
+            out.append("required packages:\n");
             for (ManifestEntry requiredPackage : plugin.getRequiredPackages()) {
                 String sep = requiredPackage.getVersion().isEmpty()? "" : " ";
                 out.append("\t" + requiredPackage.getName() + sep + requiredPackage.getVersion());
@@ -567,9 +576,9 @@ public class CommandLineInterpreter {
                 for (Package resolvedPackage : plugin.getImportedPackages()) {
                     if (requiredPackage.isMatching(resolvedPackage)) {
                         String sep2 = resolvedPackage.getVersion().isEmpty()? "" : " ";
-                        out.append("\t->Package: " + resolvedPackage.getName() + sep2
+                        out.append("\t->package: " + resolvedPackage.getName() + sep2
                                 + resolvedPackage.getVersion() + "\n");
-                        out.append("\t\tExported By:\n");
+                        out.append("\t\texported by:\n");
                         Set<Plugin> exportedBy = resolvedPackage.getExportedBy();
                         if (exportedBy.size() == 0) {
                             out.append("\t\tJRE System Library");
@@ -577,7 +586,7 @@ public class CommandLineInterpreter {
                         } else {
                             for (Plugin plug : exportedBy) {
                                 out.append("\t\t");
-                                out.append(plug.isFragment() ? "Fragment: " : "Plugin: ");
+                                out.append(plug.isFragment() ? "fragment: " : "plugin: ");
                                 out.append(plug.getName() + " " + plug.getVersion()
                                         + "\n\n");
                             }
@@ -585,11 +594,11 @@ public class CommandLineInterpreter {
                     }
                 }
             }
-            out.append("Included in Feature:\n");
+            out.append("included in feature:\n");
             for (Feature feature : plugin.getIncludedInFeatures()) {
                 out.append("\t" + feature.getName() + " " + feature.getVersion() + "\n");
             }
-            out.append("Required by Plugins:\n");
+            out.append("required by plugins:\n");
             for (Plugin neededBy : plugin.getRequiredBy()) {
                 out.append("\t");
                 if (neededBy.isOptional(plugin)) {
@@ -597,23 +606,23 @@ public class CommandLineInterpreter {
                 }
                 out.append(neededBy.getName() + " " + neededBy.getVersion() + "\n");
             }
-            out.append("Exported Packages:\n");
+            out.append("exported packages:\n");
             for (Package exportedPackage : plugin.getExportedPackages()) {
                 String sep = exportedPackage.getVersion().isEmpty()? "" : " ";
                 out.append("\t" + exportedPackage.getName() + sep
                         + exportedPackage.getVersion());
                 if (exportedPackage.getReexportedBy().contains(plugin)) {
-                    out.append(" *Reexport*");
+                    out.append(" *reexport*");
                 }
                 out.append("\n");
             }
             if (plugin.isFragment()) {
-                out.append("Fragment-Host:\n");
+                out.append("fragment host:\n");
                 Plugin fragmentHost = plugin.getHost();
                 out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
                         + "\n");
             } else {
-                out.append("Fragments:\n");
+                out.append("fragments:\n");
                 for (Plugin fragment : plugin.getFragments()) {
                     out.append("\t" + fragment.getName() + " " + fragment.getVersion()
                             + "\n");
@@ -623,19 +632,19 @@ public class CommandLineInterpreter {
         }
         for (Feature feature : foundFeatures) {
             StringBuilder out = new StringBuilder();
-            out.append("Feature: " + feature.getName() + " " + feature.getVersion()
+            out.append("feature: " + feature.getName() + " " + feature.getVersion()
                     + "\n");
-            out.append("Included Features:\n");
+            out.append("included features:\n");
             for (Feature included : feature.getIncludedFeatures()) {
                 out.append("\t" + included.getName() + " " + included.getVersion() + "\n");
             }
-            out.append("Included Plugins:\n");
+            out.append("included plugins:\n");
             for (Plugin included : feature.getResolvedPlugins()) {
                 out.append("\t");
-                out.append(included.isFragment() ? "Fragment: " : "Plugin: ");
+                out.append(included.isFragment() ? "fragment: " : "plugin: ");
                 out.append(included.getName() + " " + included.getVersion() + "\n");
             }
-            out.append("Included in Features:\n");
+            out.append("included in features:\n");
             for (Feature includedIn : feature.getIncludedInFeatures()) {
                 out.append("\t" + includedIn.getName() + " " + includedIn.getVersion()
                         + "\n");
@@ -677,15 +686,15 @@ public class CommandLineInterpreter {
         Collections.sort(features, comp);
         Collections.sort(fragments, comp);
 
-        out.append("Features:\n");
+        out.append("features:\n");
         for (Feature feature : features) {
             out.append("\t" + feature.getInformationLine() + "\n");
         }
-        out.append("Plugins:\n");
+        out.append("plugins:\n");
         for (Plugin plugin : plugins) {
             out.append("\t" + plugin.getInformationLine() + "\n");
         }
-        out.append("Fragments:\n");
+        out.append("fragments:\n");
         for (Plugin fragment : fragments) {
             out.append("\t" + fragment.getInformationLine() + "\n");
         }

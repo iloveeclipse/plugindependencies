@@ -28,6 +28,11 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestDepResResolving  extends BaseTest {
+    /**
+     *
+     */
+    private static final String HOME = System.getProperty("user.dir");
+
     Feature featureLeft;
 
     Feature featureRight;
@@ -236,9 +241,9 @@ public class TestDepResResolving  extends BaseTest {
         // plugin1
         forCompare = getPlugin("org.eclipse.plugin1", pluginSet);
 
-        compareLog.add("Error: Fragment-Host not found: host.not.found 2.0.0");
-        compareLog.add("Error: Plugin not found: plugin.not.found.test 1.1.1");
-        assertEquals(compareLog, forCompare.getLog());
+        compareLog.add("Error: fragment host not found: host.not.found 2.0.0");
+        compareLog.add("Error: plugin not found: plugin.not.found.test 1.1.1");
+        assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
 
@@ -319,16 +324,16 @@ public class TestDepResResolving  extends BaseTest {
 
         compareLog.clear();
         compareLog
-                .add("Warning: More than one Package found for org.adv.core  *optional*\n"
-                        + "\tPackage: org.adv.core\n"
-                        + "\t\tExported By:\n"
-                        + "\t\tPlugin: org.eclipse.adv.core 4.0.1.v93_k "
-                        + System.getProperty("user.dir")
+                .add("Warning: more than one package found for org.adv.core  *optional*\n"
+                        + "\tpackage: org.adv.core\n"
+                        + "\t\texported by:\n"
+                        + "\t\tplugin: org.eclipse.adv.core 4.0.1.v93_k "
+                        + HOME
                         + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv.core\n"
-                        + "\tPackage: org.adv.core 3.2.1\n"
-                        + "\t\tExported By:\n"
-                        + "\t\tFragment: org.eclipse.plugin1 2.0.0.201306111332 "
-                        + System.getProperty("user.dir")
+                        + "\tpackage: org.adv.core 3.2.1\n"
+                        + "\t\texported by:\n"
+                        + "\t\tfragment: org.eclipse.plugin1 2.0.0.201306111332 "
+                        + HOME
                         + "/testdata_dependencies/eclipse/plugins/org.eclipse.plugin1\n");
 
         assertEquals(compareLog.toString(), forCompare.getLog().toString());
@@ -372,15 +377,15 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin2);
         assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
-        String output = "Is Required By:\n"
-                + "\tPlugin: org.company.corePlugin 3.2.0.v2014 "
-                + System.getProperty("user.dir")
+        String output = "is required by:\n"
+                + "\tplugin: org.company.corePlugin 3.2.0.v2014 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n"
-                + "\tPlugin: org.company.workcenter 6.3.1 "
-                + System.getProperty("user.dir")
+                + "\tplugin: org.company.workcenter 6.3.1 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.workcenter\n"
-                + "\tFragment: org.eclipse.adv 1.2.3 "
-                + System.getProperty("user.dir")
+                + "\tfragment: org.eclipse.adv 1.2.3 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
         assertEquals(output, forCompare.printRequiringThis());
 
@@ -402,12 +407,12 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin2);
         assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
-        String output2 = "Is Required By:\n"
-                + "\tPlugin: org.company.corePlugin 3.2.0.v2014 "
-                + System.getProperty("user.dir")
+        String output2 = "is required by:\n"
+                + "\tplugin: org.company.corePlugin 3.2.0.v2014 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n"
-                + "\t*optional* for Fragment: org.eclipse.adv 1.2.3 "
-                + System.getProperty("user.dir")
+                + "\t*optional* for fragment: org.eclipse.adv 1.2.3 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
         assertEquals(output2, forCompare.printRequiringThis());
 
@@ -442,17 +447,17 @@ public class TestDepResResolving  extends BaseTest {
 
         Package pack = new Package("com.package.test", "4.11.0");
 
-        exportedBy = "\t\tExported By:\n\t\tJRE System Library";
+        exportedBy = "\t\texported by:\n\t\tJRE System Library";
         assertEquals(exportedBy, pack.printExportedBy(0));
 
         assertEquals("", pack.printImportedBy(0));
 
         plugin = getPlugin("org.company.workcenter", pluginSet);
-        exportedBy = "\t\tExported By:\n" + "\t\tPlugin: org.company.workcenter 6.3.1 "
-                + System.getProperty("user.dir")
+        exportedBy = "\t\texported by:\n\t\tplugin: org.company.workcenter 6.3.1 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.workcenter\n";
-        importedBy = "Imported By:\n" + "\tPlugin: org.eclipse.equinox.core 1.0.0 "
-                + System.getProperty("user.dir")
+        importedBy = "imported by:\n\tplugin: org.eclipse.equinox.core 1.0.0 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.eclipse.equinox.core\n";
         for (Package pack2 : plugin.getExportedPackages()) {
             assertEquals(exportedBy, pack2.printExportedBy(0));
@@ -460,9 +465,9 @@ public class TestDepResResolving  extends BaseTest {
         }
 
         plugin = getPlugin("org.company.corePlugin", pluginSet);
-        importedBy = "Imported By:\n"
-                + "\t*optional* for Plugin: org.company.corePlugin 3.2.0.v2014 "
-                + System.getProperty("user.dir")
+        importedBy = "imported by:\n"
+                + "\t*optional* for plugin: org.company.corePlugin 3.2.0.v2014 "
+                + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n";
         for (Package pack3 : plugin.getImportedPackages()) {
             assertEquals(importedBy, pack3.printImportedBy(0));

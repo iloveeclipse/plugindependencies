@@ -1,5 +1,5 @@
-Plugin: org.eclipse.core.runtime 3.7.0.v20110110
-Required Plugins:
+plugin: org.eclipse.core.runtime 3.7.0.v20110110
+required plugins:
 	org.eclipse.osgi [3.7.0,4.0.0)
 	-> org.eclipse.osgi 3.7.2.v20120110-1415
 	org.eclipse.equinox.common [3.5.0,4.0.0)
@@ -16,14 +16,14 @@ Required Plugins:
 	-> org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
 	org.eclipse.equinox.app 1.0.0
 	-> org.eclipse.equinox.app 1.3.100.v20110321
-Required Packages:
+required packages:
 	org.eclipse.core.internal.runtime.auth *dynamicImport*
-	->Package: org.eclipse.core.internal.runtime.auth
-		Exported By:
-		Plugin: org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
+	->package: org.eclipse.core.internal.runtime.auth
+		exported by:
+		plugin: org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
 
-Included in Feature:
-Required by Plugins:
+included in feature:
+required by plugins:
 	org.eclipse.ant.core 3.2.302.v20120110-1739
 	org.eclipse.core.expressions 3.4.300.v20110228
 	org.eclipse.core.resources 3.7.101.v20120125-1505
@@ -34,24 +34,24 @@ Required by Plugins:
 	com.company.itee.core 99.0.0
 	com.company.itee.maint.common 99.0.0
 	com.company.itee.svc.unoaccess 99.0.0
-Exported Packages:
+exported packages:
 	org.eclipse.core.internal.preferences.legacy
 	org.eclipse.core.internal.runtime
 	org.eclipse.core.runtime 3.4.0
-Fragments:
+fragments:
 
-Feature: org.eclipse.cdt 8.0.2.201202111925
-Included Features:
+feature: org.eclipse.cdt 8.0.2.201202111925
+included features:
 	org.eclipse.cdt.gdb 7.0.0.201202111925
-Included Plugins:
-Included in Features:
+included plugins:
+included in features:
 
-Fragment: org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
-Required Plugins:
-Required Packages:
-Included in Feature:
-Required by Plugins:
-Exported Packages:
+fragment: org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
+required plugins:
+required packages:
+included in feature:
+required by plugins:
+exported packages:
 	org.eclipse.swt.internal.accessibility.gtk
 	org.eclipse.swt.internal.cairo
 	org.eclipse.swt.internal.cde
@@ -59,21 +59,21 @@ Exported Packages:
 	org.eclipse.swt.internal.gtk
 	org.eclipse.swt.internal.mozilla
 	org.eclipse.swt.internal.opengl.glx
-Fragment-Host:
+fragment host:
 org.eclipse.swt 3.7.2.v3740f
 
-Plugin: org.eclipse.swt 3.7.2.v3740f
-Required Plugins:
-Required Packages:
+plugin: org.eclipse.swt 3.7.2.v3740f
+required plugins:
+required packages:
 	org.eclipse.swt.accessibility2 *dynamicImport*
 	org.mozilla.xpcom *dynamicImport*
-Included in Feature:
-Required by Plugins:
+included in feature:
+required by plugins:
 	org.eclipse.jface.databinding 1.5.0.I20100907-0800
 	org.eclipse.jface 3.7.0.v20110928-1505
 	org.eclipse.ui.workbench 3.7.1.v20120104-1859
 	org.eclipse.ui 3.7.0.v20110928-1505
-Exported Packages:
+exported packages:
 	org.eclipse.swt
 	org.eclipse.swt.accessibility
 	org.eclipse.swt.awt
@@ -90,12 +90,12 @@ Exported Packages:
 	org.eclipse.swt.internal
 	org.eclipse.swt.internal.image
 	org.eclipse.swt.internal.theme
-Fragments:
+fragments:
 	org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
 
-Feature: org.eclipse.cdt.gdb 7.0.0.201202111925
-Included Features:
-Included Plugins:
-Included in Features:
+feature: org.eclipse.cdt.gdb 7.0.0.201202111925
+included features:
+included plugins:
+included in features:
 	org.eclipse.cdt 8.0.2.201202111925
 

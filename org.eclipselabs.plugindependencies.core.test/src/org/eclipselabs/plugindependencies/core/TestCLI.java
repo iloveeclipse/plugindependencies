@@ -75,7 +75,7 @@ public class TestCLI extends BaseTest {
         File expectedOutput = new File("outputs/console_unres_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_unres");
         if (!outputFile.createNewFile()) {
-            fail("Output-file can not be created in " + tempDir.getCanonicalPath());
+            fail("Output file can not be created in " + tempDir.getCanonicalPath());
         }
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
@@ -101,7 +101,7 @@ public class TestCLI extends BaseTest {
         File expectedOutput = new File("outputs/console_help_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_help");
         if (!outputFile.createNewFile()) {
-            fail("Output-file can not be created in " + tempDir.getCanonicalPath());
+            fail("Output file can not be created in " + tempDir.getCanonicalPath());
         }
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));

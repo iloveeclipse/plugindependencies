@@ -85,6 +85,18 @@ public abstract class NamedElement {
         }
     }
 
+    protected void addErrorToLog(String note) {
+        if (note != null && !note.isEmpty() && !log.contains(note)) {
+            log.add(note);
+        }
+    }
+
+    protected void addWarningToLog(String note) {
+        if (note != null && !note.isEmpty() && !log.contains(note)) {
+            log.add(note);
+        }
+    }
+
     /**
      * @return never null
      */

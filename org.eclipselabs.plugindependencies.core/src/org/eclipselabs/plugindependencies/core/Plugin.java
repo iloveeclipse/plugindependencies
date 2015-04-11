@@ -105,7 +105,7 @@ public class Plugin extends OSGIElement {
         if (entries.size() < 2) {
             this.fragmentHostEntry = entries.get(0);
         } else {
-            addToLog("Error: Fragment has more than one Host");
+            addToLog("Error: fragment has more than one host");
         }
     }
 
@@ -282,29 +282,29 @@ public class Plugin extends OSGIElement {
     }
 
     /**
-     * Returns a string with the Plugins that require this Plugin. If this Plugin is
-     * optional for the other Plugin "*optional* for " will be printed before the Plugin.
+     * Returns a string with the plugins that require this plugin. If this plugin is
+     * optional for the other plugin "*optional* for " will be printed before the plugin.
      * <p>
-     * String has the following Form:
+     * String has the following form:
      * <p>
-     * "Is Required By: <br>
-     * Plugin: SymbolicName Version Path <br>
-     * Plugin: *optional* for SymbolicName Version Path"
+     * "is required by: <br>
+     * plugin: symbolicName version path <br>
+     * plugin: *optional* for symbolicName version path"
      *
-     * @return String with information about Plugins needing this
+     * @return string with information about plugins needing this
      */
     public String printRequiringThis() {
         StringBuilder out = new StringBuilder();
         if (requiredBy.size() == 0) {
             return out.toString();
         }
-        out.append("Is Required By:\n");
+        out.append("is required by:\n");
         for (Plugin plugin : this.requiredBy) {
             out.append("\t");
             if (plugin.isOptional(this)) {
                 out.append("*optional* for ");
             }
-            out.append(plugin.isFragment ? "Fragment: " : "Plugin: ");
+            out.append(plugin.isFragment ? "fragment: " : "plugin: ");
             out.append(plugin.getInformationLine() + "\n");
         }
         return out.toString();
@@ -319,7 +319,7 @@ public class Plugin extends OSGIElement {
                 : "";
         int packagesSize = packages.size();
         if (packagesSize > 1) {
-            logEntry.append("Warning: More than one Package found for ");
+            logEntry.append("Warning: more than one package found for ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport + "\n");
             for (Package pack : packages) {
                 logEntry.append("\t" + pack.getInformationLine());
@@ -327,7 +327,7 @@ public class Plugin extends OSGIElement {
         }
         if (packagesSize == 0) {
             String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? "Error: " : "Warning: ";
-            logEntry.append(errortype + "Package not found: ");
+            logEntry.append(errortype + "package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
         }
         addToLog(logEntry.toString());
@@ -461,7 +461,7 @@ public class Plugin extends OSGIElement {
         if(!isFragment) {
             return super.toString() + rs;
         }
-        return "<Fragment>" + super.toString() + rs;
+        return "<fragment>" + super.toString() + rs;
     }
 
 }
