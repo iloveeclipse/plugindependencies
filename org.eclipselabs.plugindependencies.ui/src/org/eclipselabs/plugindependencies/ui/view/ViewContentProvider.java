@@ -221,7 +221,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 monitor.subTask("Resolving dependencies");
 
                 parser.getState().resolveDependencies();
-                parser.getState().computeResolvedPlugins();
+                parser.getState().computeAllDependenciesRecursive();
                 state = parser.getState();
                 monitor.internalWorked(1);
 

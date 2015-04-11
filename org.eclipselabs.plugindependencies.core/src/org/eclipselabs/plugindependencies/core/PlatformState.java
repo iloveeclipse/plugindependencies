@@ -55,13 +55,13 @@ public class PlatformState {
         javaHome = newHome;
     }
 
-    public void computeResolvedPlugins() {
+    public void computeAllDependenciesRecursive() {
         for (Plugin plugin : pluginSet) {
-            computeResolvedPluginsRecursive(plugin);
+            computeAllDependenciesRecursive(plugin);
         }
     }
 
-    public static Set<Plugin> computeResolvedPluginsRecursive(final Plugin root) {
+    static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
         if(root.isRecursiveResolved()){
             return root.getRecursiveResolvedPlugins();
         }
