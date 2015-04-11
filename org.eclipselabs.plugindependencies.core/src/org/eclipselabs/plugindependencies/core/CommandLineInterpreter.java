@@ -33,7 +33,37 @@ import org.xml.sax.SAXException;
  */
 public class CommandLineInterpreter {
 
-    public static int interpreteInput(String[] args) {
+    private static final class NameAndVersionComparator implements Comparator<OSGIElement> {
+        @Override
+        public int compare(OSGIElement o1, OSGIElement o2) {
+            int diff = o1.getName().compareTo(o2.getName());
+            if (diff != 0) {
+                return diff;
+            }
+            Version v1 = new Version(o1.getVersion());
+            Version v2 = new Version(o2.getVersion());
+            return v1.compareTo(v2);
+        }
+    }
+
+    private final PlatformState state;
+
+    /**
+     *
+     */
+    public CommandLineInterpreter() {
+        super();
+        state = new PlatformState();
+    }
+
+    /**
+     * @return Returns the state.
+     */
+    public PlatformState getState() {
+        return state;
+    }
+
+    public int interpreteInput(String[] args) {
         Options option = null;
         int numOfArgs = args.length;
         if(numOfArgs == 0){
@@ -49,7 +79,7 @@ public class CommandLineInterpreter {
                     printHelpPage();
                 } else {
                     if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
-                        if (option.handle(null, "") == -1) {
+                        if (option.handle(state, null, "") == -1) {
                             return -1;
                         }
                     } else {
@@ -57,7 +87,7 @@ public class CommandLineInterpreter {
                         while (j + 1 < numOfArgs && !args[j + 1].startsWith("-")) {
                             argList.add(args[++j]);
                         }
-                        if (option.handle(null, argList.toArray(new String[argList.size()])) == -1) {
+                        if (option.handle(state, this, argList.toArray(new String[argList.size()])) == -1) {
                             return -1;
                         }
                     }
@@ -67,33 +97,33 @@ public class CommandLineInterpreter {
         return 0;
     }
 
-    static void printProvidingPackage(String packageName) {
+    void printProvidingPackage(String packageName) {
         ManifestEntry searchedPackage = new ManifestEntry(packageName, "");
-        Set<Package> provided = searchPackage(PlatformState.getPackageSet(), searchedPackage);
+        Set<Package> provided = searchPackage(state.getPackageSet(), searchedPackage);
         for (Package pack : provided) {
             Logging.writeStandardOut(pack.getInformationLine());
         }
     }
 
-    static void printDependingOnPlugin(String pluginName) {
+    void printDependingOnPlugin(String pluginName) {
         ManifestEntry searchedPlugin = new ManifestEntry(pluginName, "");
-        Set<Plugin> dependOn = searchPlugin(PlatformState.getPluginSet(), searchedPlugin);
+        Set<Plugin> dependOn = searchPlugin(state.getPluginSet(), searchedPlugin);
         for (Plugin plugin : dependOn) {
             Logging.writeStandardOut("plugin: " + plugin.getInformationLine());
             Logging.writeStandardOut(plugin.printRequiringThis());
         }
     }
 
-    static void printDependingOnPackage(String packageName) {
+    void printDependingOnPackage(String packageName) {
         ManifestEntry searchedPack = new ManifestEntry(packageName, "");
-        Set<Package> provid = searchPackage(PlatformState.getPackageSet(), searchedPack);
+        Set<Package> provid = searchPackage(state.getPackageSet(), searchedPack);
         for (Package pack : provid) {
             Logging.writeStandardOut(pack.getInformationLine());
             Logging.writeStandardOut(pack.printImportedBy(1));
         }
     }
 
-    static int generateRequirementsFile(String path, Set<Plugin> plugins) {
+    int generateRequirementsFile(String path, Set<Plugin> plugins) {
         try {
             if (OutputCreator.generateRequirementsfile(path, plugins) == -1) {
                 return -1;
@@ -115,7 +145,7 @@ public class CommandLineInterpreter {
         }
     }
 
-    static int writeErrorLogFile(String path) {
+    int writeErrorLogFile(String path) {
         StringBuilder errorLog = new StringBuilder();
         File out = new File(path);
         try {
@@ -130,9 +160,9 @@ public class CommandLineInterpreter {
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
                 errorLog.append("feature error log:\n");
-                errorLog.append(printUnresolvedDependencies(PlatformState.getFeatureSet(), true));
+                errorLog.append(printUnresolvedDependencies(state.getFeatureSet(), true));
                 errorLog.append("plugin error log:\n");
-                errorLog.append(printUnresolvedDependencies(PlatformState.getPluginSet(), true));
+                errorLog.append(printUnresolvedDependencies(state.getPluginSet(), true));
                 toFileOut.write(errorLog.toString());
             }
             return 0;
@@ -142,8 +172,8 @@ public class CommandLineInterpreter {
         }
     }
 
-    static int generateBuildFile(String pluginName) {
-        Set<Plugin> resultSet = searchPlugin(PlatformState.getPluginSet(), new ManifestEntry(pluginName, ""));
+    int generateBuildFile(String pluginName) {
+        Set<Plugin> resultSet = searchPlugin(state.getPluginSet(), new ManifestEntry(pluginName, ""));
         if (!resultSet.isEmpty()) {
             Plugin plugin = resultSet.iterator().next();
             int index = plugin.getPath().lastIndexOf('/');
@@ -163,16 +193,16 @@ public class CommandLineInterpreter {
         return -1;
     }
 
-    static int generateAllBuildFiles(String sourceDir) {
+    int generateAllBuildFiles(String sourceDir) {
         OutputCreator.setSourceFolder(sourceDir);
-        if(PlatformState.getPluginSet().isEmpty()){
+        if(state.getPluginSet().isEmpty()){
             Logging.getLogger().error("generation failed: no plugins found, arguments: " + sourceDir);
             return -1;
         }
-        Logging.writeStandardOut("Starting to generate classpath files, platform size: " + PlatformState.getPluginSet().size() + " plugins");
+        Logging.writeStandardOut("Starting to generate classpath files, platform size: " + state.getPluginSet().size() + " plugins");
         boolean success = true;
         int generated = 0;
-        for (Plugin plugin : PlatformState.getPluginSet()) {
+        for (Plugin plugin : state.getPluginSet()) {
             if (plugin.getPath().contains(sourceDir)) {
                 try {
                     if (OutputCreator.generateBuildFile(plugin) == -1) {
@@ -194,7 +224,7 @@ public class CommandLineInterpreter {
         return -1;
     }
 
-    static void printFocusedOSGIElement(String arg) {
+    void printFocusedOSGIElement(String arg) {
         int separatorIndex = arg.indexOf(',');
         String version = "";
         if (separatorIndex != -1) {
@@ -205,8 +235,8 @@ public class CommandLineInterpreter {
         String name = arg.substring(0, separatorIndex);
 
         ManifestEntry searchedElement = new ManifestEntry(name, version);
-        Set<Plugin> foundPlugins = searchPlugin(PlatformState.getPluginSet(), searchedElement);
-        Set<Feature> foundFeatures = searchFeature(PlatformState.getFeatureSet(), searchedElement);
+        Set<Plugin> foundPlugins = searchPlugin(state.getPluginSet(), searchedElement);
+        Set<Feature> foundFeatures = searchFeature(state.getFeatureSet(), searchedElement);
 
         for (Plugin plugin : foundPlugins) {
             StringBuilder out = new StringBuilder();
@@ -319,33 +349,22 @@ public class CommandLineInterpreter {
 
     }
 
-    static void printAllPluginsAndFeatures() {
+    void printAllPluginsAndFeatures() {
         StringBuilder out = new StringBuilder();
         List<Plugin> plugins = new ArrayList<>();
         List<Feature> features = new ArrayList<>();
         List<Plugin> fragments = new ArrayList<>();
 
-        for (Plugin plugin : PlatformState.getPluginSet()) {
+        for (Plugin plugin : state.getPluginSet()) {
             if (plugin.isFragment()) {
                 fragments.add(plugin);
             } else {
                 plugins.add(plugin);
             }
         }
-        features.addAll(PlatformState.getFeatureSet());
+        features.addAll(state.getFeatureSet());
 
-        Comparator<OSGIElement> comp = new Comparator<OSGIElement>() {
-            @Override
-            public int compare(OSGIElement o1, OSGIElement o2) {
-                int diff = o1.getName().compareTo(o2.getName());
-                if (diff != 0) {
-                    return diff;
-                }
-                Version v1 = new Version(o1.getVersion());
-                Version v2 = new Version(o2.getVersion());
-                return v1.compareTo(v2);
-            }
-        };
+        Comparator<OSGIElement> comp = new NameAndVersionComparator();
 
         Collections.sort(plugins, comp);
         Collections.sort(features, comp);
@@ -443,13 +462,13 @@ public class CommandLineInterpreter {
         return ret.toString();
     }
 
-    static int readInEclipseFolder(String eclipsePath)
+    int readInEclipseFolder(String eclipsePath)
             throws IOException, SAXException, ParserConfigurationException {
         File root = new File(eclipsePath);
         File pluginsDir = new File(root, "plugins");
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
-            if (PluginParser.createPluginsAndAddToSet(pluginsDir, PlatformState.getPluginSet(), PlatformState.getPackageSet()) == -1) {
+            if (PluginParser.createPluginsAndAddToSet(pluginsDir, state.getPluginSet(), state.getPackageSet()) == -1) {
                 return -1;
             }
             hasPlugins = true;
@@ -457,7 +476,7 @@ public class CommandLineInterpreter {
         File featureDir = new File(root, "features");
         boolean hasFeatures = false;
         if (featureDir.exists()) {
-            if (FeatureParser.createFeaturesAndAddToSet(featureDir, PlatformState.getFeatureSet()) == -1) {
+            if (FeatureParser.createFeaturesAndAddToSet(featureDir, state.getFeatureSet()) == -1) {
                 return -1;
             }
             hasFeatures = true;
@@ -471,22 +490,22 @@ public class CommandLineInterpreter {
         return readInChildren(root);
     }
 
-    private static int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
-        if (PluginParser.createPluginsAndAddToSet(directory, PlatformState.getPluginSet(), PlatformState.getPackageSet()) == -1) {
+    int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
+        if (PluginParser.createPluginsAndAddToSet(directory, state.getPluginSet(), state.getPackageSet()) == -1) {
             return -1;
         }
-        if (FeatureParser.createFeaturesAndAddToSet(directory, PlatformState.getFeatureSet()) == -1) {
+        if (FeatureParser.createFeaturesAndAddToSet(directory, state.getFeatureSet()) == -1) {
             return -1;
         }
         return 0;
     }
 
-    public static int readInFeature(File directory) throws IOException,
+    public int readInFeature(File directory) throws IOException,
         SAXException, ParserConfigurationException {
-        return FeatureParser.createFeatureAndAddToSet(directory, PlatformState.getFeatureSet());
+        return FeatureParser.createFeatureAndAddToSet(directory, state.getFeatureSet());
     }
 
-    public static int readInPlugin(File directory) throws IOException {
-        return PluginParser.createPluginAndAddToSet(directory, PlatformState.getPluginSet(), PlatformState.getPackageSet());
+    public int readInPlugin(File directory) throws IOException {
+        return PluginParser.createPluginAndAddToSet(directory, state.getPluginSet(), state.getPackageSet());
     }
 }

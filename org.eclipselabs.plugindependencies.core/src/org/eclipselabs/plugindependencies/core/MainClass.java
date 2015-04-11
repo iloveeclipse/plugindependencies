@@ -15,7 +15,7 @@ package org.eclipselabs.plugindependencies.core;
 public class MainClass {
 
     public static void main(String[] args) {
-        int status = CommandLineInterpreter.interpreteInput(args);
+        int status = new CommandLineInterpreter().interpreteInput(args);
         String name = MainClass.class.getClassLoader().getClass().getName();
         if(name.contains("eclipse") || name.contains("osgi")){
             return;

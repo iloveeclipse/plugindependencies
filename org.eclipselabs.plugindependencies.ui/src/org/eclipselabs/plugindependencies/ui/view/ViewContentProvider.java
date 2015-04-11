@@ -14,7 +14,6 @@ package org.eclipselabs.plugindependencies.ui.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -35,7 +34,6 @@ import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.ui.PlatformUI;
 import org.eclipselabs.plugindependencies.core.CommandLineInterpreter;
-import org.eclipselabs.plugindependencies.core.DependencyResolver;
 import org.eclipselabs.plugindependencies.core.Feature;
 import org.eclipselabs.plugindependencies.core.Package;
 import org.eclipselabs.plugindependencies.core.PlatformState;
@@ -56,8 +54,11 @@ public class ViewContentProvider implements ITreeContentProvider {
 
     private final ResolveRule rule;
 
+    private PlatformState state;
+
     public ViewContentProvider(PluginTreeView v) {
         super();
+        state = new PlatformState();
         view = v;
         resolveJob = createResolveDependenciesJob();
         rule = new ResolveRule();
@@ -128,19 +129,19 @@ public class ViewContentProvider implements ITreeContentProvider {
         // Plugins
         TreeParent plugins = new TreeParent("Plugins", invisibleRoot);
         boolean errorsOnly = view.isShowErrorsOnly();
-        for (Plugin plugin : PlatformState.getPluginSet()) {
+        for (Plugin plugin : state.getPluginSet()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
                 plugins.addChild(new TreePlugin(plugin, plugins));
             }
         }
         // Packages
         TreeParent packages = new TreeParent("Packages", invisibleRoot);
-        for (Package pack : PlatformState.getPackageSet()) {
+        for (Package pack : state.getPackageSet()) {
             packages.addChild(new TreePackage(pack, packages));
         }
         // Features
         TreeParent features = new TreeParent("Features", invisibleRoot);
-        for (Feature feature : PlatformState.getFeatureSet()) {
+        for (Feature feature : state.getFeatureSet()) {
             features.addChild(new TreeFeature(feature, features));
         }
         if(!plugins.hasChildren() &&  !packages.hasChildren() && !features.hasChildren()) {
@@ -158,7 +159,8 @@ public class ViewContentProvider implements ITreeContentProvider {
             protected IStatus run(IProgressMonitor monitor) {
                 monitor.beginTask(getName(), 4);
                 monitor.subTask("Reading platform plugins");
-                PlatformState.cleanup();
+                state = new PlatformState();
+                CommandLineInterpreter parser = new CommandLineInterpreter();
                 TargetBundle[] bundles = view.getCurrentShownTarget().getBundles();
 
                 MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading plugins", null);
@@ -170,7 +172,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                     }
                     String pluginPath = location.getPath();
                     try {
-                        CommandLineInterpreter.readInPlugin(new File(pluginPath));
+                        parser.readInPlugin(new File(pluginPath));
                     } catch (IOException e) {
                         ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
                     }
@@ -185,7 +187,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 for (TargetFeature feature : features) {
                     String featurePath = feature.getLocation();
                     try {
-                        CommandLineInterpreter.readInFeature(new File(featurePath));
+                        parser.readInFeature(new File(featurePath));
                     } catch (IOException | SAXException | ParserConfigurationException e) {
                         ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
                     }
@@ -206,9 +208,9 @@ public class ViewContentProvider implements ITreeContentProvider {
                     try {
                         IPluginModelBase model = PluginRegistry.findModel(project);
                         if(model != null){
-                            CommandLineInterpreter.readInPlugin(location.toFile());
+                            parser.readInPlugin(location.toFile());
                         } else {
-                            CommandLineInterpreter.readInFeature(location.toFile());
+                            parser.readInFeature(location.toFile());
                         }
                     } catch (IOException | SAXException | ParserConfigurationException e) {
                         ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));
@@ -217,12 +219,10 @@ public class ViewContentProvider implements ITreeContentProvider {
                 monitor.internalWorked(1);
 
                 monitor.subTask("Resolving dependencies");
-                DependencyResolver.resolveDependencies();
-                Set<Plugin> allPlugins = PlatformState.getPluginSet();
-                for (Plugin plugin : allPlugins) {
-                    DependencyResolver.computeResolvedPluginsRecursive(plugin);
-                }
 
+                parser.getState().resolveDependencies();
+                parser.getState().computeResolvedPlugins();
+                state = parser.getState();
                 monitor.internalWorked(1);
 
                 monitor.done();

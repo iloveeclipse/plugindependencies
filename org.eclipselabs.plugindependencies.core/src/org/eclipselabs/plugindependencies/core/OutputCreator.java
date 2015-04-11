@@ -80,7 +80,7 @@ public class OutputCreator {
         List<Plugin> dependencyList = new ArrayList<>();
         List<String> dependencyPathList = new ArrayList<>();
 
-        dependencyList.addAll(DependencyResolver.computeResolvedPluginsRecursive(plugin));
+        dependencyList.addAll(PlatformState.computeResolvedPluginsRecursive(plugin));
 
         // build dependency file for given plugin should NOT contain it's fragments (recursive dep!)
         if(plugin.isHost()){
@@ -96,7 +96,7 @@ public class OutputCreator {
 
     public static int generateBuildFile(Plugin plugin) throws IOException {
         Set<Plugin> resolvedPlugins = new LinkedHashSet<>();
-        resolvedPlugins.addAll(DependencyResolver.computeResolvedPluginsRecursive(plugin));
+        resolvedPlugins.addAll(PlatformState.computeResolvedPluginsRecursive(plugin));
         return writeClassPathsToFile(plugin, resolvedPlugins);
     }
 

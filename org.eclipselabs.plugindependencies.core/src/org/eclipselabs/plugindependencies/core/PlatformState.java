@@ -8,41 +8,126 @@ package org.eclipselabs.plugindependencies.core;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Stack;
+
+import org.eclipselabs.plugindependencies.core.DependencyResolver.PluginElt;
 
 /**
  */
 public class PlatformState {
 
-    private static Set<Plugin> pluginSet = new LinkedHashSet<>();
-    private static Set<Package> packageSet = new LinkedHashSet<>();
-    private static Set<Feature> featureSet = new LinkedHashSet<>();
-    private static String javaHome;
+    private final Set<Plugin> pluginSet;
+    private final Set<Package> packageSet;
+    private final Set<Feature> featureSet;
+    private String javaHome;
 
-    public static Set<Plugin> getPluginSet(){
-        return PlatformState.pluginSet;
+    /**
+     *
+     */
+    public PlatformState() {
+        this(new LinkedHashSet<Plugin>(), new LinkedHashSet<Package>(), new LinkedHashSet<Feature>());
     }
 
-    public static Set<Package> getPackageSet(){
-        return PlatformState.packageSet;
+    public PlatformState(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet) {
+        this.pluginSet = pluginSet;
+        this.packageSet = packageSet;
+        this.featureSet = featureSet;
+        javaHome = "";
     }
 
-    public static Set<Feature> getFeatureSet(){
-        return PlatformState.featureSet;
+    public Set<Plugin> getPluginSet(){
+        return pluginSet;
     }
 
-    public static void cleanup(){
-        pluginSet = new LinkedHashSet<>();
-        packageSet = new LinkedHashSet<>();
-        featureSet = new LinkedHashSet<>();
-        PlatformState.javaHome = "";
+    public Set<Package> getPackageSet(){
+        return packageSet;
     }
 
-    static String getJavaHome() {
+    public Set<Feature> getFeatureSet(){
+        return featureSet;
+    }
+
+    String getJavaHome() {
         return javaHome;
     }
 
-    static void setJavaHome(String newHome) {
+    void setJavaHome(String newHome) {
         javaHome = newHome;
+    }
+
+    public void computeResolvedPlugins() {
+        for (Plugin plugin : pluginSet) {
+            computeResolvedPluginsRecursive(plugin);
+        }
+    }
+
+    public static Set<Plugin> computeResolvedPluginsRecursive(final Plugin root) {
+        if(root.isRecursiveResolved()){
+            return root.getRecursiveResolvedPlugins();
+        }
+        Stack<PluginElt> stack = new Stack<>();
+        stack.add(new PluginElt(null, root));
+        while (!stack.isEmpty()){
+            PluginElt current = stack.peek();
+            PluginElt next = current.next();
+
+            if(next == PluginElt.EMPTY) {
+                stack.pop();
+                // make sure we finished the iteration and replace the default empty set if no dependencies found
+                current.setResolved();
+                continue;
+            }
+
+            if(stack.contains(next)){
+                if(!next.plugin.isRecursiveResolved()){
+                    Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                    for (Plugin p : resolvedPlugins) {
+                        current.resolved(p);
+                    }
+                }
+                // avoid cyclic dependencies
+                continue;
+            }
+
+            if(root.containsRecursiveResolved(next.plugin)) {
+                Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
+                for (Plugin p : resolvedPlugins) {
+                    current.resolved(p);
+                }
+                current.resolved(next.plugin);
+            } else {
+                stack.push(next);
+            }
+        }
+        Set<Plugin> rrp = root.getRecursiveResolvedPlugins();
+        for (Plugin plugin : rrp) {
+            if(!plugin.isRecursiveResolved()){
+                if(plugin.isFragment()){
+                    plugin.setResolved();
+                }
+            }
+            if(!plugin.isRecursiveResolved()) {
+                throw new IllegalStateException("Unable to resolve: " + plugin);
+            }
+        }
+        return rrp;
+    }
+
+    public void resolveDependencies() {
+        DependencyResolver depres = new DependencyResolver(this);
+
+        for (Plugin plugin : getPluginSet()) {
+            depres.resolvePluginDependency(plugin);
+        }
+        for (Feature feature : getFeatureSet()) {
+            depres.resolveFeatureDependency(feature);
+        }
+        for (Plugin plugin : getPluginSet()) {
+            plugin.parsingDone();
+        }
+        for (Feature feature : getFeatureSet()) {
+            feature.parsingDone();
+        }
     }
 
 }

@@ -14,11 +14,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 enum Options {
+
     Providing("-providing") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                CommandLineInterpreter.printProvidingPackage(arg);
+                cli.printProvidingPackage(arg);
             }
             return 0;
         }
@@ -33,9 +34,9 @@ enum Options {
 
     UnresolvedDependenciesPlugins("-unresPlugin") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(PlatformState.getPluginSet(),
+            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(state.getPluginSet(),
                     showWarnings));
             return 0;
         }
@@ -51,9 +52,9 @@ enum Options {
 
     UnresolvedDependenciesFeatures("-unresFeature") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(PlatformState.getFeatureSet(),
+            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(state.getFeatureSet(),
                     showWarnings));
             return 0;
         }
@@ -69,9 +70,9 @@ enum Options {
 
     DependOnPlugin("-dependOnPlugin") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                CommandLineInterpreter.printDependingOnPlugin(arg);
+                cli.printDependingOnPlugin(arg);
             }
             return 0;
         }
@@ -86,9 +87,9 @@ enum Options {
 
     DependOnPackage("-dependOnPackage") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                CommandLineInterpreter.printDependingOnPackage(arg);
+                cli.printDependingOnPackage(arg);
             }
             return 0;
         }
@@ -104,9 +105,9 @@ enum Options {
 
     GenerateRequirementsFile("-generateReqFile") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                int result = CommandLineInterpreter.generateRequirementsFile(arg, PlatformState.getPluginSet());
+                int result = cli.generateRequirementsFile(arg, state.getPluginSet());
                 if(result != 0){
                     return result;
                 }
@@ -127,11 +128,11 @@ enum Options {
 
     GenerateBuildFile("-generateBuildFile") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             if(args.length > 1) {
                 OutputCreator.setTargetFolder(args[1]);
             }
-            return CommandLineInterpreter.generateBuildFile(args[0]);
+            return cli.generateBuildFile(args[0]);
         }
 
         @Override
@@ -148,11 +149,11 @@ enum Options {
 
     GenerateAllBuildFiles("-generateAllBuild") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             if(args.length > 1) {
                 OutputCreator.setTargetFolder(args[1]);
             }
-            return CommandLineInterpreter.generateAllBuildFiles(args[0]);
+            return cli.generateAllBuildFiles(args[0]);
         }
 
         @Override
@@ -169,7 +170,7 @@ enum Options {
 
     Help("-h") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             CommandLineInterpreter.printHelpPage();
             return 0;
         }
@@ -182,8 +183,8 @@ enum Options {
 
     FullLogFile("-fullLog") {
         @Override
-        int handle(PlatformState state, String... args) {
-            return CommandLineInterpreter.writeErrorLogFile(args[0]);
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
+            return cli.writeErrorLogFile(args[0]);
         }
 
         @Override
@@ -198,15 +199,15 @@ enum Options {
 
     EclipsePaths("-eclipsePaths") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             try {
                 for (String arg : args) {
-                    int result = CommandLineInterpreter.readInEclipseFolder(arg);
+                    int result = cli.readInEclipseFolder(arg);
                     if(result != 0){
                         return result;
                     }
                 }
-                DependencyResolver.resolveDependencies();
+                state.resolveDependencies();
                 return 0;
             } catch (IOException | SAXException | ParserConfigurationException e) {
                 Logging.getLogger().error("failed to read from: " + Arrays.toString(args), e);
@@ -227,8 +228,8 @@ enum Options {
 
     JavaHome("-javaHome") {
         @Override
-        int handle(PlatformState state, String... args) {
-            PlatformState.setJavaHome(args[0]);
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
+            state.setJavaHome(args[0]);
             return 0;
         }
 
@@ -243,7 +244,7 @@ enum Options {
 
     EclipseRoot("-deploymentRoot") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             try {
                 OutputCreator.setEclipseRoot(args[0]);
             } catch (IOException e) {
@@ -264,7 +265,7 @@ enum Options {
 
     BundleVersion("-bundleVersion") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             OutputCreator.setBundleVersion(args[0]);
             return 0;
         }
@@ -280,9 +281,9 @@ enum Options {
 
     Focus("-focus") {
         @Override
-        int handle(PlatformState state, String... args) {
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                CommandLineInterpreter.printFocusedOSGIElement(arg);
+                cli.printFocusedOSGIElement(arg);
             }
             return 0;
         }
@@ -299,8 +300,8 @@ enum Options {
 
     PrintAllPluginsAndFeatures("-printAll") {
         @Override
-        int handle(PlatformState state, String... args) {
-            CommandLineInterpreter.printAllPluginsAndFeatures();
+        int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
+            cli.printAllPluginsAndFeatures();
             return 0;
         }
 
@@ -321,7 +322,7 @@ enum Options {
         optionName = name;
     }
 
-    int handle(PlatformState state, String... args) {
+    int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
         throw new UnsupportedOperationException();
     }
 
