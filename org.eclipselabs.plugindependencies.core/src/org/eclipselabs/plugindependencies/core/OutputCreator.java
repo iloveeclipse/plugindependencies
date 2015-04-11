@@ -84,7 +84,7 @@ public class OutputCreator {
         List<Plugin> dependencyList = new ArrayList<>();
         List<String> dependencyPathList = new ArrayList<>();
 
-        dependencyList.addAll(getResolvedPluginsRecursive(plugin));
+        dependencyList.addAll(computeResolvedPluginsRecursive(plugin));
 
         // build dependency file for given plugin should NOT contain it's fragments (recursive dep!)
         if(plugin.isHost()){
@@ -118,8 +118,8 @@ public class OutputCreator {
         }
 
         void setResolved(){
-            resolved(plugin);
             plugin.setResolved();
+            resolved(plugin);
         }
 
         void resolved(Plugin p){
@@ -224,9 +224,9 @@ public class OutputCreator {
 
     }
 
-    public static Set<Plugin> getResolvedPluginsRecursive(final Plugin root) {
+    public static Set<Plugin> computeResolvedPluginsRecursive(final Plugin root) {
         if(root.isRecursiveResolved()){
-            return  root.getRecursiveResolvedPlugins();
+            return root.getRecursiveResolvedPlugins();
         }
         Stack<PluginElt> stack = new Stack<>();
         stack.add(new PluginElt(null, root));
@@ -262,12 +262,23 @@ public class OutputCreator {
                 stack.push(next);
             }
         }
-        return root.getRecursiveResolvedPlugins();
+        Set<Plugin> rrp = root.getRecursiveResolvedPlugins();
+        for (Plugin plugin : rrp) {
+            if(!plugin.isRecursiveResolved()){
+                if(plugin.isFragment()){
+                    plugin.setResolved();
+                }
+            }
+            if(!plugin.isRecursiveResolved()) {
+                throw new IllegalStateException("Unable to resolve: " + plugin);
+            }
+        }
+        return rrp;
     }
 
     public static int generateBuildFile(Plugin plugin) throws IOException {
         Set<Plugin> resolvedPlugins = new LinkedHashSet<>();
-        resolvedPlugins.addAll(getResolvedPluginsRecursive(plugin));
+        resolvedPlugins.addAll(computeResolvedPluginsRecursive(plugin));
         return writeClassPathsToFile(plugin, resolvedPlugins);
     }
 

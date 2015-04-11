@@ -217,7 +217,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 MainClass.resolveDependencies();
                 Set<Plugin> allPlugins = MainClass.getPluginSet();
                 for (Plugin plugin : allPlugins) {
-                    OutputCreator.getResolvedPluginsRecursive(plugin);
+                    OutputCreator.computeResolvedPluginsRecursive(plugin);
                 }
 
                 monitor.internalWorked(1);
