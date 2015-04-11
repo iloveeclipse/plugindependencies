@@ -12,6 +12,8 @@
 
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -23,13 +25,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 public class MainClass {
+
     public static String printUnresolvedDependencies(Set<? extends OSGIElement> elements,
             boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
 
         for (OSGIElement element : elements) {
             List<String> log = element.getLog();
-            if (!log.isEmpty() && (log.toString().contains("Error") || showWarnings)) {
+            if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
                 ret.append(element instanceof Plugin ? "plugin: " : "feature: ");
                 ret.append(element.getInformationLine() + "\n");
                 ret.append(printLog(element, showWarnings));
