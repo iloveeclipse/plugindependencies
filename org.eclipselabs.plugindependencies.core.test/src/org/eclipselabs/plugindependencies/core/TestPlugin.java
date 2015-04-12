@@ -37,13 +37,16 @@ public class TestPlugin extends BaseTest {
     String requPackages;
 
     String exportedPackages;
+    String importedPackages;
 
+    @Override
     @Before
-    public void generateEnv() throws Exception {
+    public void setup() throws Exception {
         plugin = new Plugin("myPlugin", "2.3.4");
         requPlugins = "org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.core.filesystem,org.eclipse.core.expressions,JSR305-ri;resolution:=optional";
         requPackages = "javax.xml.parsers,org.eclipse.core.runtime.jobs;resolution:=optional,org.eclipse.osgi.framework.console;resolution:=optional,org.eclipse.osgi.service.datalocation,org.eclipse.osgi.service.debug,org.eclipse.osgi.service.environment;resolution:=optional,org.eclipse.osgi.service.localization;version=\"1.1.0\",org.eclipse.osgi.service.resolver;resolution:=optional,org.eclipse.osgi.storagemanager,org.eclipse.osgi.util,org.osgi.framework,org.osgi.service.packageadmin,org.osgi.util.tracker,org.xml.sax,org.xml.sax.helpers";
         exportedPackages = "org.eclipse.core.internal.adapter;x-internal:=true,org.eclipse.core.internal.registry;x-friends:=\"org.eclipse.core.runtime\",org.eclipse.core.internal.registry.osgi;x-friends:=\"org.eclipse.core.runtime\",org.eclipse.core.internal.registry.spi;x-internal:=true,org.eclipse.core.runtime;registry=split;version=\"3.4.0\";mandatory:=registry,org.eclipse.core.runtime.dynamichelpers;version=\"3.4.0\",org.eclipse.core.runtime.spi;version=\"3.4.0\"";
+        importedPackages = "org.eclipse.core.internal.adapter,org.eclipse.core.internal.registry;version=\"3.4.0\"";
     }
 
     @Override
@@ -131,6 +134,18 @@ public class TestPlugin extends BaseTest {
         Set<Plugin> packageReexporter = new LinkedHashSet<>();
         packageReexporter.add(plugin);
         assertEquals(packageReexporter, reexportedPackage.getReexportedBy());
+    }
+
+    @Test
+    public void testImportedPackages() {
+        plugin.setExportedPackages(exportedPackages);
+        plugin.setRequiredPackages(importedPackages);
+        for (ManifestEntry entry : plugin.getRequiredPackages()) {
+            Package pack = new Package(entry.getName(), entry.getVersion());
+            plugin.addImportedPackage(pack);
+        }
+        plugin.parsingDone();
+        assertEquals("Warning: plugin imports and exports same package: [name=org.eclipse.core.internal.adapter, version=]", plugin.getLog().get(0));
     }
 
     @Test

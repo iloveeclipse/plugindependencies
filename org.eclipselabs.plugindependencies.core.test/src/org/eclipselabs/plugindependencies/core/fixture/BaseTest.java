@@ -7,6 +7,7 @@
 package org.eclipselabs.plugindependencies.core.fixture;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -15,6 +16,11 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BaseTest {
+
+    @Before
+    public void setup() throws Exception {
+        //
+    }
 
     @After
     public void tearDown() throws Exception {

@@ -119,7 +119,7 @@ public abstract class NamedElement {
     }
 
     public boolean exactMatch(NamedElement elt) {
-        return name.equals(elt.name) && version.equals(elt.name);
+        return name.equals(elt.name) && version.equals(elt.version);
     }
 
     public boolean hasWarnings(){
