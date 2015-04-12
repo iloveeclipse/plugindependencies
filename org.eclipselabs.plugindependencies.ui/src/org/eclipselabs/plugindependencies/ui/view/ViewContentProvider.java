@@ -282,7 +282,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 return ms;
             }
             try {
-                parser.readInChildren(new File(somePath));
+                parser.readInEclipseFolder(somePath);
             } catch (IOException | SAXException | ParserConfigurationException e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading: " + somePath, e));
             }

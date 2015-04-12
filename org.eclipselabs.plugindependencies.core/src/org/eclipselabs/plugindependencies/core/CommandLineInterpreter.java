@@ -462,7 +462,7 @@ public class CommandLineInterpreter {
         return ret.toString();
     }
 
-    int readInEclipseFolder(String eclipsePath)
+    public int readInEclipseFolder(String eclipsePath)
             throws IOException, SAXException, ParserConfigurationException {
         File root = new File(eclipsePath);
         File pluginsDir = new File(root, "plugins");
