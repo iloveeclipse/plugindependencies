@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipselabs.plugindependencies.core.Plugin;
 import org.eclipselabs.plugindependencies.ui.Activator;
 
 /**
@@ -83,6 +84,24 @@ public class ViewLabelProvider extends ColumnLabelProvider {
             }
         }
         return null;
+    }
+
+    @Override
+    public String getToolTipText(Object element) {
+        if(element instanceof TreePlugin){
+            TreePlugin tp = (TreePlugin) element;
+            Plugin plugin = tp.getPlugin();
+            List<String> log = plugin.getLog();
+            if(log.isEmpty()){
+                return null;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (String err : log) {
+                sb.append(err).append("\n");
+            }
+            return sb.toString();
+        }
+        return super.getToolTipText(element);
     }
 
     @Override
