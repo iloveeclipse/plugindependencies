@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.Manifest;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

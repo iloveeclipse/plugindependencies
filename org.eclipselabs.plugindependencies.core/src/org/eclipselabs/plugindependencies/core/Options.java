@@ -1,8 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2015 andrey. All rights reserved.
+ * Copyright (c) 2015 Oliver Brösamle
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     andrey - initial API and implementation
+ *    Oliver Brösamle - initial API and implementation and/or initial documentation
+ *    Andrey Loskutov <loskutov@gmx.de> - review, cleanup and bugfixes
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 

@@ -9,7 +9,7 @@
  *    Oliver Brösamle - initial API and implementation and/or initial documentation
  *    Andrey Loskutov <loskutov@gmx.de> - review, cleanup and bugfixes
  *******************************************************************************/
-package org.eclipselabs.plugindependencies.core;
+package org.eclipselabs.plugindependencies.core.fixture;
 
 import java.security.Permission;
 

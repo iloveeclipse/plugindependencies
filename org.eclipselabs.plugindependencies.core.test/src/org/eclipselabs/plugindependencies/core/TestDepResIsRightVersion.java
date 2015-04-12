@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.core;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

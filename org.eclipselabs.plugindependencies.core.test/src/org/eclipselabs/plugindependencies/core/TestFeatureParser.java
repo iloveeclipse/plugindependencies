@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -21,6 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
+import org.eclipselabs.plugindependencies.core.fixture.SecurityMan;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

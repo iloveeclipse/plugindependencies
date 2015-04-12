@@ -4,7 +4,7 @@
  * Contributors:
  *     example - initial API and implementation
  *******************************************************************************/
-package org.eclipselabs.plugindependencies.core;
+package org.eclipselabs.plugindependencies.core.fixture;
 
 import org.junit.After;
 import org.junit.FixMethodOrder;
