@@ -24,7 +24,7 @@ public class Logging {
 
     private static AbstractLogger logger;
     static {
-        setLogger(new SimpleLogger(System.out, System.err));
+        setLogger(null);
     }
 
     public static void writeStandardOut(String output) {
@@ -36,7 +36,11 @@ public class Logging {
     }
 
     public static void setLogger(AbstractLogger logger){
-        Logging.logger = logger;
+        if(logger == null){
+            Logging.logger = new SimpleLogger(System.out, System.err);
+        } else {
+            Logging.logger = logger;
+        }
     }
 
     public static AbstractLogger getLogger() {

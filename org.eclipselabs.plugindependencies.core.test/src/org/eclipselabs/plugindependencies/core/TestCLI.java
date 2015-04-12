@@ -24,9 +24,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
+import org.eclipselabs.plugindependencies.core.fixture.SecurityMan;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -37,14 +38,8 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCLI extends BaseTest {
-    static PrintStream console;
 
     File tempDir;
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        console = System.out;
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -56,11 +51,11 @@ public class TestCLI extends BaseTest {
     @Override
     @After
     public void tearDown() throws Exception {
+        System.setSecurityManager(null);
+        Logging.setLogger(null);
         if (!removeDirectory(tempDir)) {
             throw new Exception("Can not remove Directory: " + tempDir.getCanonicalPath());
         }
-        System.setSecurityManager(null);
-        System.setOut(console);
         super.tearDown();
     }
 
