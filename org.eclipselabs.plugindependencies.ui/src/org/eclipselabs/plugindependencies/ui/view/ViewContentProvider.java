@@ -149,12 +149,16 @@ public class ViewContentProvider implements ITreeContentProvider {
         // Packages
         TreeParent packages = new TreeParent("Packages", invisibleRoot);
         for (Package pack : state.getPackageSet()) {
-            packages.addChild(new TreePackage(pack, packages));
+            if(! errorsOnly || (pack.hasErrors() || pack.hasWarnings())) {
+                packages.addChild(new TreePackage(pack, packages));
+            }
         }
         // Features
         TreeParent features = new TreeParent("Features", invisibleRoot);
         for (Feature feature : state.getFeatureSet()) {
-            features.addChild(new TreeFeature(feature, features));
+            if(! errorsOnly || (feature.hasErrors() || feature.hasWarnings())) {
+                features.addChild(new TreeFeature(feature, features));
+            }
         }
         if(!plugins.hasChildren() &&  !packages.hasChildren() && !features.hasChildren()) {
             return;
