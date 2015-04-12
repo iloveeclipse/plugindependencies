@@ -34,7 +34,7 @@ public class DependencyResolver {
 
     private static final String ZERO_VERSION = "0.0.0";
     private static final List<String> JDK_PACK_PREFIXES = Collections.unmodifiableList(
-            Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom.", "org.xml.sax",
+            Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom", "org.xml.sax",
                     "org.ietf.jgss", "org.jcp.xml.", "com.sun.", "com.oracle.", "jdk.", "sun."));
 
     private final PlatformState state;
