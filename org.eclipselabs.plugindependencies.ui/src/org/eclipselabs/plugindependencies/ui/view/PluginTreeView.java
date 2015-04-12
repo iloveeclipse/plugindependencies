@@ -246,16 +246,16 @@ public class PluginTreeView extends ViewPart {
             @Override
             public void run() {
                 boolean toggle = !isShowErrorsOnly();
-                setChecked(toggle);
+//                setChecked(!isChecked());
                 showErrors(toggle);
             }
 
         };
         showErrors.setText("Show Errors Only");
         showErrors.setToolTipText("Show Errors Only");
-        ImageDescriptor errImg = AbstractUIPlugin.imageDescriptorFromPlugin(
-                "org.eclipse.ui", "$nl$/icons/full/eview16/prop_ps.gif");
+        ImageDescriptor errImg = Activator.getImageDescriptor("icons/errorwarning_tab.gif");
         showErrors.setImageDescriptor(errImg);
+        showErrors.setChecked(false);
 
         reloadTargets = new Action() {
             @Override
