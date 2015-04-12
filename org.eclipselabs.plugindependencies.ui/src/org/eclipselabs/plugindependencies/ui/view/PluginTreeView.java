@@ -54,8 +54,10 @@ import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
@@ -322,11 +324,31 @@ public class PluginTreeView extends ViewPart {
 
     private static final class OpenTargetFileDialog extends ResourceListSelectionDialog {
 
-           public OpenTargetFileDialog(Shell parentShell, IContainer container,
-            int typesMask) {
+        public OpenTargetFileDialog(Shell parentShell, IContainer container, int typesMask) {
             super(parentShell, container, typesMask);
             setTitle("Select Target File");
             setMessage("Please select target file (.t2) to load");
+        }
+
+        @Override
+        public void create() {
+            super.create();
+            getContents().getShell().getDisplay().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    Control contents = getContents();
+                    if(contents.isDisposed()){
+                        return;
+                    }
+                    Control focus = contents.getShell().getDisplay().getFocusControl();
+                    if(focus instanceof Text){
+                        Text text = (Text) focus;
+                        text.setText("*");
+                    }
+
+                }
+            });
         }
 
         @Override
