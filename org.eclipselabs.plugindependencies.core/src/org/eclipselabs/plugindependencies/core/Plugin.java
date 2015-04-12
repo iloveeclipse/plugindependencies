@@ -437,8 +437,15 @@ public class Plugin extends OSGIElement {
         if(!exportedPackages.isEmpty()){
             for (Package ip : importedPackages) {
                 if(exportedPackages.contains(ip)){
-                    // XXX the resolved packages might have different version as required (still matching however)
-                    addWarningToLog("plugin imports and exports same package: " + ip);
+                    for (ManifestEntry rp : requiredPackages) {
+//                        if(rp.isMatching(ip)) {
+                            if (rp.exactMatch(ip)) {
+                                // the resolved packages might have different version as required (still matching however)
+                                addWarningToLog("plugin imports and exports same package: " + ip);
+                                break;
+                            }
+//                        }
+                    }
                 }
             }
         }

@@ -118,6 +118,10 @@ public abstract class NamedElement {
         return name.equals(id) && (version.equals(vers) || vers.isEmpty());
     }
 
+    public boolean exactMatch(NamedElement elt) {
+        return name.equals(elt.name) && version.equals(elt.name);
+    }
+
     public boolean hasWarnings(){
         for (String string : log) {
             if(string.startsWith(PREFIX_WARN)){
