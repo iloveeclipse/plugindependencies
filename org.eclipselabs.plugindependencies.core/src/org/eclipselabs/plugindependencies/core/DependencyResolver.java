@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.core;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -32,6 +33,9 @@ import java.util.regex.Pattern;
 public class DependencyResolver {
 
     private static final String ZERO_VERSION = "0.0.0";
+    private static final List<String> JDK_PACK_PREFIXES = Collections.unmodifiableList(
+            Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom.", "org.xml.sax",
+                    "org.ietf.jgss", "org.jcp.xml.", "com.sun.", "com.oracle.", "jdk.", "sun."));
 
     private final PlatformState state;
 
@@ -196,6 +200,18 @@ public class DependencyResolver {
         }
 
         String packageName = requiredPackage.getName().trim();
+        List<String> prefixes = JDK_PACK_PREFIXES;
+        boolean canBeFromJdk = false;
+        for (String prefix : prefixes) {
+            if(packageName.startsWith(prefix)){
+                canBeFromJdk = true;
+                break;
+            }
+        }
+        if(!canBeFromJdk){
+            return null;
+        }
+
         String javaHome = state.getJavaHome();
 
         if (javaHome == null || javaHome.isEmpty()) {
@@ -219,7 +235,7 @@ public class DependencyResolver {
                 Enumeration<JarEntry> jarEntries = jarfile.entries();
                 while (jarEntries.hasMoreElements()) {
                     JarEntry entry = jarEntries.nextElement();
-                    if (entry.getName().contains(packagePath)) {
+                    if (entry.getName().startsWith(packagePath)) {
                         Package p = new Package(packageName, NamedElement.EMPTY_VERSION);
                         state.getPackageSet().add(p);
                         return p;

@@ -39,7 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
 //    TestPluginParser.class,
 //    TestStringUtil.class
 })
-@Repeat(10)
+@Repeat(50)
 public class SomeTestXTimes {
 
     @ClassRule
