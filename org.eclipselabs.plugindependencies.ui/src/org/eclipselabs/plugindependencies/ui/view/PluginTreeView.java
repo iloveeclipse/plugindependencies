@@ -24,6 +24,10 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -44,12 +48,14 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
@@ -57,6 +63,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -81,9 +88,9 @@ public class PluginTreeView extends ViewPart {
 
     private Action reloadTargets;
 
-    private Action showProperties;
+    private Action loadTarget;
 
-    private ITargetDefinition currentShownTarget;
+    private Action showProperties;
 
     private boolean disposed;
 
@@ -112,7 +119,7 @@ public class PluginTreeView extends ViewPart {
         viewer.getTree().setToolTipText(null);
         ColumnViewerToolTipSupport.enableFor(viewer);
         getSite().setSelectionProvider(viewer);
-        refresh();
+        refresh(new Object());
 
         targetActions = new LinkedHashSet<>();
 
@@ -190,6 +197,8 @@ public class PluginTreeView extends ViewPart {
                 fillTargetMenu(manager);
             }
         });
+        dropDownMenu.add(showErrors);
+        dropDownMenu.add(loadTarget);
         dropDownMenu.add(reloadTargets);
     }
 
@@ -214,6 +223,7 @@ public class PluginTreeView extends ViewPart {
         manager.add(collapseAll);
         manager.add(showProperties);
         manager.add(showErrors);
+        manager.add(loadTarget);
         manager.add(new Separator());
         if (drillDownAdapter != null) {
             drillDownAdapter.addNavigationActions(manager);
@@ -249,7 +259,6 @@ public class PluginTreeView extends ViewPart {
             @Override
             public void run() {
                 boolean toggle = !isShowErrorsOnly();
-//                setChecked(!isChecked());
                 showErrors(toggle);
             }
 
@@ -260,6 +269,15 @@ public class PluginTreeView extends ViewPart {
         showErrors.setImageDescriptor(errImg);
         showErrors.setChecked(false);
 
+        loadTarget = new Action() {
+            @Override
+            public void run() {
+                readTargetDefinition();
+            }
+        };
+        loadTarget.setText("Load Target Definition");
+        loadTarget.setImageDescriptor(Activator.getImageDescriptor("icons/target_profile_xml_obj.gif"));
+
         reloadTargets = new Action() {
             @Override
             public void run() {
@@ -267,6 +285,7 @@ public class PluginTreeView extends ViewPart {
             }
         };
         reloadTargets.setText("Reload Targets");
+        reloadTargets.setImageDescriptor(Activator.getImageDescriptor("icons/refresh.gif"));
 
         doubleClickAction = new Action() {
             @Override
@@ -282,17 +301,55 @@ public class PluginTreeView extends ViewPart {
         };
     }
 
+    protected void readTargetDefinition() {
+        OpenTargetFileDialog rd = new OpenTargetFileDialog(getSite().getShell(),
+                ResourcesPlugin.getWorkspace().getRoot(), IResource.FILE);
+        int result = rd.open();
+        if(result == Window.OK){
+            Object[] selection = rd.getResult();
+            if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile)) {
+                viewer.setInput(null);
+                return;
+            }
+            TargetData td = new TargetData((IFile) selection[0]);
+
+            ViewContentProvider provider = getContentProvider();
+            IWorkbenchSiteProgressService progressService = getProgressService();
+            progressService.schedule(provider.getJob(td));
+        }
+
+    }
+
+    private static final class OpenTargetFileDialog extends ResourceListSelectionDialog {
+
+           public OpenTargetFileDialog(Shell parentShell, IContainer container,
+            int typesMask) {
+            super(parentShell, container, typesMask);
+            setTitle("Select Target File");
+            setMessage("Please select target file (.t2) to load");
+        }
+
+        @Override
+        protected boolean select(IResource resource) {
+            if (resource == null) {
+                return false;
+            }
+            String fileExtension = resource.getFileExtension();
+            return "t2".equals(fileExtension) && super.select(resource);
+        }
+    }
+
     protected void showErrors(boolean on) {
         showErrorsOnly = on;
-        refresh();
+        refresh(new Object());
     }
 
     boolean isShowErrorsOnly() {
         return showErrorsOnly;
     }
 
-    void refresh() {
-        viewer.setInput(new Object());
+    void refresh(Object input) {
+        viewer.setInput(input);
     }
 
     boolean isDisposed(){
@@ -399,10 +456,9 @@ public class PluginTreeView extends ViewPart {
                 for (TargetAction targetAction : targetActions) {
                     targetAction.setChecked(false);
                 }
-                setCurrentShownTarget(targetDef);
                 ViewContentProvider provider = getContentProvider();
                 IWorkbenchSiteProgressService progressService = getProgressService();
-                progressService.schedule(provider.getJob());
+                progressService.schedule(provider.getJob(targetDef));
                 setChecked(true);
             } else {
                 viewer.setInput(null);
@@ -429,11 +485,4 @@ public class PluginTreeView extends ViewPart {
         }
     }
 
-    public ITargetDefinition getCurrentShownTarget() {
-        return currentShownTarget;
-    }
-
-    public void setCurrentShownTarget(ITargetDefinition currentShownTarget) {
-        this.currentShownTarget = currentShownTarget;
-    }
 }

@@ -490,7 +490,7 @@ public class CommandLineInterpreter {
         return readInChildren(root);
     }
 
-    int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
+    public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
         if (PluginParser.createPluginsAndAddToSet(directory, state.getPluginSet(), state.getPackageSet()) == -1) {
             return -1;
         }

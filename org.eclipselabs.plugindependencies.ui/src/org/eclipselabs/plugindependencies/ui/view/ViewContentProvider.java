@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.ui.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.ui.PlatformUI;
@@ -50,7 +52,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 
     private final PluginTreeView view;
 
-    private final Job resolveJob;
+    private final LoadTarget resolveJob;
 
     private final ResolveRule rule;
 
@@ -65,7 +67,17 @@ public class ViewContentProvider implements ITreeContentProvider {
         resolveJob.setRule(rule);
     }
 
-    public Job getJob() {
+    public Job getJob(TargetData td) {
+        resolveJob.cancel();
+        resolveJob.setTargetData((ITargetDefinition) null);
+        resolveJob.setTargetData(td);
+        return resolveJob;
+    }
+
+    public Job getJob(ITargetDefinition td) {
+        resolveJob.cancel();
+        resolveJob.setTargetData((TargetData) null);
+        resolveJob.setTargetData(td);
         return resolveJob;
     }
 
@@ -84,7 +96,7 @@ public class ViewContentProvider implements ITreeContentProvider {
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if(newInput != null) {
-            createRoots();
+            createRoots(newInput);
         }
     }
 
@@ -124,7 +136,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         return false;
     }
 
-    void createRoots() {
+    void createRoots(Object newInput) {
         invisibleRoot = new TreeParent("Parent", null);
         // Plugins
         TreeParent plugins = new TreeParent("Plugins", invisibleRoot);
@@ -152,95 +164,158 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot.addChild(features);
     }
 
-    private Job createResolveDependenciesJob() {
+    private LoadTarget createResolveDependenciesJob() {
 
-        return new Job("Reading target platform") {
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                monitor.beginTask(getName(), 4);
-                monitor.subTask("Reading platform plugins");
-                state = new PlatformState();
-                CommandLineInterpreter parser = new CommandLineInterpreter();
-                TargetBundle[] bundles = view.getCurrentShownTarget().getBundles();
+        return new LoadTarget("Reading target platform");
+    }
 
-                MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading plugins", null);
-                for (TargetBundle bundle : bundles) {
-                    URI location = bundle.getBundleInfo().getLocation();
-                    if(location == null){
-                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + bundle, null));
-                        continue;
-                    }
-                    String pluginPath = location.getPath();
-                    try {
-                        parser.readInPlugin(new File(pluginPath));
-                    } catch (IOException e) {
-                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
-                    }
-                }
-                monitor.internalWorked(1);
+    private final class LoadTarget extends Job {
+        private ITargetDefinition itd;
+        private TargetData td;
 
-                monitor.subTask("Reading platform features");
-                TargetFeature[] features = view.getCurrentShownTarget().getAllFeatures();
-                // TODO At the moment all the Features are read in, also when their
-                // are not chosen in target platform
+        private LoadTarget(String name) {
+            super(name);
+        }
 
-                for (TargetFeature feature : features) {
-                    String featurePath = feature.getLocation();
-                    try {
-                        parser.readInFeature(new File(featurePath));
-                    } catch (IOException | SAXException | ParserConfigurationException e) {
-                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
-                    }
-                }
-                monitor.internalWorked(1);
+        public void setTargetData(ITargetDefinition td) {
+            this.itd = td;
+        }
 
-                monitor.subTask("Reading workspace projects");
-                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-                for (IProject project : projects) {
-                    if(!project.isAccessible() || project.isHidden()){
-                        continue;
-                    }
-                    IPath location = project.getLocation();
-                    if(location == null){
-                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + project.getName(), null));
-                        continue;
-                    }
-                    try {
-                        IPluginModelBase model = PluginRegistry.findModel(project);
-                        if(model != null){
-                            parser.readInPlugin(location.toFile());
-                        } else {
-                            parser.readInFeature(location.toFile());
-                        }
-                    } catch (IOException | SAXException | ParserConfigurationException e) {
-                        ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));
-                    }
-                }
-                monitor.internalWorked(1);
+        public void setTargetData(TargetData td) {
+            this.td = td;
+        }
 
-                monitor.subTask("Resolving dependencies");
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+            monitor.beginTask(getName(), 4);
+            monitor.subTask("Reading platform plugins");
+            state = new PlatformState();
+            CommandLineInterpreter parser = new CommandLineInterpreter();
 
-                parser.getState().resolveDependencies();
-                parser.getState().computeAllDependenciesRecursive();
-                state = parser.getState();
-                monitor.internalWorked(1);
-
-                monitor.done();
-                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(view.isDisposed()){
-                            return;
-                        }
-                        view.refresh();
-                    }
-                });
-                if(ms.getChildren().length > 0){
-                    return ms;
-                }
-                return Status.OK_STATUS;
+            MultiStatus ms;
+            if(itd != null){
+                ms = loadTargetPlatform(monitor, parser, itd);
+            } else {
+                ms = loadTargetPlatform(monitor, parser, td);
             }
-        };
+
+            monitor.subTask("Resolving dependencies");
+
+            parser.getState().resolveDependencies();
+            parser.getState().computeAllDependenciesRecursive();
+            state = parser.getState();
+            monitor.internalWorked(1);
+
+            monitor.done();
+            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    if(view.isDisposed()){
+                        return;
+                    }
+                    view.refresh(new Object());
+                }
+            });
+
+            if(ms.getChildren().length > 0){
+                return ms;
+            }
+            return Status.OK_STATUS;
+        }
+
+    }
+
+    MultiStatus loadTargetPlatform(IProgressMonitor monitor, CommandLineInterpreter parser, ITargetDefinition target) {
+        MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading plugins", null);
+        TargetBundle[] bundles = target.getBundles();
+
+        for (TargetBundle bundle : bundles) {
+            if(monitor.isCanceled()){
+                return ms;
+            }
+            URI location = bundle.getBundleInfo().getLocation();
+            if(location == null){
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + bundle, null));
+                continue;
+            }
+            String pluginPath = location.getPath();
+            try {
+                parser.readInPlugin(new File(pluginPath));
+            } catch (IOException e) {
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
+            }
+        }
+        monitor.internalWorked(1);
+
+        monitor.subTask("Reading platform features");
+        TargetFeature[] features = target.getAllFeatures();
+        // TODO At the moment all the Features are read in, also when their
+        // are not chosen in target platform
+
+        for (TargetFeature feature : features) {
+            if(monitor.isCanceled()){
+                return ms;
+            }
+            String featurePath = feature.getLocation();
+            try {
+                parser.readInFeature(new File(featurePath));
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
+            }
+        }
+        monitor.internalWorked(1);
+
+        readWorkspace(monitor, parser, ms);
+        return ms;
+    }
+
+    MultiStatus loadTargetPlatform(IProgressMonitor monitor, CommandLineInterpreter parser, TargetData target) {
+        MultiStatus ms = new MultiStatus(Activator.getPluginId(), 0, "Error while reading target", null);
+        List<String> paths = target.getPaths();
+
+        for (String somePath : paths) {
+            if(monitor.isCanceled()){
+                return ms;
+            }
+            try {
+                parser.readInChildren(new File(somePath));
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading: " + somePath, e));
+            }
+        }
+        monitor.internalWorked(2);
+
+        readWorkspace(monitor, parser, ms);
+        return ms;
+    }
+
+    private static void readWorkspace(IProgressMonitor monitor, CommandLineInterpreter parser, MultiStatus ms) {
+        monitor.subTask("Reading workspace projects");
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        for (IProject project : projects) {
+            if(monitor.isCanceled()){
+                return;
+            }
+            if(!project.isAccessible() || project.isHidden()){
+                continue;
+            }
+            IPath location = project.getLocation();
+            if(location == null){
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + project.getName(), null));
+                continue;
+            }
+            try {
+                IPluginModelBase model = PluginRegistry.findModel(project);
+                if(model != null){
+                    parser.readInPlugin(location.toFile());
+                } else {
+                    parser.readInFeature(location.toFile());
+                }
+            } catch (IOException | SAXException | ParserConfigurationException e) {
+                ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));
+            }
+        }
+        monitor.internalWorked(1);
     }
 
     static class ResolveRule implements ISchedulingRule {
