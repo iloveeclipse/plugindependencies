@@ -130,11 +130,12 @@ public class DependencyResolver {
         Package importedPackage = null;
         int packagesSize = packages.size();
 
-        if (packagesSize >= 1) {
-            importedPackage = getPackageWithHighestVersion(packages);
-        }
-
-        if (packagesSize != 1) {
+        if (packagesSize == 1) {
+            importedPackage = packages.iterator().next();
+        } else {
+            if (packagesSize > 1){
+                importedPackage = getPackageWithHighestVersion(packages);
+            }
             startPlugin.writePackageErrorLog(requiredPackage, packages);
         }
 
@@ -148,13 +149,18 @@ public class DependencyResolver {
         Set<Plugin> resultSet = searchInPluginSet(entry, false);
         int setSize = resultSet.size();
 
-        if (setSize >= 1) {
-            Plugin fragmentHost = getPluginWithHighestVersion(resultSet);
+        Plugin fragmentHost = null;
+        if (setSize == 1) {
+            fragmentHost = resultSet.iterator().next();
+        } else {
+            if(setSize > 1){
+                fragmentHost = getPluginWithHighestVersion(resultSet);
+            }
+            fragment.writeErrorLog(entry, resultSet, "fragment host");
+        }
+        if(fragmentHost != null){
             fragment.setHost(fragmentHost);
             fragmentHost.addFragments(fragment);
-        }
-        if (setSize != 1) {
-            fragment.writeErrorLog(entry, resultSet, "fragment host");
         }
     }
 
@@ -305,24 +311,28 @@ public class DependencyResolver {
             }
 
             // TODO throw away "duplicated" bundles with different versions, exporting same package
-            Set<Plugin> allExporting = new LinkedHashSet<>();
-            addPluginsForImportedPackages(plugin, allExporting);
+            Set<Plugin> requiredByImportPackage = new LinkedHashSet<>();
+            addPluginsForImportedPackages(plugin, requiredByImportPackage);
             // fragment inherits all dependencies from host
             if(plugin.isFragment() && plugin.getHost() != null){
-                addPluginsForImportedPackages(plugin.getHost(), allExporting);
+                addPluginsForImportedPackages(plugin.getHost(), requiredByImportPackage);
             }
-            allExporting.remove(plugin);
-            addToVisit(allExporting);
+            requiredByImportPackage.remove(plugin);
+            addToVisit(requiredByImportPackage);
         }
 
-        static void addPluginsForImportedPackages(Plugin p, Set<Plugin> allExporting) {
+        static void addPluginsForImportedPackages(Plugin p, Set<Plugin> exporting) {
             for (Package imported : p.getImportedPackages()) {
                 Set<Plugin> exportedBy = imported.getExportedBy();
+                if(exportedBy.contains(p)){
+                    // do not add dependencies for packages the plugin exports by yourself
+                    continue;
+                }
                 if(!exportedBy.isEmpty()) {
-                    allExporting.addAll(exportedBy);
+                    exporting.addAll(exportedBy);
                 } else {
                     Set<Plugin> reexportedBy = imported.getReexportedBy();
-                    allExporting.addAll(reexportedBy);
+                    exporting.addAll(reexportedBy);
                 }
             }
         }

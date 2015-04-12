@@ -122,14 +122,14 @@ public class PluginParser {
         return dirArray;
     }
 
-    private static void addExportedPackagesToSet(Plugin plugin, Set<Package> packageList) {
+    private static void addExportedPackagesToSet(Plugin plugin, Set<Package> packages) {
         for (Package exportedPackage : plugin.getExportedPackages()) {
             /*
              * Package is exported by another plugin, package has to be found in packages
              * and plugin must be added to exportPlugins of package
              */
-            if (!packageList.add(exportedPackage)) {
-                for (Package pack : packageList) {
+            if (!packages.add(exportedPackage)) {
+                for (Package pack : packages) {
                     if(pack.equals(exportedPackage)){
                         pack.addExportPlugin(plugin);
                         break;

@@ -108,6 +108,7 @@ public class TestStringUtil extends BaseTest {
         assertEquals("[2.4,3.0)", StringUtil.extractVersionOrRange(testString8));
         assertEquals("[3.2.0,4.0.0)", StringUtil.extractVersionOrRange(testString9));
         assertEquals("99.0.0", StringUtil.extractVersionOrRange(testString10));
+        assertEquals("[1.6,1.7)", StringUtil.extractVersionOrRange("org.apache.felix.scr; version=\"[1.6,1.7)\""));
     }
 
     @Test

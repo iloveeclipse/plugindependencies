@@ -107,41 +107,16 @@ public class Package extends NamedElement {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
-        return result;
+    public final int hashCode() {
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Package other = (Package) obj;
-        if (name == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!name.equals(other.getName())) {
-            return false;
-        }
-        if (version == null) {
-            if (other.getVersion() != null) {
-                return false;
-            }
-        } else if (!version.equals(other.getVersion())) {
-            return false;
-        }
-        return true;
+        return obj instanceof Package;
     }
 
 }

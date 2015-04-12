@@ -79,8 +79,8 @@ public class Feature extends OSGIElement {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode() + 0;
+    public final int hashCode() {
+        return super.hashCode();
     }
 
     @Override

@@ -433,6 +433,15 @@ public class Plugin extends OSGIElement {
         fragments = fragments.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(fragments);
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
+
+        if(!exportedPackages.isEmpty()){
+            for (Package ip : importedPackages) {
+                if(exportedPackages.contains(ip)){
+                    // XXX the resolved packages might have different version as required (still matching however)
+                    addWarningToLog("plugin imports and exports same package: " + ip);
+                }
+            }
+        }
     }
 
     public void setResolved(){
