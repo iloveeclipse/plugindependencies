@@ -30,7 +30,7 @@ public class PluginAdapter implements IPropertySource {
     private final Plugin plugin;
 
     public PluginAdapter(TreePlugin treePlugin) {
-        this.plugin = treePlugin.getPlugin();
+        this.plugin = treePlugin.getNamedElement();
     }
 
     @Override

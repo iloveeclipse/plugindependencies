@@ -34,7 +34,8 @@ public class TreePackage extends TreeParent {
         this.parent = treeparent;
     }
 
-    public Package getPackage() {
+    @Override
+    public Package getNamedElement() {
         return pack;
     }
 
@@ -53,7 +54,7 @@ public class TreePackage extends TreeParent {
         if (children.isEmpty()) {
             // Exported By
             TreeParent exportedBy = new TreeParent("Exported by", this);
-            for (Plugin plugin : getPackage().getExportedBy()) {
+            for (Plugin plugin : getNamedElement().getExportedBy()) {
                 exportedBy.addChild(new TreePlugin(plugin, exportedBy));
             }
             if (exportedBy.hasChildren()) {
@@ -61,7 +62,7 @@ public class TreePackage extends TreeParent {
             }
             // Imported By
             TreeParent importedBy = new TreeParent("Imported by", this);
-            for (Plugin plugin : getPackage().getImportedBy()) {
+            for (Plugin plugin : getNamedElement().getImportedBy()) {
                 importedBy.addChild(new TreePlugin(plugin, importedBy));
             }
             if (importedBy.hasChildren()) {
@@ -78,8 +79,8 @@ public class TreePackage extends TreeParent {
 
     @Override
     public boolean hasChildren() {
-        boolean hasExportedBy = !getPackage().getExportedBy().isEmpty();
-        boolean hasImportedBy = !getPackage().getImportedBy().isEmpty();
+        boolean hasExportedBy = !getNamedElement().getExportedBy().isEmpty();
+        boolean hasImportedBy = !getNamedElement().getImportedBy().isEmpty();
 
         return hasExportedBy || hasImportedBy;
     }

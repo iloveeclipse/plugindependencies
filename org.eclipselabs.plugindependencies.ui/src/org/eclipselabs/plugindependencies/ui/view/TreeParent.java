@@ -56,6 +56,10 @@ public class TreeParent {
         return children.toArray(new TreeParent[children.size()]);
     }
 
+    public NamedElement getNamedElement(){
+        return null;
+    }
+
     static String getName(NamedElement elt) {
         String version = elt.getVersion();
         if(version.isEmpty()) {

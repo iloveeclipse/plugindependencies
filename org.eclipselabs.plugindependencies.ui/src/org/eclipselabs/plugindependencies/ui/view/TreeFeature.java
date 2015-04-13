@@ -34,7 +34,8 @@ public class TreeFeature extends TreeParent {
         this.parent = treeparent;
     }
 
-    public Feature getFeature() {
+    @Override
+    public Feature getNamedElement() {
         return feature;
     }
 

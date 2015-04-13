@@ -29,7 +29,7 @@ public class PackageAdapter implements IPropertySource {
     private final Package pack;
 
     public PackageAdapter(TreePackage treePackage) {
-        this.pack = treePackage.getPackage();
+        this.pack = treePackage.getNamedElement();
     }
 
     @Override

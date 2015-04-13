@@ -383,13 +383,13 @@ public class PluginTreeView extends ViewPart {
 
         if (obj instanceof TreeFeature) {
             TreeFeature treeFeature = (TreeFeature) obj;
-            String featureXMLPath = treeFeature.getFeature().getPath();
+            String featureXMLPath = treeFeature.getNamedElement().getPath();
             fileStore = EFS.getLocalFileSystem().getStore(new Path(featureXMLPath));
 
         }
         if (obj instanceof TreePlugin) {
             TreePlugin treePlugin = (TreePlugin) obj;
-            File plugin = new File(treePlugin.getPlugin().getPath());
+            File plugin = new File(treePlugin.getNamedElement().getPath());
             try {
                 if (!plugin.isDirectory()) {
                     try (JarFile pluginJar = new JarFile(plugin)) {

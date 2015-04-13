@@ -44,7 +44,8 @@ public class TreePlugin extends TreeParent {
         this.parent = treeparent;
     }
 
-    public Plugin getPlugin() {
+    @Override
+    public Plugin getNamedElement() {
         return plugin;
     }
 

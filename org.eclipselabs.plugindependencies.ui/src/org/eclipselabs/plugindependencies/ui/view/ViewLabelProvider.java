@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipselabs.plugindependencies.core.Plugin;
+import org.eclipselabs.plugindependencies.core.NamedElement;
 import org.eclipselabs.plugindependencies.ui.Activator;
 
 /**
@@ -65,17 +65,12 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 
     @Override
     public Color getForeground(Object element) {
-        if (element instanceof TreePlugin) {
-            List<String> log = ((TreePlugin) element).getPlugin().getLog();
-            if (!log.isEmpty()) {
-                if (log.toString().contains("Error")) {
-                    return Display.getDefault().getSystemColor(SWT.COLOR_RED);
-                }
-                return Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);
+        if (element instanceof TreeParent) {
+            NamedElement elt = ((TreeParent) element).getNamedElement();
+            if(elt == null){
+                return null;
             }
-        }
-        if (element instanceof TreeFeature) {
-            List<String> log = ((TreeFeature) element).getFeature().getLog();
+            List<String> log = elt.getLog();
             if (!log.isEmpty()) {
                 if (log.toString().contains("Error")) {
                     return Display.getDefault().getSystemColor(SWT.COLOR_RED);
@@ -88,10 +83,13 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 
     @Override
     public String getToolTipText(Object element) {
-        if(element instanceof TreePlugin){
-            TreePlugin tp = (TreePlugin) element;
-            Plugin plugin = tp.getPlugin();
-            List<String> log = plugin.getLog();
+        if(element instanceof TreeParent){
+            TreeParent tp = (TreeParent) element;
+            NamedElement elt = tp.getNamedElement();
+            if(elt == null){
+                return null;
+            }
+            List<String> log = elt.getLog();
             if(log.isEmpty()){
                 return null;
             }

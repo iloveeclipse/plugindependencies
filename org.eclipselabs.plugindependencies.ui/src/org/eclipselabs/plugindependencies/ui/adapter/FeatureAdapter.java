@@ -30,7 +30,7 @@ public class FeatureAdapter implements IPropertySource {
     private final Feature feature;
 
     public FeatureAdapter(TreeFeature treeFeature) {
-        this.feature = treeFeature.getFeature();
+        this.feature = treeFeature.getNamedElement();
     }
 
     @Override
