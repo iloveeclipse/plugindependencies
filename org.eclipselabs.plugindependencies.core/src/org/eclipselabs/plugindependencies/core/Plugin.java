@@ -322,7 +322,7 @@ public class Plugin extends OSGIElement {
                 logEntry.append("\t" + pack.getInformationLine());
             }
         }
-        if (packagesSize == 0) {
+        if (packagesSize == 0 && optional.isEmpty()) {
             String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? PREFIX_ERROR : PREFIX_WARN;
             logEntry.append(errortype + "package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);

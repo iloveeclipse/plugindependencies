@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,13 +57,6 @@ public class TestExceptions extends BaseTest {
         log.add("Error: plugin not found: org.eclipse.emf.ecore 2.7.0");
         log.add("Error: plugin not found: org.eclipse.emf.common 2.7.0");
         log.add("Error: plugin not found: org.eclipse.xtext.common.types 2.4.0");
-        log.add("Warning: plugin not found: org.eclipse.xtext.generator  *optional*");
-        log.add("Warning: plugin not found: org.apache.commons.logging 1.0.4 *optional*");
-        log.add("Warning: plugin not found: org.eclipse.emf.codegen.ecore  *optional*");
-        log.add("Warning: plugin not found: org.eclipse.emf.mwe.utils  *optional*");
-        log.add("Warning: plugin not found: org.eclipse.emf.mwe2.launch  *optional*");
-        log.add("Warning: plugin not found: de.itemis.statefullexer 1.0.0 *optional*");
-        log.add("Warning: plugin not found: org.eclipse.xtext.ecore 2.4.0 *optional*");
         log.add("Warning: more than one plugin found for org.objectweb.asm [3.0.0,6.0.0) *optional*\n"
                 + "\torg.objectweb.asm 3.3.1.v201105211655 "
                 + System.getProperty("user.dir")

@@ -93,7 +93,7 @@ public abstract class OSGIElement extends NamedElement {
                 logEntry.append("\t" + element.getInformationLine() + "\n");
             }
         }
-        if (setSize == 0) {
+        if (setSize == 0 && optional.isEmpty()) {
             String errortype = optional.isEmpty() ? PREFIX_ERROR : PREFIX_WARN;
             logEntry.append(errortype + type + " not found: ");
             logEntry.append(id + " " + vers + optional);
