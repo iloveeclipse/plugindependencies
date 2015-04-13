@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -23,6 +28,7 @@ public class PlatformState {
     private final Set<Plugin> pluginSet;
     private final Set<Package> packageSet;
     private final Set<Feature> featureSet;
+    private final Map<String, List<Package>> nameToPackages;
     private String javaHome;
 
     /**
@@ -36,6 +42,7 @@ public class PlatformState {
         this.pluginSet = pluginSet;
         this.packageSet = packageSet;
         this.featureSet = featureSet;
+        nameToPackages = new HashMap<>();
         javaHome = "";
     }
 
@@ -59,11 +66,47 @@ public class PlatformState {
         javaHome = newHome;
     }
 
+    public Package addPackage(Package newOne){
+        packageSet.add(newOne);
+
+        List<Package> list = nameToPackages.get(newOne.getName());
+        if(list == null){
+            list = new ArrayList<>();
+            nameToPackages.put(newOne.getName(), list);
+        }
+        int existing = list.indexOf(newOne);
+        if(existing >= 0){
+            return list.get(existing);
+        }
+        list.add(newOne);
+        return newOne;
+    }
+
+    public Set<Package> getPackages(String name){
+        List<Package> list = nameToPackages.get(name);
+        if(list == null) {
+            if (packageSet.isEmpty()) {
+                return Collections.emptySet();
+            }
+            // For tests only
+            return Collections.unmodifiableSet(packageSet);
+        }
+        // XXX???
+        return new LinkedHashSet<>(list);
+    }
+
     public void computeAllDependenciesRecursive() {
         for (Plugin plugin : pluginSet) {
             computeAllDependenciesRecursive(plugin);
         }
+
+        finalValidation();
     }
+
+   void finalValidation() {
+       // TODO validate packages with different versions used by different plugins in same dependency chain?
+
+   }
 
     static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
         if(root.isRecursiveResolved()){
@@ -117,7 +160,7 @@ public class PlatformState {
         return rrp;
     }
 
-    public void resolveDependencies() {
+    public DependencyResolver resolveDependencies() {
         DependencyResolver depres = new DependencyResolver(this);
 
         for (Plugin plugin : getPluginSet()) {
@@ -126,12 +169,19 @@ public class PlatformState {
         for (Feature feature : getFeatureSet()) {
             depres.resolveFeatureDependency(feature);
         }
+
         for (Plugin plugin : getPluginSet()) {
             plugin.parsingDone();
         }
         for (Feature feature : getFeatureSet()) {
             feature.parsingDone();
         }
+        for (Package pack : getPackageSet()) {
+            pack.parsingDone();
+        }
+
+        return depres;
     }
+
 
 }

@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,9 +96,9 @@ public class TestDepResResolving  extends BaseTest {
         pluginSet = new LinkedHashSet<Plugin>();
         packageSet = new LinkedHashSet<Package>();
         featureSet = new LinkedHashSet<Feature>();
-        PluginParser.createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), pluginSet,
-                packageSet);
         FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), featureSet);
+        PlatformState state = new PlatformState(pluginSet, packageSet, featureSet);
+        PluginParser.createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), state);
         featureLeft = new Feature("org.example.left", "2.1.1.v20120113-1346");
         featureRight = new Feature("org.company.right", "1.6.0");
         featureRR = new Feature("org.eclipse.right.right",
@@ -126,13 +125,13 @@ public class TestDepResResolving  extends BaseTest {
         package13 = new Package("junit.framework", "4.11.0");
         package14 = new Package("junit.runner", "4.11.0");
         package15 = new Package("org.adv.core", "3.2.1");
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        for (Feature feature : featureSet) {
-            depres.resolveFeatureDependency(feature);
-        }
-        for (Plugin plugin : pluginSet) {
-            depres.resolvePluginDependency(plugin);
-        }
+        depres = state.resolveDependencies();
+//        for (Feature feature : featureSet) {
+//            depres.resolveFeatureDependency(feature);
+//        }
+//        for (Plugin plugin : pluginSet) {
+//            depres.resolvePluginDependency(plugin);
+//        }
     }
 
     @Override
@@ -278,7 +277,7 @@ public class TestDepResResolving  extends BaseTest {
 
         assertEquals(plugin4, forCompare.getHost());
 
-        assertTrue(forCompare.getLog().isEmpty());
+        assertEquals("[]", forCompare.getLog().toString());
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin4);

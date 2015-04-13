@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -20,11 +21,11 @@ import java.util.Set;
  */
 public class Package extends NamedElement {
 
-    private final Set<Plugin> exportedBy;
+    private Set<Plugin> exportedBy;
 
-    private final Set<Plugin> importedBy;
+    private Set<Plugin> importedBy;
 
-    private final Set<Plugin> reexportedBy;
+    private Set<Plugin> reexportedBy;
 
     public Package(String name, String version) {
         super(name, version);
@@ -117,6 +118,12 @@ public class Package extends NamedElement {
             return false;
         }
         return obj instanceof Package;
+    }
+
+    public void parsingDone() {
+        importedBy = importedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedBy);
+        reexportedBy = reexportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reexportedBy);
+        exportedBy = exportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedBy);
     }
 
 }

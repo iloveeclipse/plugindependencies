@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
+import static org.eclipselabs.plugindependencies.core.Logging.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -98,15 +98,15 @@ public class CommandLineInterpreter {
     }
 
     void printProvidingPackage(String packageName) {
-        ManifestEntry searchedPackage = new ManifestEntry(packageName, "");
-        Set<Package> provided = searchPackage(state.getPackageSet(), searchedPackage);
+        ManifestEntry searchedPackage = new ManifestEntry(packageName, NamedElement.EMPTY_VERSION);
+        Set<Package> provided = searchPackage(state.getPackages(packageName), searchedPackage);
         for (Package pack : provided) {
             Logging.writeStandardOut(pack.getInformationLine());
         }
     }
 
     void printDependingOnPlugin(String pluginName) {
-        ManifestEntry searchedPlugin = new ManifestEntry(pluginName, "");
+        ManifestEntry searchedPlugin = new ManifestEntry(pluginName, NamedElement.EMPTY_VERSION);
         Set<Plugin> dependOn = searchPlugin(state.getPluginSet(), searchedPlugin);
         for (Plugin plugin : dependOn) {
             Logging.writeStandardOut("plugin: " + plugin.getInformationLine());
@@ -115,8 +115,8 @@ public class CommandLineInterpreter {
     }
 
     void printDependingOnPackage(String packageName) {
-        ManifestEntry searchedPack = new ManifestEntry(packageName, "");
-        Set<Package> provid = searchPackage(state.getPackageSet(), searchedPack);
+        ManifestEntry searchedPack = new ManifestEntry(packageName, NamedElement.EMPTY_VERSION);
+        Set<Package> provid = searchPackage(state.getPackages(packageName), searchedPack);
         for (Package pack : provid) {
             Logging.writeStandardOut(pack.getInformationLine());
             Logging.writeStandardOut(pack.printImportedBy(1));
@@ -468,7 +468,7 @@ public class CommandLineInterpreter {
         File pluginsDir = new File(root, "plugins");
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
-            if (PluginParser.createPluginsAndAddToSet(pluginsDir, state.getPluginSet(), state.getPackageSet()) == -1) {
+            if (PluginParser.createPluginsAndAddToSet(pluginsDir, state) == -1) {
                 return -1;
             }
             hasPlugins = true;
@@ -491,7 +491,7 @@ public class CommandLineInterpreter {
     }
 
     public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
-        if (PluginParser.createPluginsAndAddToSet(directory, state.getPluginSet(), state.getPackageSet()) == -1) {
+        if (PluginParser.createPluginsAndAddToSet(directory, state) == -1) {
             return -1;
         }
         if (FeatureParser.createFeaturesAndAddToSet(directory, state.getFeatureSet()) == -1) {
@@ -506,6 +506,6 @@ public class CommandLineInterpreter {
     }
 
     public int readInPlugin(File directory) throws IOException {
-        return PluginParser.createPluginAndAddToSet(directory, state.getPluginSet(), state.getPackageSet());
+        return PluginParser.createPluginAndAddToSet(directory, state);
     }
 }

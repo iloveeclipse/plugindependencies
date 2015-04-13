@@ -38,8 +38,9 @@ public class TestExceptions extends BaseTest {
         Set<Feature> features = new LinkedHashSet<>();
         String dir = "testdata_exceptions/plugins";
 
-        PluginParser.createPluginsAndAddToSet(new File(dir), plugins, packages);
-        DependencyResolver depres = new DependencyResolver(plugins, packages, features);
+        PlatformState state = new PlatformState(plugins, packages, features);
+        PluginParser.createPluginsAndAddToSet(new File(dir), state);
+        state.resolveDependencies();
         Plugin orgExpect = new Plugin("", "");
         for (Plugin plugin : plugins) {
             if (plugin.getName().equals("org.xpect")) {
@@ -47,7 +48,7 @@ public class TestExceptions extends BaseTest {
             }
         }
 
-        depres.resolvePluginDependency(orgExpect);
+//        depres.resolvePluginDependency(orgExpect);
         List<String> log = new ArrayList<>();
         log.add("Error: plugin not found: org.apache.log4j 1.2.0");
         log.add("Error: plugin not found: org.junit 4.11.0");

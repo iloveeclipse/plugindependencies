@@ -26,11 +26,11 @@ import org.w3c.dom.NodeList;
  */
 public class Feature extends OSGIElement {
 
-    private final List<ManifestEntry> requiredPlugins;
+    private List<ManifestEntry> requiredPlugins;
 
-    private final List<ManifestEntry> requiredFeatures;
+    private List<ManifestEntry> requiredFeatures;
 
-    private final Set<Feature> includedFeatures;
+    private Set<Feature> includedFeatures;
 
     public Feature(String name, String vers) {
         super(name, vers);
@@ -40,7 +40,7 @@ public class Feature extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredPlugins() {
-        return Collections.unmodifiableList(requiredPlugins);
+        return requiredPlugins;
     }
 
     public void addRequiredPlugins(NodeList requiredplugins) {
@@ -50,7 +50,7 @@ public class Feature extends OSGIElement {
     }
 
     public List<ManifestEntry> getRequiredFeatures() {
-        return Collections.unmodifiableList(requiredFeatures);
+        return requiredFeatures;
     }
 
     public void addRequiredFeatures(NodeList requiredfeatures) {
@@ -76,6 +76,14 @@ public class Feature extends OSGIElement {
         if (plugin != null) {
             plugin.addIncludingFeature(this);
         }
+    }
+
+    @Override
+    public void parsingDone() {
+        super.parsingDone();
+        includedFeatures = includedFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedFeatures);
+        requiredPlugins = requiredPlugins.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredPlugins);
+        requiredFeatures = requiredFeatures.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredFeatures);
     }
 
     @Override

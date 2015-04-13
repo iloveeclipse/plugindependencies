@@ -38,15 +38,10 @@ public class PluginParser {
      *
      * @param rootDir
      *            Path to directory where Plugins are located
-     * @param plugins
-     *            Set to add the parsed Plugins
-     * @param packages
-     *            Set to add extracted Packages
      * @throws IOException
      *             Reading in file system throws IOException
      */
-    public static int createPluginsAndAddToSet(File rootDir, Set<Plugin> plugins,
-            Set<Package> packages) throws IOException {
+    public static int createPluginsAndAddToSet(File rootDir, PlatformState state) throws IOException {
 
         if (!rootDir.exists()) {
             Logging.writeErrorOut("given directory does not exist: " + rootDir);
@@ -61,15 +56,14 @@ public class PluginParser {
         sortFiles(dirArray);
 
         for (File pluginOrDirectory : dirArray) {
-            if (createPluginAndAddToSet(pluginOrDirectory, plugins, packages) != 0) {
+            if (createPluginAndAddToSet(pluginOrDirectory, state) != 0) {
                 return -1;
             }
         }
         return 0;
     }
 
-    public static int createPluginAndAddToSet(File pluginOrDirectory, Set<Plugin> plugins,
-            Set<Package> packages) throws IOException {
+    public static int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {
         Plugin plugin;
         Manifest manifest = getManifest(pluginOrDirectory);
         if (manifest == null) {
@@ -80,8 +74,9 @@ public class PluginParser {
             return 0;
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
+        Set<Plugin> plugins = state.getPluginSet();
         if (plugins.add(plugin)) {
-            addExportedPackagesToSet(plugin, packages);
+            addExportedPackagesToSet(plugin, state);
             return 0;
         }
         List<String> equalPluginPaths = new ArrayList<>();
@@ -122,20 +117,13 @@ public class PluginParser {
         return dirArray;
     }
 
-    private static void addExportedPackagesToSet(Plugin plugin, Set<Package> packages) {
+    private static void addExportedPackagesToSet(Plugin plugin, PlatformState state) {
         for (Package exportedPackage : plugin.getExportedPackages()) {
             /*
              * Package is exported by another plugin, package has to be found in packages
              * and plugin must be added to exportPlugins of package
              */
-            if (!packages.add(exportedPackage)) {
-                for (Package pack : packages) {
-                    if(pack.equals(exportedPackage)){
-                        pack.addExportPlugin(plugin);
-                        break;
-                    }
-                }
-            }
+            state.addPackage(exportedPackage).addExportPlugin(plugin);
         }
     }
 
@@ -155,7 +143,9 @@ public class PluginParser {
         if (symbolicName == null || version == null) {
             return null;
         }
-        Plugin extractedPlugin = new Plugin(symbolicName.split(";")[0], version);
+        String fragmentHost = readAttribute(mf, "Fragment-Host");
+        boolean fragment = fragmentHost != null;
+        Plugin extractedPlugin = new Plugin(symbolicName.split(";")[0], version, fragment);
 
         extractedPlugin.setRequiredPlugins(readAttribute(mf, "Require-Bundle"));
 
@@ -165,9 +155,7 @@ public class PluginParser {
 
         extractedPlugin.setBundleClassPath(readAttribute(mf, "Bundle-ClassPath"));
 
-        String fragmentHost = readAttribute(mf, "Fragment-Host");
-        if (fragmentHost != null) {
-            extractedPlugin.setFragment(true);
+        if (fragment) {
             extractedPlugin.setFragmentHost(fragmentHost);
         }
 

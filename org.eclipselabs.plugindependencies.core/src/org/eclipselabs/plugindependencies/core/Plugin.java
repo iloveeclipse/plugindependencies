@@ -45,7 +45,7 @@ public class Plugin extends OSGIElement {
 
     private Set<Plugin> recursiveResolvedPlugins;
 
-    private boolean isFragment;
+    private final boolean isFragment;
 
     private ManifestEntry fragmentHostEntry;
 
@@ -57,15 +57,17 @@ public class Plugin extends OSGIElement {
 
 
     public Plugin(String symbName, String vers) {
+        this(symbName, vers, false);
+    }
+
+    public Plugin(String symbName, String vers, boolean fragment) {
         super(symbName, vers);
+        this.requiredPackages = new ArrayList<>();
+        this.requiredPlugins = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
         this.importedPackages = new LinkedHashSet<>();
         this.requiredBy = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
-    }
-
-    public Plugin(String symbName, String vers, boolean fragment) {
-        this(symbName, vers);
         this.isFragment = fragment;
     }
 
@@ -91,10 +93,6 @@ public class Plugin extends OSGIElement {
 
     public boolean isHost() {
         return !isFragment() && !fragments.isEmpty();
-    }
-
-    void setFragment(boolean isFragment) {
-        this.isFragment = isFragment;
     }
 
     public ManifestEntry getFragmentHost() {
@@ -248,7 +246,7 @@ public class Plugin extends OSGIElement {
      * @return true if reqPlugin is optional
      */
     public boolean isOptional(Plugin reqPlugin) {
-        if (requiredPlugins == null) {
+        if (requiredPlugins.isEmpty()) {
             return false;
         }
         for (ManifestEntry entry : requiredPlugins) {
@@ -267,7 +265,7 @@ public class Plugin extends OSGIElement {
      * @return true if reqPlugin is optional
      */
     public boolean isOptional(Package reqPack) {
-        if (requiredPackages == null) {
+        if (requiredPackages.isEmpty()) {
             return false;
         }
         for (ManifestEntry entry : requiredPackages) {

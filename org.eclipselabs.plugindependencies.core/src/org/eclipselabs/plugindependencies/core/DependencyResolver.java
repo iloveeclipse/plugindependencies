@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.NamedElement.*;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -32,7 +34,6 @@ import java.util.regex.Pattern;
  */
 public class DependencyResolver {
 
-    private static final String ZERO_VERSION = "0.0.0";
     private static final List<String> JDK_PACK_PREFIXES = Collections.unmodifiableList(
             Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom", "org.xml.sax",
                     "org.ietf.jgss", "org.jcp.xml.", "com.sun.", "com.oracle.", "jdk.", "sun."));
@@ -43,8 +44,12 @@ public class DependencyResolver {
         this.state = state;
     }
 
+    /**
+     * For tests only!
+     */
     public DependencyResolver(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet) {
         this(new PlatformState(pluginSet, packageSet, featureSet));
+        state.resolveDependencies();
     }
 
     public void resolveFeatureDependency(Feature feature) {
@@ -140,7 +145,9 @@ public class DependencyResolver {
             if (packagesSize > 1){
                 importedPackage = getPackageWithHighestVersion(packages);
             }
-            startPlugin.writePackageErrorLog(requiredPackage, packages);
+            if(importedPackage == null || !requiredPackage.isMatching(importedPackage)) {
+                startPlugin.writePackageErrorLog(requiredPackage, packages);
+            }
         }
 
         if (importedPackage != null) {
@@ -173,7 +180,7 @@ public class DependencyResolver {
             return Collections.emptySet();
         }
         Set<Package> ret = new LinkedHashSet<Package>();
-        for (Package pack : state.getPackageSet()) {
+        for (Package pack : state.getPackages(requiredPackage.getName())) {
             if (requiredPackage.isMatching(pack)) {
                 ret.add(pack);
             }
@@ -237,8 +244,7 @@ public class DependencyResolver {
                     JarEntry entry = jarEntries.nextElement();
                     if (entry.getName().startsWith(packagePath)) {
                         Package p = new Package(packageName, NamedElement.EMPTY_VERSION);
-                        state.getPackageSet().add(p);
-                        return p;
+                        return state.addPackage(p);
                     }
                 }
             }
@@ -491,4 +497,6 @@ public class DependencyResolver {
         Version version2 = new Version(v2);
         return version1.compareTo(version2);
     }
+
+
 }

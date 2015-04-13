@@ -35,8 +35,8 @@ public abstract class OSGIElement extends NamedElement {
     }
 
     public void parsingDone(){
-        resolvedPlugins = Collections.unmodifiableSet(resolvedPlugins);
-        includedInFeatures = Collections.unmodifiableSet(includedInFeatures);
+        resolvedPlugins = resolvedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(resolvedPlugins);
+        includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
     }
 
     public Set<Plugin> getResolvedPlugins() {

@@ -29,7 +29,7 @@ import java.util.Set;
 public class OutputCreator {
     private static File eclipseFolder = new File(".");
 
-    private static String bundleVersion = "0.0.0";
+    private static String bundleVersion = NamedElement.ZERO_VERSION;
 
     private static String sourceFolder = "./";
 

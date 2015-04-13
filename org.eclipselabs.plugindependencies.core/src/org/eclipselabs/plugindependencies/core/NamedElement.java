@@ -17,6 +17,8 @@ import java.util.Objects;
 public abstract class NamedElement {
 
     public static final String EMPTY_VERSION = "";
+    public static final String ZERO_VERSION = "0.0.0";
+
     protected final String name;
     protected final String version;
     protected final List<String> log;
@@ -138,6 +140,10 @@ public abstract class NamedElement {
             }
         }
         return false;
+    }
+
+    public boolean hasDefaultVersion(){
+        return version == EMPTY_VERSION || ZERO_VERSION.equals(version);
     }
 
     @Override
