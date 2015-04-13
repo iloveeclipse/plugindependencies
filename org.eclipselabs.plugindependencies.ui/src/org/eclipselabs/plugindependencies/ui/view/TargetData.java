@@ -11,6 +11,7 @@
 package org.eclipselabs.plugindependencies.ui.view;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +42,7 @@ public class TargetData {
             return Collections.emptyList();
         }
         try {
-            List<String> lines = Files.readAllLines(path.toFile().toPath());
+            List<String> lines = Files.readAllLines(path.toFile().toPath(), Charset.forName("utf-8"));
             return lines;
         } catch (IOException e) {
             IStatus err = Activator.getDefault().errorStatus("Failed to read file: " + file, e);
