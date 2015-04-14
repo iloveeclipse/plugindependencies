@@ -12,7 +12,7 @@ package org.eclipselabs.plugindependencies.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ public class PlatformState {
     private final Set<Feature> features;
     private final Map<String, List<Package>> nameToPackages;
     private final Map<String, List<Plugin>> nameToPlugins;
+    private final Map<String, List<Feature>> nameToFeatures;
     private String javaHome;
     private boolean dependenciesresolved;
 
@@ -40,22 +41,29 @@ public class PlatformState {
         this(new LinkedHashSet<Plugin>(), new LinkedHashSet<Package>(), new LinkedHashSet<Feature>());
     }
 
-    public PlatformState(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet) {
-        this.plugins = pluginSet == null? new LinkedHashSet<Plugin>() : pluginSet;
-        this.packages = packageSet == null? new LinkedHashSet<Package>() : packageSet;
-        this.features = featureSet == null? new LinkedHashSet<Feature>() : featureSet;
-        nameToPackages = new HashMap<>();
-        nameToPlugins = new HashMap<>();
+    public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features) {
+        this.plugins = plugins == null? new LinkedHashSet<Plugin>() : plugins;
+        this.packages = packages == null? new LinkedHashSet<Package>() : packages;
+        this.features = features == null? new LinkedHashSet<Feature>() : features;
+        nameToPackages = new LinkedHashMap<>();
+        nameToPlugins = new LinkedHashMap<>();
+        nameToFeatures = new LinkedHashMap<>();
+
         javaHome = "";
 
-        if(!plugins.isEmpty()){
-            for (Plugin plugin : plugins) {
+        if(!this.plugins.isEmpty()){
+            for (Plugin plugin : this.plugins) {
                 addPlugin(plugin);
             }
         }
-        if(!packages.isEmpty()){
-            for (Package pack : packages) {
+        if(!this.packages.isEmpty()){
+            for (Package pack : this.packages) {
                 addPackage(pack);
+            }
+        }
+        if(!this.features.isEmpty()){
+            for (Feature feature : this.features) {
+                addFeature(feature);
             }
         }
     }
@@ -120,6 +128,22 @@ public class PlatformState {
         return newOne;
     }
 
+    public Feature addFeature(Feature newOne){
+        features.add(newOne);
+
+        List<Feature> list = nameToFeatures.get(newOne.getName());
+        if(list == null){
+            list = new ArrayList<>();
+            nameToFeatures.put(newOne.getName(), list);
+        }
+        int existing = list.indexOf(newOne);
+        if(existing >= 0){
+            return list.get(existing);
+        }
+        list.add(newOne);
+        return newOne;
+    }
+
     public Set<Plugin> getPlugins(String name){
         List<Plugin> list = nameToPlugins.get(name);
         if(list == null) {
@@ -141,6 +165,19 @@ public class PlatformState {
             }
             // For tests only
             return Collections.unmodifiableSet(packages);
+        }
+        // XXX???
+        return new LinkedHashSet<>(list);
+    }
+
+    public Set<Feature> getFeatures(String name){
+        List<Feature> list = nameToFeatures.get(name);
+        if(list == null) {
+            if (packages.isEmpty()) {
+                return Collections.emptySet();
+            }
+            // For tests only
+            return Collections.unmodifiableSet(features);
         }
         // XXX???
         return new LinkedHashSet<>(list);
