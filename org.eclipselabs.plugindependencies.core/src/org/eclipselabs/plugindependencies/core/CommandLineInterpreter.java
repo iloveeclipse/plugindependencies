@@ -79,7 +79,7 @@ public class CommandLineInterpreter {
                     printHelpPage();
                 } else {
                     if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
-                        if (option.handle(state, this, "") == -1) {
+                        if (option.handle(this, "") == -1) {
                             return -1;
                         }
                     } else {
@@ -87,7 +87,7 @@ public class CommandLineInterpreter {
                         while (j + 1 < numOfArgs && !args[j + 1].startsWith("-")) {
                             argList.add(args[++j]);
                         }
-                        if (option.handle(state, this, argList.toArray(new String[argList.size()])) == -1) {
+                        if (option.handle(this, argList.toArray(new String[argList.size()])) == -1) {
                             return -1;
                         }
                     }
