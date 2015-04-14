@@ -323,20 +323,6 @@ public class TestDepResResolving  extends BaseTest {
         forCompare = getPlugin("org.company.corePlugin", pluginSet);
 
         compareLog.clear();
-        compareLog
-                .add("Warning: more than one package found for org.adv.core  *optional*\n"
-                        + "\tpackage: org.adv.core\n"
-                        + "\t\texported by:\n"
-                        + "\t\tplugin: org.eclipse.adv.core 4.0.1.v93_k "
-                        + HOME
-                        + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv.core\n"
-                        + "\tpackage: org.adv.core 3.2.1\n"
-                        + "\t\texported by:\n"
-                        + "\t\tfragment: org.eclipse.plugin1 2.0.0.201306111332 "
-                        + HOME
-                        + "/testdata_dependencies/eclipse/plugins/org.eclipse.plugin1\n");
-
-        assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin5);
