@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class TestDependencyResolver extends BaseTest {
         PlatformState ps = new PlatformState(plugins, null, null);
         ps.computeAllDependenciesRecursive();
 
-        assertEquals("[Warning: package contributed by multiple plugins]", ps.getPackage("hello").getLog().toString());
+        assertEquals("[Warning: package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
         assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello']", p1.getLog().toString());
         assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello']", p2.getLog().toString());
         assertEquals("[Warning: this plugin uses package 'hello' contributed by multiple plugins]", p3.getLog().toString());
@@ -55,8 +55,8 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=0.5.0");
-        p2.setExportedPackages("hello;version=0.5.0");
+        p1.setExportedPackages("hello;version=\"0.5.0\"");
+        p2.setExportedPackages("hello;version=\"0.5.0\"");
 
         p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
 
@@ -69,11 +69,10 @@ public class TestDependencyResolver extends BaseTest {
         ps.computeAllDependenciesRecursive();
 
 
-        assertEquals("[Warning: package contributed by multiple plugins]", ps.getPackage("hello").getLog().toString());
+        assertEquals("[Warning: package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
         assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p1.getLog().toString());
         assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p2.getLog().toString());
         assertEquals("[Warning: this plugin uses package 'hello 0.5.0' contributed by multiple plugins]", p3.getLog().toString());
-
     }
 
     @Test
@@ -82,7 +81,7 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=0.5.0");
+        p1.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setExportedPackages("hello");
 
         p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
@@ -99,6 +98,103 @@ public class TestDependencyResolver extends BaseTest {
         assertEquals("[]", p2.getLog().toString());
         assertEquals("[]", p3.getLog().toString());
         assertEquals(2,  ps.getPackages("hello").size());
+        Set<Package> packages = ps.getPackages("hello");
+        for (Package p : packages) {
+            assertEquals("[]", p.getLog().toString());
+        }
+    }
+
+    @Test
+    public void testImportNonAmbiguousPackages2() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setExportedPackages("hello;version=\"0.5.0\"");
+        p2.setExportedPackages("hello;version=\"0.5.0\"");
+        p2.setRequiredPlugins("p1;version=\"1.0.0\"");
+
+        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p2.getLog().toString());
+        assertEquals("[]", p3.getLog().toString());
+        assertEquals(1,  ps.getPackages("hello").size());
+        Set<Package> packages = ps.getPackages("hello");
+        for (Package p : packages) {
+            assertEquals("[]", p.getLog().toString());
+        }
+    }
+
+    @Test
+    public void testImportNonAmbiguousPackages3() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p1", "2.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setExportedPackages("hello;version=\"0.5.0\"");
+        p2.setExportedPackages("hello;version=\"0.5.0\"");
+
+        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p2.getLog().toString());
+        assertEquals("[]", p3.getLog().toString());
+        assertEquals(1,  ps.getPackages("hello").size());
+        Set<Package> packages = ps.getPackages("hello");
+        for (Package p : packages) {
+            assertEquals("[]", p.getLog().toString());
+        }
+    }
+
+    @Test
+    public void testImportNonAmbiguousPackages4() {
+        Plugin p1 = new Plugin("p1", "1.0.0", true, false);
+        Plugin p2 = new Plugin("p2", "2.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setExportedPackages("hello;version=\"0.5.0\"");
+        p2.setExportedPackages("hello;version=\"0.5.0\"");
+
+        p1.setFragmentHost("p2");
+
+        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p2.getLog().toString());
+        assertEquals("[]", p3.getLog().toString());
+        assertEquals(1,  ps.getPackages("hello").size());
+        Set<Package> packages = ps.getPackages("hello");
+        for (Package p : packages) {
+            assertEquals("[]", p.getLog().toString());
+        }
     }
 
 }

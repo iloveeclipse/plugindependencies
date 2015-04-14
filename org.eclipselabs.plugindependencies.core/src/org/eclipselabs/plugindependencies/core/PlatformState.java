@@ -13,10 +13,14 @@ package org.eclipselabs.plugindependencies.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
@@ -228,14 +232,55 @@ public class PlatformState {
        // validate same package contributed by different plugins in same dependency chain
        for (Package pack : packages) {
            if(pack.getExportedBy().size() > 1){
-               pack.addWarningToLog("package contributed by multiple plugins");
-               Set<Plugin> exportedBy = pack.getExportedBy();
-               for (Plugin plugin : exportedBy) {
-                   plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
+               Set<Plugin> exportedBy = new HashSet<>(pack.getExportedBy());
+
+               Iterator<Plugin> iterator = exportedBy.iterator();
+               Set<Plugin> toRemove = new HashSet<>();
+               while (iterator.hasNext()) {
+                   Plugin p1 = iterator.next();
+                   for (Plugin p2 : exportedBy) {
+                       // ignore packages from same plugin with different version
+                       // ignore packages from fragments and hosts
+                       if(p1 != p2 && (p1.getName().equals(p2.getName()) || p1.isFragmentOrHost(p2))){
+                           iterator.remove();
+                           toRemove.add(p2);
+                       }
+                       if(toRemove.contains(p1)){
+                           iterator.remove();
+                       }
+                   }
+
                }
-               Set<Plugin> importedBy = pack.getImportedBy();
-               for (Plugin plugin : importedBy) {
-                   plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
+
+               // exclude all plugins which might have dependencies to each other
+               Map<Plugin, Plugin> required = new HashMap<>();
+               for (Plugin plugin : exportedBy) {
+                   Set<Plugin> resolvedPlugins = plugin.getRecursiveResolvedPlugins();
+                   for (Plugin p : resolvedPlugins) {
+                       // only exclude if there is no cycle
+                       if(!p.containsRecursiveResolved(plugin)){
+                           required.put(p, plugin);
+                       }
+                   }
+               }
+               for (Entry<Plugin, Plugin> entry : required.entrySet()) {
+                   Plugin p1 = entry.getKey();
+                   if(exportedBy.contains(p1)){
+                       exportedBy.remove(p1);
+                       exportedBy.remove(entry.getValue());
+                   }
+               }
+
+               if(exportedBy.size() > 1){
+                   pack.addWarningToLog("package contributed by multiple, not related plugins");
+                   for (Plugin plugin : exportedBy) {
+                       plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
+                   }
+
+                   Set<Plugin> importedBy = pack.getImportedBy();
+                   for (Plugin plugin : importedBy) {
+                       plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
+                   }
                }
            }
        }
