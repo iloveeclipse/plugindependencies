@@ -55,12 +55,13 @@ public class PluginParser {
         }
         sortFiles(dirArray);
 
+        int result = 0;
         for (File pluginOrDirectory : dirArray) {
             if (createPluginAndAddToSet(pluginOrDirectory, state) != 0) {
-                return -1;
+                result = -1;
             }
         }
-        return 0;
+        return result;
     }
 
     public static int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {

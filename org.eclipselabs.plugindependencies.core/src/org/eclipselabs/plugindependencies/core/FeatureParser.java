@@ -59,13 +59,13 @@ public class FeatureParser {
             return 3;
         }
         PluginParser.sortFiles(dirArray);
-
+        int result = 0;
         for (File featureFolder : dirArray) {
             if (createFeatureAndAddToSet(featureFolder, state) != 0) {
-                return -1;
+                result = -1;
             }
         }
-        return 0;
+        return result;
     }
 
     public static int createFeatureAndAddToSet(File featureFolder, PlatformState state)
