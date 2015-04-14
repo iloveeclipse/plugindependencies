@@ -79,7 +79,7 @@ public class CommandLineInterpreter {
                     printHelpPage();
                 } else {
                     if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
-                        if (option.handle(state, null, "") == -1) {
+                        if (option.handle(state, this, "") == -1) {
                             return -1;
                         }
                     } else {
@@ -122,9 +122,9 @@ public class CommandLineInterpreter {
         }
     }
 
-    int generateRequirementsFile(String path, Set<Plugin> plugins) {
+    int generateRequirementsFile(String path) {
         try {
-            if (OutputCreator.generateRequirementsfile(path, plugins) == -1) {
+            if (OutputCreator.generateRequirementsfile(path, state) == -1) {
                 return -1;
             }
         } catch (IOException e) {
@@ -418,7 +418,15 @@ public class CommandLineInterpreter {
         return returnSet;
     }
 
-    static String printUnresolvedDependencies(Set<? extends OSGIElement> elements, boolean showWarnings) {
+    String printUnresolvedPlugins(boolean showWarnings) {
+        return printUnresolvedDependencies(state.getPlugins(), showWarnings);
+    }
+
+    String printUnresolvedFeatures(boolean showWarnings) {
+        return printUnresolvedDependencies(state.getFeatureSet(), showWarnings);
+    }
+
+    private static String printUnresolvedDependencies(Set<? extends OSGIElement> elements, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
 
         for (OSGIElement element : elements) {

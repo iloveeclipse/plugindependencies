@@ -61,11 +61,11 @@ public class OutputCreator {
         return 0;
     }
 
-    public static int generateRequirementsfile(String outfile, Set<Plugin> pluginSet) throws IOException {
+    public static int generateRequirementsfile(String outfile, PlatformState state) throws IOException {
         StringBuilder dependencyBuilder = new StringBuilder();
         List<String> sortedDependencyList;
 
-        for (Plugin plugin : pluginSet) {
+        for (Plugin plugin : state.getPlugins()) {
             sortedDependencyList = getSortedDependencyList(plugin);
             String elementPath = plugin.getPath();
             for (String path : sortedDependencyList) {

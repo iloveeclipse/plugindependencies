@@ -41,8 +41,7 @@ enum Options {
         @Override
         int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(state.getPlugins(),
-                    showWarnings));
+            Logging.writeStandardOut(cli.printUnresolvedPlugins(showWarnings));
             return 0;
         }
 
@@ -59,8 +58,7 @@ enum Options {
         @Override
         int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(CommandLineInterpreter.printUnresolvedDependencies(state.getFeatureSet(),
-                    showWarnings));
+            Logging.writeStandardOut(cli.printUnresolvedFeatures(showWarnings));
             return 0;
         }
 
@@ -112,7 +110,7 @@ enum Options {
         @Override
         int handle(PlatformState state, CommandLineInterpreter cli, String... args) {
             for (String arg : args) {
-                int result = cli.generateRequirementsFile(arg, state.getPlugins());
+                int result = cli.generateRequirementsFile(arg);
                 if(result != 0){
                     return result;
                 }
