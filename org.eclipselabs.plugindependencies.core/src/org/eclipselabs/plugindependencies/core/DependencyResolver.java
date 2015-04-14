@@ -136,22 +136,18 @@ public class DependencyResolver {
 
     private void resolveRequiredPackage(Plugin startPlugin, ManifestEntry requiredPackage) {
         Set<Package> packages = searchInPackageSet(requiredPackage);
-        Package importedPackage = null;
         int packagesSize = packages.size();
 
-        if (packagesSize == 1) {
-            importedPackage = packages.iterator().next();
-        } else {
-            if (packagesSize > 1){
+        if (packagesSize > 0) {
+            Package importedPackage;
+            if (packagesSize == 1) {
+                importedPackage = packages.iterator().next();
+            } else {
                 importedPackage = getPackageWithHighestVersion(packages);
             }
-            if(importedPackage == null || !requiredPackage.isMatching(importedPackage)) {
-                startPlugin.writePackageErrorLog(requiredPackage, packages);
-            }
-        }
-
-        if (importedPackage != null) {
             startPlugin.addImportedPackage(importedPackage);
+        } else {
+            startPlugin.writePackageErrorLog(requiredPackage, packages);
         }
     }
 
@@ -189,7 +185,7 @@ public class DependencyResolver {
         if (ret.isEmpty()) {
             try {
                 Package p = searchInJavaHomeJar(requiredPackage);
-                if (p != null) {
+                if (p != null && requiredPackage.isMatching(p)) {
                     ret.add(p);
                 }
             } catch (IOException e) {

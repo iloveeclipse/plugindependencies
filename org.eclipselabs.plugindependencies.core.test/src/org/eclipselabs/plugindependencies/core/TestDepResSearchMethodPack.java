@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -100,29 +98,32 @@ public class TestDepResSearchMethodPack extends BaseTest {
         resultSet.add(package1);
 
         entry = new ManifestEntry("com.company.core", "3.2");
-        assertEquals(resultSet, depres.searchInPackageSet(entry));
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
 
         entry = new ManifestEntry("com.company.core", "3.5");
-        assertNotEquals(resultSet, depres.searchInPackageSet(entry));
+        assertNotEquals(resultSet.toString(), depres.searchInPackageSet(entry));
 
         entry = new ManifestEntry("com.company.core", "[3.2.0,4.0.0)");
-        assertEquals(resultSet, depres.searchInPackageSet(entry));
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
 
         resultSet.add(package2);
 
         entry = new ManifestEntry("com.company.core", "");
-        assertEquals(resultSet, depres.searchInPackageSet(entry));
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
 
         resultSet.remove(package1);
 
         entry = new ManifestEntry("com.company.core", "[1.2,2.0.0)");
-        assertEquals(resultSet, depres.searchInPackageSet(entry));
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
 
         resultSet.clear();
         resultSet.add(new Package("javax.crypto", ""));
 
         entry = new ManifestEntry("javax.crypto", "[1.2,2.0.0)");
-        assertEquals(resultSet, depres.searchInPackageSet(entry));
+        assertEquals("[]", depres.searchInPackageSet(entry).toString());
+
+        entry = new ManifestEntry("javax.crypto", "0.0.0");
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
     }
 
     @Test
