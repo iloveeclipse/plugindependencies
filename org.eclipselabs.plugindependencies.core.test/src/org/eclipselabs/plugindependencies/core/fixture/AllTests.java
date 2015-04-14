@@ -18,6 +18,7 @@ import org.eclipselabs.plugindependencies.core.TestDepResResolving;
 import org.eclipselabs.plugindependencies.core.TestDepResSearchMethodFeature;
 import org.eclipselabs.plugindependencies.core.TestDepResSearchMethodPack;
 import org.eclipselabs.plugindependencies.core.TestDepResSearchMethodPlugin;
+import org.eclipselabs.plugindependencies.core.TestDependencyResolver;
 import org.eclipselabs.plugindependencies.core.TestExceptions;
 import org.eclipselabs.plugindependencies.core.TestFeatureParser;
 import org.eclipselabs.plugindependencies.core.TestPlugin;
@@ -44,7 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
     TestFeatureParser.class,
     TestPlugin.class,
     TestPluginParser.class,
-    TestStringUtil.class
+    TestStringUtil.class,
+    TestDependencyResolver.class
 })
 public class AllTests {
     //

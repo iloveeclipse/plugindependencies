@@ -25,11 +25,13 @@ import org.eclipselabs.plugindependencies.core.DependencyResolver.PluginElt;
  */
 public class PlatformState {
 
-    private final Set<Plugin> pluginSet;
-    private final Set<Package> packageSet;
-    private final Set<Feature> featureSet;
+    private final Set<Plugin> plugins;
+    private final Set<Package> packages;
+    private final Set<Feature> features;
     private final Map<String, List<Package>> nameToPackages;
+    private final Map<String, List<Plugin>> nameToPlugins;
     private String javaHome;
+    private boolean dependenciesresolved;
 
     /**
      *
@@ -39,23 +41,35 @@ public class PlatformState {
     }
 
     public PlatformState(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet) {
-        this.pluginSet = pluginSet;
-        this.packageSet = packageSet;
-        this.featureSet = featureSet;
+        this.plugins = pluginSet == null? new LinkedHashSet<Plugin>() : pluginSet;
+        this.packages = packageSet == null? new LinkedHashSet<Package>() : packageSet;
+        this.features = featureSet == null? new LinkedHashSet<Feature>() : featureSet;
         nameToPackages = new HashMap<>();
+        nameToPlugins = new HashMap<>();
         javaHome = "";
+
+        if(!plugins.isEmpty()){
+            for (Plugin plugin : plugins) {
+                addPlugin(plugin);
+            }
+        }
+        if(!packages.isEmpty()){
+            for (Package pack : packages) {
+                addPackage(pack);
+            }
+        }
     }
 
     public Set<Plugin> getPluginSet(){
-        return pluginSet;
+        return plugins;
     }
 
     public Set<Package> getPackageSet(){
-        return packageSet;
+        return packages;
     }
 
     public Set<Feature> getFeatureSet(){
-        return featureSet;
+        return features;
     }
 
     String getJavaHome() {
@@ -66,8 +80,32 @@ public class PlatformState {
         javaHome = newHome;
     }
 
+    public Plugin addPlugin(Plugin newOne){
+        plugins.add(newOne);
+
+        List<Plugin> list = nameToPlugins.get(newOne.getName());
+        if(list == null){
+            list = new ArrayList<>();
+            nameToPlugins.put(newOne.getName(), list);
+        }
+        int existing = list.indexOf(newOne);
+        Plugin oldOne = null;
+        if(existing >= 0){
+            oldOne = list.get(existing);
+        }
+        list.add(newOne);
+        for (Package exportedPackage : newOne.getExportedPackages()) {
+            /*
+             * Package is exported by another plugin, package has to be found in packages
+             * and plugin must be added to exportPlugins of package
+             */
+            addPackage(exportedPackage).addExportPlugin(newOne);
+        }
+        return oldOne != null? oldOne : newOne;
+    }
+
     public Package addPackage(Package newOne){
-        packageSet.add(newOne);
+        packages.add(newOne);
 
         List<Package> list = nameToPackages.get(newOne.getName());
         if(list == null){
@@ -82,30 +120,75 @@ public class PlatformState {
         return newOne;
     }
 
-    public Set<Package> getPackages(String name){
-        List<Package> list = nameToPackages.get(name);
+    public Set<Plugin> getPlugins(String name){
+        List<Plugin> list = nameToPlugins.get(name);
         if(list == null) {
-            if (packageSet.isEmpty()) {
+            if (plugins.isEmpty()) {
                 return Collections.emptySet();
             }
             // For tests only
-            return Collections.unmodifiableSet(packageSet);
+            return Collections.unmodifiableSet(plugins);
         }
         // XXX???
         return new LinkedHashSet<>(list);
     }
 
-    public void computeAllDependenciesRecursive() {
-        for (Plugin plugin : pluginSet) {
-            computeAllDependenciesRecursive(plugin);
+    public Set<Package> getPackages(String name){
+        List<Package> list = nameToPackages.get(name);
+        if(list == null) {
+            if (packages.isEmpty()) {
+                return Collections.emptySet();
+            }
+            // For tests only
+            return Collections.unmodifiableSet(packages);
         }
-
-        finalValidation();
+        // XXX???
+        return new LinkedHashSet<>(list);
     }
 
-   void finalValidation() {
-       // TODO validate packages with different versions used by different plugins in same dependency chain?
+    public Package getPackage(String name){
+        List<Package> list = nameToPackages.get(name);
+        if(list == null || list.isEmpty() || list.size() > 1) {
+            return null;
+        }
+        return list.get(0);
+    }
 
+    public Plugin getPlugin(String name){
+        List<Plugin> list = nameToPlugins.get(name);
+        if(list == null || list.isEmpty() || list.size() > 1) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public void computeAllDependenciesRecursive() {
+        if(!dependenciesresolved){
+            resolveDependencies();
+        }
+        for (Plugin plugin : plugins) {
+            computeAllDependenciesRecursive(plugin);
+        }
+        validate();
+    }
+
+   public void validate() {
+       // validate same package contributed by different plugins in same dependency chain
+       for (Package pack : packages) {
+           if(pack.getExportedBy().size() > 1){
+               pack.addWarningToLog("package contributed by multiple plugins");
+               Set<Plugin> exportedBy = pack.getExportedBy();
+               for (Plugin plugin : exportedBy) {
+                   plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
+               }
+               Set<Plugin> importedBy = pack.getImportedBy();
+               for (Plugin plugin : importedBy) {
+                   plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
+               }
+           }
+       }
+       // TODO validate packages with different versions used by different plugins in same dependency chain
+       // TODO validate singleton plugins with different versions used by different plugins in same dependency chain
    }
 
     static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
@@ -179,7 +262,7 @@ public class PlatformState {
         for (Package pack : getPackageSet()) {
             pack.parsingDone();
         }
-
+        dependenciesresolved = true;
         return depres;
     }
 

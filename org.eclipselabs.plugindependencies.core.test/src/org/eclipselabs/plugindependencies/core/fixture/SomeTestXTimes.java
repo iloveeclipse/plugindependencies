@@ -37,7 +37,9 @@ import org.junit.runners.Suite.SuiteClasses;
 //    TestFeatureParser.class,
 //    TestPlugin.class,
 //    TestPluginParser.class,
-//    TestStringUtil.class
+//    TestStringUtil.class,
+//    TestDependencyResolver.class
+
 })
 @Repeat(50)
 public class SomeTestXTimes {

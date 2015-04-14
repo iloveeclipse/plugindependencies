@@ -146,6 +146,13 @@ public abstract class NamedElement {
         return version == EMPTY_VERSION || ZERO_VERSION.equals(version);
     }
 
+    public String getNameAndVersion(){
+        if(version == EMPTY_VERSION) {
+            return name;
+        }
+        return name + " " + version;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

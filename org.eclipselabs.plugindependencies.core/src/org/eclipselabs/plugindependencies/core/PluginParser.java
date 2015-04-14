@@ -74,11 +74,11 @@ public class PluginParser {
             return 0;
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
-        Set<Plugin> plugins = state.getPluginSet();
-        if (plugins.add(plugin)) {
-            addExportedPackagesToSet(plugin, state);
+        Plugin addedPlugin = state.addPlugin(plugin);
+        if (addedPlugin == plugin) {
             return 0;
         }
+        Set<Plugin> plugins = state.getPlugins(plugin.getName());
         List<String> equalPluginPaths = new ArrayList<>();
         for (Plugin plug : plugins) {
             if (plug.equals(plugin)) {
@@ -93,9 +93,7 @@ public class PluginParser {
         }
         StringBuilder output = new StringBuilder();
         output.append("two plugins with equal symbolic name and version: ");
-        output.append(plugin.getName());
-        output.append(" ");
-        output.append(plugin.getVersion());
+        output.append(plugin.getNameAndVersion());
 
         equalPluginPaths.add(plugin.getPath());
         Collections.sort(equalPluginPaths);
@@ -115,16 +113,6 @@ public class PluginParser {
             }
         });
         return dirArray;
-    }
-
-    private static void addExportedPackagesToSet(Plugin plugin, PlatformState state) {
-        for (Package exportedPackage : plugin.getExportedPackages()) {
-            /*
-             * Package is exported by another plugin, package has to be found in packages
-             * and plugin must be added to exportPlugins of package
-             */
-            state.addPackage(exportedPackage).addExportPlugin(plugin);
-        }
     }
 
     /**
