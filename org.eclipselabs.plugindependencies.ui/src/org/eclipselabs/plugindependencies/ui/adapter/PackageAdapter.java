@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -50,9 +51,26 @@ public class PackageAdapter implements IPropertySource {
         PropertyDescriptor reexporter = new PropertyDescriptor("Reexport",
                 "Reexported By");
         reexporter.setCategory("General");
+        PropertyDescriptor log = new PropertyDescriptor("Log", "Log");
+        log.setCategory("General");
+        log.setLabelProvider(new LabelProvider() {
+            @Override
+            public String getText(Object element) {
+                if (element instanceof List<?>) {
+                    List<?> logList = (List<?>) element;
+                    StringBuilder out = new StringBuilder();
+                    for (Object logEntry : logList) {
+                        out.append(logEntry + "\n");
+                    }
+                    return out.toString();
+                }
+                return "";
+            }
+        });
+
         PropertyDescriptor importedBy = new PropertyDescriptor("Import", "Imported By");
 
-        Collections.addAll(list, name, version, exporter, importedBy, reexporter);
+        Collections.addAll(list, name, version, exporter, importedBy, reexporter, log);
 
         return list.toArray(new IPropertyDescriptor[list.size()]);
     }
@@ -73,6 +91,9 @@ public class PackageAdapter implements IPropertySource {
         }
         if (id.equals("Import")) {
             return new IPropertySourceList(pack.getImportedBy());
+        }
+        if (id.equals("Log")) {
+            return pack.getLog();
         }
         return null;
     }
