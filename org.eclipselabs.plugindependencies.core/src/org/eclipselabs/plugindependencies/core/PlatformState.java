@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,9 +26,11 @@ import org.eclipselabs.plugindependencies.core.DependencyResolver.PluginElt;
  */
 public class PlatformState {
 
-    private final Set<Plugin> plugins;
-    private final Set<Package> packages;
-    private final Set<Feature> features;
+    private final static String DEFAULT_JAVA_HOME = System.getProperty("java.home");
+
+    private Set<Plugin> plugins;
+    private Set<Package> packages;
+    private Set<Feature> features;
     private final Map<String, List<Package>> nameToPackages;
     private final Map<String, List<Plugin>> nameToPlugins;
     private final Map<String, List<Feature>> nameToFeatures;
@@ -49,7 +52,7 @@ public class PlatformState {
         nameToPlugins = new LinkedHashMap<>();
         nameToFeatures = new LinkedHashMap<>();
 
-        javaHome = "";
+        javaHome = DEFAULT_JAVA_HOME;
 
         if(!this.plugins.isEmpty()){
             for (Plugin plugin : this.plugins) {
@@ -69,15 +72,15 @@ public class PlatformState {
     }
 
     public Set<Plugin> getPlugins(){
-        return Collections.unmodifiableSet(plugins);
+        return plugins;
     }
 
     public Set<Package> getPackages(){
-        return Collections.unmodifiableSet(packages);
+        return packages;
     }
 
     public Set<Feature> getFeatures(){
-        return Collections.unmodifiableSet(features);
+        return features;
     }
 
     String getJavaHome() {
@@ -85,7 +88,16 @@ public class PlatformState {
     }
 
     void setJavaHome(String newHome) {
-        javaHome = newHome;
+        if (newHome == null || newHome.trim().isEmpty()) {
+            javaHome = DEFAULT_JAVA_HOME;
+        } else {
+            File javaHomeLib = new File(newHome + "/lib");
+            if (javaHomeLib.isDirectory()) {
+                javaHome = newHome;
+            } else {
+                Logging.writeErrorOut("specified $JAVA_HOME (" + newHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
+            }
+        }
     }
 
     public Plugin addPlugin(Plugin newOne){
@@ -299,6 +311,9 @@ public class PlatformState {
         for (Package pack : getPackages()) {
             pack.parsingDone();
         }
+        packages = Collections.unmodifiableSet(packages);
+        plugins = Collections.unmodifiableSet(plugins);
+        features = Collections.unmodifiableSet(features);
         dependenciesresolved = true;
         return depres;
     }

@@ -136,6 +136,16 @@ public class DependencyResolver {
 
     private void resolveRequiredPackage(Plugin startPlugin, ManifestEntry requiredPackage) {
         Set<Package> packages = searchInPackageSet(requiredPackage);
+        if(packages.isEmpty()){
+            try {
+                packages = searchInJavaHomeJar(requiredPackage);
+                if(!packages.isEmpty()) {
+                    state.addPackage(packages.iterator().next());
+                }
+            } catch (IOException e) {
+                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + state.getJavaHome() + ").", e);
+            }
+        }
         int packagesSize = packages.size();
 
         if (packagesSize > 0) {
@@ -181,25 +191,12 @@ public class DependencyResolver {
                 ret.add(pack);
             }
         }
-
-        if (ret.isEmpty()) {
-            try {
-                Package p = searchInJavaHomeJar(requiredPackage);
-                if (p != null && requiredPackage.isMatching(p)) {
-                    ret.add(p);
-                }
-            } catch (IOException e) {
-                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + state.getJavaHome() + ").", e);
-            }
-        }
         return ret;
     }
 
-    private final static String DEFAULT_JAVA_HOME = System.getProperty("java.home");
-
-    public Package searchInJavaHomeJar(ManifestEntry requiredPackage) throws IOException {
+    public Set<Package> searchInJavaHomeJar(ManifestEntry requiredPackage) throws IOException {
         if (requiredPackage == null || requiredPackage.getName().isEmpty()) {
-            return null;
+            return Collections.emptySet();
         }
 
         String packageName = requiredPackage.getName().trim();
@@ -212,25 +209,13 @@ public class DependencyResolver {
             }
         }
         if(!canBeFromJdk){
-            return null;
+            return Collections.emptySet();
         }
 
-        String javaHome = state.getJavaHome();
-
-        if (javaHome == null || javaHome.isEmpty()) {
-            javaHome = DEFAULT_JAVA_HOME;
-            state.setJavaHome(javaHome);
-        }
-        File javaHomeLib = new File(javaHome + "/lib");
-        if (!javaHomeLib.exists()) {
-            Logging.writeErrorOut("specified $JAVA_HOME (" + javaHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
-            javaHome = DEFAULT_JAVA_HOME;
-            state.setJavaHome(javaHome);
-        }
-
+        File javaHomeLib = new File(state.getJavaHome(), "lib");
         File[] jarList = javaHomeLib.listFiles(new JarFilter());
         if(jarList == null){
-            return null;
+            return Collections.emptySet();
         }
         String packagePath = packageName.replace('.', '/') + "/";
         for (File jar : jarList) {
@@ -240,12 +225,14 @@ public class DependencyResolver {
                     JarEntry entry = jarEntries.nextElement();
                     if (entry.getName().startsWith(packagePath)) {
                         Package p = new Package(packageName, NamedElement.EMPTY_VERSION);
-                        return state.addPackage(p);
+                        Set<Package> result = new LinkedHashSet<>();
+                        result.add(p);
+                        return result;
                     }
                 }
             }
         }
-        return null;
+        return Collections.emptySet();
     }
 
     static class JarFilter implements FilenameFilter {

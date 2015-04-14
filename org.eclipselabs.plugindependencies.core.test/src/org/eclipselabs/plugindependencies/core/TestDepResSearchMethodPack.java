@@ -78,15 +78,15 @@ public class TestDepResSearchMethodPack extends BaseTest {
         ManifestEntry entry = new ManifestEntry("javax.crypto", "");
         Package result = new Package("javax.crypto", "");
 
-        assertEquals(result, depres.searchInJavaHomeJar(entry));
+        assertEquals(result, depres.searchInJavaHomeJar(entry).iterator().next());
 
         entry = new ManifestEntry("Package.can.not.be.found", "");
-        assertNull(depres.searchInJavaHomeJar(entry));
+        assertTrue(depres.searchInJavaHomeJar(entry).isEmpty());
 
-        assertNull(depres.searchInJavaHomeJar(null));
+        assertTrue(depres.searchInJavaHomeJar(null).isEmpty());
 
         entry = new ManifestEntry("", "");
-        assertNull(depres.searchInJavaHomeJar(entry));
+        assertTrue(depres.searchInJavaHomeJar(entry).isEmpty());
     }
 
     @Test
@@ -121,9 +121,6 @@ public class TestDepResSearchMethodPack extends BaseTest {
 
         entry = new ManifestEntry("javax.crypto", "[1.2,2.0.0)");
         assertEquals("[]", depres.searchInPackageSet(entry).toString());
-
-        entry = new ManifestEntry("javax.crypto", "0.0.0");
-        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
     }
 
     @Test
