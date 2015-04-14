@@ -112,6 +112,7 @@ public class PlatformState {
         Plugin oldOne = null;
         if(existing >= 0){
             oldOne = list.get(existing);
+            oldOne.addDuplicate(newOne);
         }
         list.add(newOne);
         for (Package exportedPackage : newOne.getExportedPackages()) {
@@ -149,11 +150,13 @@ public class PlatformState {
             nameToFeatures.put(newOne.getName(), list);
         }
         int existing = list.indexOf(newOne);
+        Feature oldOne = null;
         if(existing >= 0){
-            return list.get(existing);
+            oldOne = list.get(existing);
+            oldOne.addDuplicate(newOne);
         }
         list.add(newOne);
-        return newOne;
+        return oldOne != null? oldOne : newOne;
     }
 
     public Set<Plugin> getPlugins(String name){
@@ -234,6 +237,26 @@ public class PlatformState {
                for (Plugin plugin : importedBy) {
                    plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
                }
+           }
+       }
+       for (Plugin plugin : plugins) {
+           Set<OSGIElement> dups = (Set<OSGIElement>) plugin.getDuplicates();
+           if(!dups.isEmpty()){
+               StringBuilder sb = new StringBuilder("duplicated plugins:\n");
+               for (OSGIElement elt : dups) {
+                   sb.append(elt).append(" at ").append(elt.getPath()).append("\n");
+               }
+               plugin.addErrorToLog(sb.toString());
+           }
+       }
+       for (Feature feature : features) {
+           Set<OSGIElement> dups = (Set<OSGIElement>) feature.getDuplicates();
+           if(!dups.isEmpty()){
+               StringBuilder sb = new StringBuilder("duplicated features:\n");
+               for (OSGIElement elt : dups) {
+                   sb.append(elt).append(" at ").append(elt.getPath()).append("\n");
+               }
+               feature.addErrorToLog(sb.toString());
            }
        }
        // TODO validate packages with different versions used by different plugins in same dependency chain

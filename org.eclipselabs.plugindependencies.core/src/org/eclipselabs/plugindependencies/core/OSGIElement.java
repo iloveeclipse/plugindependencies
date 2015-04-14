@@ -28,15 +28,19 @@ public abstract class OSGIElement extends NamedElement {
 
     private String elementPath;
 
+    private Set<? super OSGIElement> duplicates;
+
     public OSGIElement(String name, String version) {
         super(name, version);
         this.resolvedPlugins = new LinkedHashSet<>();
         this.includedInFeatures = new LinkedHashSet<>();
+        this.duplicates = new LinkedHashSet<>();
     }
 
     public void parsingDone(){
         resolvedPlugins = resolvedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(resolvedPlugins);
         includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
+        duplicates = duplicates.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(duplicates);
     }
 
     public Set<Plugin> getResolvedPlugins() {
@@ -71,6 +75,14 @@ public abstract class OSGIElement extends NamedElement {
         this.elementPath = canonicalPath;
     }
 
+    public void addDuplicate(OSGIElement dup){
+        duplicates.add(dup);
+    }
+
+    public Set<? super OSGIElement> getDuplicates() {
+        return duplicates;
+    }
+
     public String getInformationLine() {
         if(version.isEmpty()){
             return name + " " + elementPath;
@@ -78,26 +90,20 @@ public abstract class OSGIElement extends NamedElement {
         return name + " " + version + " " + elementPath;
     }
 
-    public void writeErrorLog(ManifestEntry requiredElement,
-            Set<? extends OSGIElement> elements, String type) {
-        StringBuilder logEntry = new StringBuilder();
-        String id = requiredElement.getName().trim();
-        String vers = requiredElement.getVersion();
-        String optional = requiredElement.isOptional() ? " *optional*" : EMPTY_VERSION;
+    public void writeErrorLog(ManifestEntry entry, Set<? extends OSGIElement> elements, String type) {
+        String optional = entry.isOptional() ? " *optional*" : "";
         int setSize = elements.size();
 
         if (setSize > 1) {
-            logEntry.append(PREFIX_WARN).append("more than one " + type + " found for ");
-            logEntry.append(id + " " + vers + optional + "\n");
+            StringBuilder logStr = new StringBuilder();
+            logStr.append("more than one " + type + " found for ");
+            logStr.append(entry.getNameAndVersion() + optional + "\n");
             for (OSGIElement element : elements) {
-                logEntry.append("\t" + element.getInformationLine() + "\n");
+                logStr.append("\t" + element.getInformationLine() + "\n");
             }
+            addWarningToLog(logStr.toString());
+        } else if (setSize == 0 && optional.isEmpty()) {
+            addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional);
         }
-        if (setSize == 0 && optional.isEmpty()) {
-            String errortype = optional.isEmpty() ? PREFIX_ERROR : PREFIX_WARN;
-            logEntry.append(errortype + type + " not found: ");
-            logEntry.append(id + " " + vers + optional);
-        }
-        addToLog(logEntry.toString());
     }
 }
