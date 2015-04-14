@@ -106,8 +106,7 @@ public class CommandLineInterpreter {
     }
 
     void printDependingOnPlugin(String pluginName) {
-        ManifestEntry searchedPlugin = new ManifestEntry(pluginName, NamedElement.EMPTY_VERSION);
-        Set<Plugin> dependOn = searchPlugin(state.getPluginSet(), searchedPlugin);
+        Set<Plugin> dependOn = state.getPlugins(pluginName);
         for (Plugin plugin : dependOn) {
             Logging.writeStandardOut("plugin: " + plugin.getInformationLine());
             Logging.writeStandardOut(plugin.printRequiringThis());
@@ -162,7 +161,7 @@ public class CommandLineInterpreter {
                 errorLog.append("feature error log:\n");
                 errorLog.append(printUnresolvedDependencies(state.getFeatureSet(), true));
                 errorLog.append("plugin error log:\n");
-                errorLog.append(printUnresolvedDependencies(state.getPluginSet(), true));
+                errorLog.append(printUnresolvedDependencies(state.getPlugins(), true));
                 toFileOut.write(errorLog.toString());
             }
             return 0;
@@ -173,7 +172,7 @@ public class CommandLineInterpreter {
     }
 
     int generateBuildFile(String pluginName) {
-        Set<Plugin> resultSet = searchPlugin(state.getPluginSet(), new ManifestEntry(pluginName, ""));
+        Set<Plugin> resultSet = state.getPlugins(pluginName);
         if (!resultSet.isEmpty()) {
             Plugin plugin = resultSet.iterator().next();
             int index = plugin.getPath().lastIndexOf('/');
@@ -195,14 +194,14 @@ public class CommandLineInterpreter {
 
     int generateAllBuildFiles(String sourceDir) {
         OutputCreator.setSourceFolder(sourceDir);
-        if(state.getPluginSet().isEmpty()){
+        if(state.getPlugins().isEmpty()){
             Logging.getLogger().error("generation failed: no plugins found, arguments: " + sourceDir);
             return -1;
         }
-        Logging.writeStandardOut("Starting to generate classpath files, platform size: " + state.getPluginSet().size() + " plugins");
+        Logging.writeStandardOut("Starting to generate classpath files, platform size: " + state.getPlugins().size() + " plugins");
         boolean success = true;
         int generated = 0;
-        for (Plugin plugin : state.getPluginSet()) {
+        for (Plugin plugin : state.getPlugins()) {
             if (plugin.getPath().contains(sourceDir)) {
                 try {
                     if (OutputCreator.generateBuildFile(plugin) == -1) {
@@ -235,7 +234,7 @@ public class CommandLineInterpreter {
         String name = arg.substring(0, separatorIndex);
 
         ManifestEntry searchedElement = new ManifestEntry(name, version);
-        Set<Plugin> foundPlugins = searchPlugin(state.getPluginSet(), searchedElement);
+        Set<Plugin> foundPlugins = searchPlugin(state.getPlugins(name), searchedElement);
         Set<Feature> foundFeatures = searchFeature(state.getFeatureSet(), searchedElement);
 
         for (Plugin plugin : foundPlugins) {
@@ -314,8 +313,12 @@ public class CommandLineInterpreter {
             if (plugin.isFragment()) {
                 out.append("fragment host:\n");
                 Plugin fragmentHost = plugin.getHost();
-                out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
-                + "\n");
+                if(fragmentHost == null){
+                    out.append("<missing>\n");
+                } else {
+                    out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
+                    + "\n");
+                }
             } else {
                 out.append("fragments:\n");
                 for (Plugin fragment : plugin.getFragments()) {
@@ -355,7 +358,7 @@ public class CommandLineInterpreter {
         List<Feature> features = new ArrayList<>();
         List<Plugin> fragments = new ArrayList<>();
 
-        for (Plugin plugin : state.getPluginSet()) {
+        for (Plugin plugin : state.getPlugins()) {
             if (plugin.isFragment()) {
                 fragments.add(plugin);
             } else {

@@ -68,7 +68,7 @@ public class PlatformState {
         }
     }
 
-    public Set<Plugin> getPluginSet(){
+    public Set<Plugin> getPlugins(){
         return plugins;
     }
 
@@ -283,14 +283,14 @@ public class PlatformState {
     public DependencyResolver resolveDependencies() {
         DependencyResolver depres = new DependencyResolver(this);
 
-        for (Plugin plugin : getPluginSet()) {
+        for (Plugin plugin : getPlugins()) {
             depres.resolvePluginDependency(plugin);
         }
         for (Feature feature : getFeatureSet()) {
             depres.resolveFeatureDependency(feature);
         }
 
-        for (Plugin plugin : getPluginSet()) {
+        for (Plugin plugin : getPlugins()) {
             plugin.parsingDone();
         }
         for (Feature feature : getFeatureSet()) {

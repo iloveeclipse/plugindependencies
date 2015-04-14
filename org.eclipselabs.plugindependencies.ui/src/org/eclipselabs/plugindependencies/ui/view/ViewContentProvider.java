@@ -141,7 +141,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         // Plugins
         TreeParent plugins = new TreeParent("Plugins", invisibleRoot);
         boolean errorsOnly = view.isShowErrorsOnly();
-        for (Plugin plugin : state.getPluginSet()) {
+        for (Plugin plugin : state.getPlugins()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
                 plugins.addChild(new TreePlugin(plugin, plugins));
             }

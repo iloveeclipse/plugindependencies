@@ -88,9 +88,7 @@ public class PluginParser {
                 equalPluginPaths.add(plug.getPath());
             }
         }
-        if(equalPluginPaths.isEmpty()) {
-            return 0;
-        }
+
         StringBuilder output = new StringBuilder();
         output.append("two plugins with equal symbolic name and version: ");
         output.append(plugin.getNameAndVersion());

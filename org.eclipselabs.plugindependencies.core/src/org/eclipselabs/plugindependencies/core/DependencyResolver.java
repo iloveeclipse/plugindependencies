@@ -397,13 +397,13 @@ public class DependencyResolver {
         Set<Plugin> ret = new LinkedHashSet<Plugin>();
 
         if (exactVersion) {
-            for (Plugin plugin : state.getPluginSet()) {
+            for (Plugin plugin : state.getPlugins()) {
                 if (plugin.matches(pluginName, version)) {
                     ret.add(plugin);
                 }
             }
         } else {
-            for (Plugin plugin : state.getPluginSet()) {
+            for (Plugin plugin : state.getPlugins()) {
                 if (requiredPlugin.isMatching(plugin)) {
                     ret.add(plugin);
                 }
