@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.*;
+import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -477,10 +477,11 @@ public class CommandLineInterpreter {
             throws IOException, SAXException, ParserConfigurationException {
         File root = new File(eclipsePath);
         File pluginsDir = new File(root, "plugins");
+        int result = 0;
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
             if (PluginParser.createPluginsAndAddToSet(pluginsDir, state) == -1) {
-                return -1;
+                result = -1;
             }
             hasPlugins = true;
         }
@@ -488,27 +489,32 @@ public class CommandLineInterpreter {
         boolean hasFeatures = false;
         if (featureDir.exists()) {
             if (FeatureParser.createFeaturesAndAddToSet(featureDir, state) == -1) {
-                return -1;
+                result = -1;
             }
             hasFeatures = true;
         }
         if(hasPlugins && hasFeatures){
             File dropinsDir = new File(root, "dropins");
             if (dropinsDir.exists()) {
-                return readInChildren(dropinsDir);
+                result =  readInChildren(dropinsDir);
             }
         }
-        return readInChildren(root);
+        result += readInChildren(root);
+        if(result < 0){
+            return -1;
+        }
+        return result;
     }
 
     public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
+        int result = 0;
         if (PluginParser.createPluginsAndAddToSet(directory, state) == -1) {
-            return -1;
+            result = -1;
         }
         if (FeatureParser.createFeaturesAndAddToSet(directory, state) == -1) {
-            return -1;
+            result = -1;
         }
-        return 0;
+        return result;
     }
 
     public int readInFeature(File directory) throws IOException,
