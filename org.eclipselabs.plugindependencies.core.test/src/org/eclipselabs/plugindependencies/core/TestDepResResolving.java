@@ -96,8 +96,8 @@ public class TestDepResResolving  extends BaseTest {
         pluginSet = new LinkedHashSet<Plugin>();
         packageSet = new LinkedHashSet<Package>();
         featureSet = new LinkedHashSet<Feature>();
-        FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), featureSet);
         PlatformState state = new PlatformState(pluginSet, packageSet, featureSet);
+        FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), state);
         PluginParser.createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), state);
         featureLeft = new Feature("org.example.left", "2.1.1.v20120113-1346");
         featureRight = new Feature("org.company.right", "1.6.0");

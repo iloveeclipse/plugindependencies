@@ -76,8 +76,8 @@ public class PlatformState {
         return Collections.unmodifiableSet(packages);
     }
 
-    public Set<Feature> getFeatureSet(){
-        return features;
+    public Set<Feature> getFeatures(){
+        return Collections.unmodifiableSet(features);
     }
 
     String getJavaHome() {
@@ -286,14 +286,14 @@ public class PlatformState {
         for (Plugin plugin : getPlugins()) {
             depres.resolvePluginDependency(plugin);
         }
-        for (Feature feature : getFeatureSet()) {
+        for (Feature feature : getFeatures()) {
             depres.resolveFeatureDependency(feature);
         }
 
         for (Plugin plugin : getPlugins()) {
             plugin.parsingDone();
         }
-        for (Feature feature : getFeatureSet()) {
+        for (Feature feature : getFeatures()) {
             feature.parsingDone();
         }
         for (Package pack : getPackages()) {

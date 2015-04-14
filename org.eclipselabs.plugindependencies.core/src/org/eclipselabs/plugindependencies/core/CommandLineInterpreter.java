@@ -159,7 +159,7 @@ public class CommandLineInterpreter {
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
                 errorLog.append("feature error log:\n");
-                errorLog.append(printUnresolvedDependencies(state.getFeatureSet(), true));
+                errorLog.append(printUnresolvedDependencies(state.getFeatures(), true));
                 errorLog.append("plugin error log:\n");
                 errorLog.append(printUnresolvedDependencies(state.getPlugins(), true));
                 toFileOut.write(errorLog.toString());
@@ -235,7 +235,7 @@ public class CommandLineInterpreter {
 
         ManifestEntry searchedElement = new ManifestEntry(name, version);
         Set<Plugin> foundPlugins = searchPlugin(state.getPlugins(name), searchedElement);
-        Set<Feature> foundFeatures = searchFeature(state.getFeatureSet(), searchedElement);
+        Set<Feature> foundFeatures = searchFeature(state.getFeatures(name), searchedElement);
 
         for (Plugin plugin : foundPlugins) {
             StringBuilder out = new StringBuilder();
@@ -365,7 +365,7 @@ public class CommandLineInterpreter {
                 plugins.add(plugin);
             }
         }
-        features.addAll(state.getFeatureSet());
+        features.addAll(state.getFeatures());
 
         Comparator<OSGIElement> comp = new NameAndVersionComparator();
 
@@ -423,7 +423,7 @@ public class CommandLineInterpreter {
     }
 
     String printUnresolvedFeatures(boolean showWarnings) {
-        return printUnresolvedDependencies(state.getFeatureSet(), showWarnings);
+        return printUnresolvedDependencies(state.getFeatures(), showWarnings);
     }
 
     private static String printUnresolvedDependencies(Set<? extends OSGIElement> elements, boolean showWarnings) {
@@ -487,7 +487,7 @@ public class CommandLineInterpreter {
         File featureDir = new File(root, "features");
         boolean hasFeatures = false;
         if (featureDir.exists()) {
-            if (FeatureParser.createFeaturesAndAddToSet(featureDir, state.getFeatureSet()) == -1) {
+            if (FeatureParser.createFeaturesAndAddToSet(featureDir, state) == -1) {
                 return -1;
             }
             hasFeatures = true;
@@ -505,7 +505,7 @@ public class CommandLineInterpreter {
         if (PluginParser.createPluginsAndAddToSet(directory, state) == -1) {
             return -1;
         }
-        if (FeatureParser.createFeaturesAndAddToSet(directory, state.getFeatureSet()) == -1) {
+        if (FeatureParser.createFeaturesAndAddToSet(directory, state) == -1) {
             return -1;
         }
         return 0;
@@ -513,7 +513,7 @@ public class CommandLineInterpreter {
 
     public int readInFeature(File directory) throws IOException,
         SAXException, ParserConfigurationException {
-        return FeatureParser.createFeatureAndAddToSet(directory, state.getFeatureSet());
+        return FeatureParser.createFeatureAndAddToSet(directory, state);
     }
 
     public int readInPlugin(File directory) throws IOException {

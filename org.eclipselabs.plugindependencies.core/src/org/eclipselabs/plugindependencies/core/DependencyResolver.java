@@ -397,13 +397,13 @@ public class DependencyResolver {
         Set<Plugin> ret = new LinkedHashSet<Plugin>();
 
         if (exactVersion) {
-            for (Plugin plugin : state.getPlugins()) {
+            for (Plugin plugin : state.getPlugins(pluginName)) {
                 if (plugin.matches(pluginName, version)) {
                     ret.add(plugin);
                 }
             }
         } else {
-            for (Plugin plugin : state.getPlugins()) {
+            for (Plugin plugin : state.getPlugins(pluginName)) {
                 if (requiredPlugin.isMatching(plugin)) {
                     ret.add(plugin);
                 }
@@ -420,7 +420,7 @@ public class DependencyResolver {
         String version = entry.getVersion();
         Set<Feature> ret = new LinkedHashSet<Feature>();
 
-        for (Feature feature : state.getFeatureSet()) {
+        for (Feature feature : state.getFeatures(id)) {
             if (feature.matches(id, version)) {
                 ret.add(feature);
             }

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,8 +38,6 @@ public class FeatureParser {
      *
      * @param rootDir
      *            Path to Folder where Features are located
-     * @param features
-     *            Set to add the parsed Features
      * @throws IOException
      *             From reading file system
      * @throws SAXException
@@ -49,7 +46,7 @@ public class FeatureParser {
      *             if a DocumentBuilder cannot be created which satisfies the
      *             configuration requested.
      */
-    public static int createFeaturesAndAddToSet(File rootDir, Set<Feature> features)
+    public static int createFeaturesAndAddToSet(File rootDir, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
         if (!rootDir.isDirectory()) {
             Logging.writeErrorOut("given directory does not exist: " + rootDir);
@@ -64,16 +61,15 @@ public class FeatureParser {
         PluginParser.sortFiles(dirArray);
 
         for (File featureFolder : dirArray) {
-            if (createFeatureAndAddToSet(featureFolder, features) != 0) {
+            if (createFeatureAndAddToSet(featureFolder, state) != 0) {
                 return -1;
             }
         }
         return 0;
     }
 
-    public static int createFeatureAndAddToSet(File featureFolder, Set<Feature> features)
+    public static int createFeatureAndAddToSet(File featureFolder, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
-
         String path = featureFolder.getCanonicalPath() + "/feature.xml";
         File featureXMLFile = new File(path);
         if (!featureXMLFile.exists()) {
@@ -85,12 +81,13 @@ public class FeatureParser {
             return 0;
         }
         feature.setPath(path);
-        if (features.add(feature)) {
+        Feature addedFeature = state.addFeature(feature);
+        if (addedFeature == feature) {
             return 0;
         }
         List<String> equalFeaturePaths = new ArrayList<>();
         equalFeaturePaths.add(feature.getPath());
-        for (Feature feat : features) {
+        for (Feature feat : state.getFeatures(feature.getName())) {
             if (feat.equals(feature)) {
                 equalFeaturePaths.add(feat.getPath());
             }

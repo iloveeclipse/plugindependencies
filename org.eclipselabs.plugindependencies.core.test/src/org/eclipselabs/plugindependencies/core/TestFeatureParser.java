@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,12 +93,12 @@ public class TestFeatureParser  extends BaseTest {
     @Test
     public void testReadFeatures() throws IOException, SAXException,
             ParserConfigurationException {
-        featureSet = new LinkedHashSet<>();
-        FeatureParser.createFeaturesAndAddToSet(new File(dirPath), featureSet);
-        assertEquals(compareFeatureSet, featureSet);
+        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>());
+        FeatureParser.createFeaturesAndAddToSet(new File(dirPath), state);
+        assertEquals(compareFeatureSet, state.getFeatures());
 
         Feature orgEclipseCdtFeat = new Feature("", "");
-        for (Feature feature : featureSet) {
+        for (Feature feature : state.getFeatures()) {
             if (feature.getName().equals("org.eclipse.cdt")) {
                 if (feature.getVersion().equals("8.0.2.201202111925")) {
                     orgEclipseCdtFeat = feature;
@@ -117,17 +114,18 @@ public class TestFeatureParser  extends BaseTest {
     @Test
     public void testReadFeaturesWrongArguments() throws IOException, SAXException,
             ParserConfigurationException {
-        featureSet = new LinkedHashSet<>();
+        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>());
         try {
-            FeatureParser.createFeaturesAndAddToSet(null, featureSet);
+            FeatureParser.createFeaturesAndAddToSet(null, state);
             fail();
         } catch (NullPointerException e) {
             // expected
         }
-        assertTrue(featureSet.isEmpty());
+        assertTrue(state.getFeatures().isEmpty());
 
-        FeatureParser.createFeaturesAndAddToSet(new File("/folder/does/not/exist"), featureSet);
-        assertTrue(featureSet.isEmpty());
+        state = new PlatformState(null, null, new LinkedHashSet<Feature>());
+        FeatureParser.createFeaturesAndAddToSet(new File("/folder/does/not/exist"), state);
+        assertTrue(state.getFeatures().isEmpty());
     }
 
     @Test

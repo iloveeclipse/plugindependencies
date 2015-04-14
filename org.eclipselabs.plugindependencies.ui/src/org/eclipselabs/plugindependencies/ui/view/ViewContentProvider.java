@@ -155,7 +155,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         }
         // Features
         TreeParent features = new TreeParent("Features", invisibleRoot);
-        for (Feature feature : state.getFeatureSet()) {
+        for (Feature feature : state.getFeatures()) {
             if(! errorsOnly || (feature.hasErrors() || feature.hasWarnings())) {
                 features.addChild(new TreeFeature(feature, features));
             }
