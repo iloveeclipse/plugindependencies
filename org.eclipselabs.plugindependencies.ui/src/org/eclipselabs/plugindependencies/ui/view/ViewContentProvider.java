@@ -148,7 +148,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         }
         // Packages
         TreeParent packages = new TreeParent("Packages", invisibleRoot);
-        for (Package pack : state.getPackageSet()) {
+        for (Package pack : state.getPackages()) {
             if(! errorsOnly || (pack.hasErrors() || pack.hasWarnings())) {
                 packages.addChild(new TreePackage(pack, packages));
             }

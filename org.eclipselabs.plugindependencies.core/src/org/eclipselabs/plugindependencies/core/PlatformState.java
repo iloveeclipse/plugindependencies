@@ -69,11 +69,11 @@ public class PlatformState {
     }
 
     public Set<Plugin> getPlugins(){
-        return plugins;
+        return Collections.unmodifiableSet(plugins);
     }
 
-    public Set<Package> getPackageSet(){
-        return packages;
+    public Set<Package> getPackages(){
+        return Collections.unmodifiableSet(packages);
     }
 
     public Set<Feature> getFeatureSet(){
@@ -296,7 +296,7 @@ public class PlatformState {
         for (Feature feature : getFeatureSet()) {
             feature.parsingDone();
         }
-        for (Package pack : getPackageSet()) {
+        for (Package pack : getPackages()) {
             pack.parsingDone();
         }
         dependenciesresolved = true;
