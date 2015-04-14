@@ -232,7 +232,12 @@ enum Options {
     JavaHome("-javaHome") {
         @Override
         int handle(CommandLineInterpreter cli, String... args) {
-            cli.getState().setJavaHome(args[0]);
+            try {
+                cli.getState().setJavaHome(args[0]);
+            } catch (IllegalArgumentException e) {
+                Logging.getLogger().error(e.getMessage(), e);
+                return -1;
+            }
             return 0;
         }
 

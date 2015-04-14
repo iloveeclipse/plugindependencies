@@ -423,7 +423,6 @@ public class DependencyResolver {
 
     public static boolean isCompatibleVersion(String rangeOrLowerLimit,  String givenVersion) {
         if (rangeOrLowerLimit == null || givenVersion == null) {
-            Logging.writeErrorOut("version can't be null");
             return false;
         }
         if (givenVersion.isEmpty()) {

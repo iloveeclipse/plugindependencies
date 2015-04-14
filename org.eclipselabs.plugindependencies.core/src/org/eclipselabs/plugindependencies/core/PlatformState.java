@@ -95,7 +95,7 @@ public class PlatformState {
             if (javaHomeLib.isDirectory()) {
                 javaHome = newHome;
             } else {
-                Logging.writeErrorOut("specified $JAVA_HOME (" + newHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
+                throw new IllegalArgumentException("specified $JAVA_HOME (" + newHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
             }
         }
     }

@@ -214,7 +214,6 @@ public class Plugin extends OSGIElement {
         if (targetDir == null) {
             File makefileLocal = new File(getPath() + "/Makefile.local");
             if (!makefileLocal.canRead()) {
-                Logging.writeErrorOut("can't read: " + makefileLocal);
                 return null;
             }
             try (FileReader makefileReader = new FileReader(makefileLocal)) {
