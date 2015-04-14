@@ -198,7 +198,7 @@ public class TestPluginParser  extends BaseTest {
         checkForDoubleExport.add(plugin1);
 
         plugins = new LinkedHashSet<>();
-        plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0", true));
+        plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0", true, false));
         plugins.addAll(checkForDoubleExport);
     }
 
@@ -302,6 +302,7 @@ public class TestPluginParser  extends BaseTest {
         assertEquals(compareReqPackagesOfOrgEclipseEqu, plugin.getRequiredPackages());
         assertEquals(expPackagesOfOrgEclipseEqu, plugin.getExportedPackages());
         assertFalse(plugin.isFragment());
+        assertTrue(plugin.isSingleton());
         assertNull(plugin.getFragmentHost());
 
         Package pack = new Package("org.eclipse.osgi.framework.console", "");

@@ -103,8 +103,8 @@ public class TestDepResResolving  extends BaseTest {
         featureRight = new Feature("org.company.right", "1.6.0");
         featureRR = new Feature("org.eclipse.right.right",
                 "3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8");
-        plugin1 = new Plugin("org.eclipse.plugin1", "2.0.0.201306111332", true);
-        plugin2 = new Plugin("org.eclipse.adv", "1.2.3", true);
+        plugin1 = new Plugin("org.eclipse.plugin1", "2.0.0.201306111332", true, false);
+        plugin2 = new Plugin("org.eclipse.adv", "1.2.3", true, false);
         plugin3 = new Plugin("org.eclipse.adv.core", "4.0.1.v93_k");
         plugin4 = new Plugin("org.company.corePlugin", "3.2.0.v2014");
         plugin5 = new Plugin("org.company.test.framework", "8.4.0.t2000");

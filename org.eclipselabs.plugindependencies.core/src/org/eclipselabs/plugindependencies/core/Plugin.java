@@ -47,6 +47,8 @@ public class Plugin extends OSGIElement {
 
     private final boolean isFragment;
 
+    private final boolean isSingleton;
+
     private ManifestEntry fragmentHostEntry;
 
     private Plugin host;
@@ -57,11 +59,12 @@ public class Plugin extends OSGIElement {
 
 
     public Plugin(String symbName, String vers) {
-        this(symbName, vers, false);
+        this(symbName, vers, false, false);
     }
 
-    public Plugin(String symbName, String vers, boolean fragment) {
+    public Plugin(String symbName, String vers, boolean fragment, boolean singleton) {
         super(symbName, vers);
+        isSingleton = singleton;
         this.requiredPackages = new ArrayList<>();
         this.requiredPlugins = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
@@ -89,6 +92,10 @@ public class Plugin extends OSGIElement {
 
     public boolean isFragment() {
         return isFragment;
+    }
+
+    public boolean isSingleton() {
+        return isSingleton;
     }
 
     public boolean isHost() {
