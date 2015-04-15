@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.eclipselabs.plugindependencies.core.StringUtil.*;
+import static org.junit.Assert.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -84,7 +84,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, false).toString());
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, true).toString());
 
-        entry = new ManifestEntry(new String[] { "" });
+        entry = new ManifestEntry(asList( "" ));
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, true).toString());
 
@@ -130,14 +130,14 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
 
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, false).toString());
 
-        entry = new ManifestEntry(new String[] { "" });
+        entry = new ManifestEntry(asList( "" ));
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
 
         entry = new ManifestEntry("Plugin.can.not.be.found", "");
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
 
-        entry = new ManifestEntry(new String[] { "com.company.core",
-                "version=\"Wrong.Version.Format\"" });
+        entry = new ManifestEntry(asList( "com.company.core",
+                "version=\"Wrong.Version.Format\"" ));
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(entry, false).toString());
     }
 

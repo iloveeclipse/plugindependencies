@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.StringUtil.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -99,7 +100,7 @@ public class TestPluginParser  extends BaseTest {
         compareReqPluginsOfTestPlugin.add(entry);
         entry = new ManifestEntry("org.eclipse.core.expressions", null);
         compareReqPluginsOfTestPlugin.add(entry);
-        entry = new ManifestEntry(new String[] { "JSR305-ri", "resolution:=optional" });
+        entry = new ManifestEntry(asList("JSR305-ri", "resolution:=optional" ));
         compareReqPluginsOfTestPlugin.add(entry);
 
         compareReqPackagesOfTestPlugin = new ArrayList<>();
@@ -124,59 +125,59 @@ public class TestPluginParser  extends BaseTest {
         expPackagesOfTestPlugin.add(new Package("org.eclipse.equinox.app", "1.1"));
 
         compareReqPluginsOforgEclipseAnt = new ArrayList<>();
-        entry = new ManifestEntry(new String[] { "org.junit", "bundle-version=4.11.0",
-                "resolution:=optional" });
+        entry = new ManifestEntry(asList("org.junit", "bundle-version=4.11.0",
+                "resolution:=optional" ));
         compareReqPluginsOforgEclipseAnt.add(entry);
 
         compareReqPackagesOforgEclipseAnt = new ArrayList<>();
 
-        fragmentHost = new ManifestEntry(new String[] { "org.apache.ant",
-                "bundle-version=\"[1.6.5,2.0.0)\"" });
+        fragmentHost = new ManifestEntry(asList("org.apache.ant",
+                "bundle-version=\"[1.6.5,2.0.0)\"" ));
 
         compareReqPluginsOfOrgEclipseEqu = new ArrayList<>();
-        entry = new ManifestEntry(new String[] { "org.eclipse.equinox.registry",
-                "bundle-version=\"[3.4.0,4.0.0)\"" });
+        entry = new ManifestEntry(asList("org.eclipse.equinox.registry",
+                "bundle-version=\"[3.4.0,4.0.0)\"" ));
         compareReqPluginsOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.equinox.common",
-                "bundle-version=\"[3.2.0,4.0.0)\"" });
+        entry = new ManifestEntry(asList("org.eclipse.equinox.common",
+                "bundle-version=\"[3.2.0,4.0.0)\"" ));
         compareReqPluginsOfOrgEclipseEqu.add(entry);
 
         compareReqPackagesOfOrgEclipseEqu = new ArrayList<>();
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.framework.console",
-                "resolution:=optional" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.framework.console",
+                "resolution:=optional" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.framework.log" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(
-                new String[] { "org.eclipse.osgi.service.datalocation" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.service.debug" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.service.environment",
-                " version=\"1.1\"" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.service.runnable" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.storagemanager" });
-        compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.eclipse.osgi.util" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.framework.log" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
         entry = new ManifestEntry(
-                new String[] { "org.osgi.framework", "version=\"1.3\"" });
+                asList("org.eclipse.osgi.service.datalocation" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.osgi.service.condpermadmin",
-                " resolution:=optional" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.service.debug" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.osgi.service.event",
-                "version=\"1.0.0\"", "resolution:=optional" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.service.environment",
+                "version=\"1.1\"" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.osgi.service.packageadmin",
-                "version=\"1.2\"" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.service.runnable" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.osgi.util.tracker" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.storagemanager" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
-        entry = new ManifestEntry(new String[] { "org.osgi.service.event",
-                "version=\"1.0.0\"", "dynamicImport" });
+        entry = new ManifestEntry(asList("org.eclipse.osgi.util" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(
+                asList("org.osgi.framework", "version=\"1.3\"" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(asList("org.osgi.service.condpermadmin",
+                "resolution:=optional" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(asList("org.osgi.service.event",
+                "version=\"1.0.0\"", "resolution:=optional" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(asList("org.osgi.service.packageadmin",
+                "version=\"1.2\"" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(asList("org.osgi.util.tracker" ));
+        compareReqPackagesOfOrgEclipseEqu.add(entry);
+        entry = new ManifestEntry(asList("org.osgi.service.event",
+                "version=\"1.0.0\"", "dynamicImport" ));
         compareReqPackagesOfOrgEclipseEqu.add(entry);
 
         expPackagesOfOrgEclipseEqu = new LinkedHashSet<>();
@@ -299,7 +300,7 @@ public class TestPluginParser  extends BaseTest {
         assertEquals("org.eclipse.equinox.app", plugin.getName());
         assertEquals("1.3.100.v20110321", plugin.getVersion());
         assertEquals(compareReqPluginsOfOrgEclipseEqu, plugin.getRequiredPlugins());
-        assertEquals(compareReqPackagesOfOrgEclipseEqu, plugin.getRequiredPackages());
+        assertEquals(compareReqPackagesOfOrgEclipseEqu.toString(), plugin.getRequiredPackages().toString());
         assertEquals(expPackagesOfOrgEclipseEqu, plugin.getExportedPackages());
         assertFalse(plugin.isFragment());
         assertTrue(plugin.isSingleton());

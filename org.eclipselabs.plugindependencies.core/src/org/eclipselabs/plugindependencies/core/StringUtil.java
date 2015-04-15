@@ -12,6 +12,7 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class StringUtil {
         List<String> splittedEntries = splitListOfEntries(stringOfEntries);
         List<ManifestEntry> entries = new ArrayList<>();
         for (String entry : splittedEntries) {
-            entries.add(new ManifestEntry(entry.split(";")));
+            entries.add(new ManifestEntry(split(entry, ';')));
         }
         return entries;
     }
@@ -64,10 +65,10 @@ public class StringUtil {
         if (stringOfEntries == null) {
             return new ArrayList<String>();
         }
-        String[] arrayOfEntries = stringOfEntries.split(",");
+        List<String> listOfEntries = split(stringOfEntries, ',');
         String collectEntry = "";
         List<String> entries = new ArrayList<>();
-        for (String entry : arrayOfEntries) {
+        for (String entry : listOfEntries) {
             collectEntry += entry;
             if (isEvenAmountOfChar(collectEntry, '"')) {
                 entries.add(collectEntry);
@@ -122,5 +123,55 @@ public class StringUtil {
             ret.append(toMultiply);
         }
         return ret.toString();
+    }
+
+    public static List<String> split(String s, char separator){
+        int i = s.indexOf(separator);
+        List<String> list = new ArrayList<>();
+        if(i < 0){
+            list.add(s);
+            return list;
+        }
+        for (; i >= 0 && i < s.length(); ) {
+            String sub = s.substring(0, i).trim();
+            if(!sub.isEmpty()) {
+                list.add(sub);
+            }
+            s = s.substring(i + 1).trim();
+            i = s.indexOf(separator);
+            if(i < 0) {
+                if (!s.isEmpty()) {
+                    list.add(s);
+                }
+                break;
+            }
+        }
+        return list;
+    }
+
+    public static String firstEntry(String s, char separator){
+        int i = s.indexOf(separator);
+        if(i < 0){
+            return s;
+        }
+        for (; i >= 0 && i < s.length(); ) {
+            String sub = s.substring(0, i).trim();
+            if(!sub.isEmpty()) {
+                return sub;
+            }
+            s = s.substring(i + 1).trim();
+            i = s.indexOf(separator);
+            if(i < 0) {
+                if (!s.isEmpty()) {
+                    return s;
+                }
+                break;
+            }
+        }
+        return null;
+    }
+
+    public static List<String> asList(String ... strings) {
+        return new ArrayList<>(Arrays.asList(strings));
     }
 }

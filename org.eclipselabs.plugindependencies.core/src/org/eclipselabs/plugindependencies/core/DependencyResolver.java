@@ -448,15 +448,19 @@ public class DependencyResolver {
         return false;
     }
 
-    private static boolean isVersionInRange(String version, String versionRange) {
-        String lowerBorder = versionRange.split(",")[0];
+    private static boolean isVersionInRange(String version, final String versionRange) {
+        List<String> strings = StringUtil.split(versionRange, ',');
+        if(strings.size() < 2){
+            return false;
+        }
+        String lowerBorder = strings.get(0);
         char leftBorderType = lowerBorder.charAt(0);
         lowerBorder = lowerBorder.substring(1);
         int lowerBorderCheck = compareVersions(lowerBorder, version);
 
         if (lowerBorderCheck < 0 || (lowerBorderCheck == 0 && leftBorderType == '[')) {
 
-            String upperBorder = versionRange.split(",")[1];
+            String upperBorder = strings.get(1);
             char rightBorderType = upperBorder.charAt(upperBorder.length() - 1);
             upperBorder = upperBorder.substring(0, upperBorder.length() - 1);
 

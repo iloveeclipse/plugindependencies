@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,8 +35,8 @@ public class ManifestEntry extends NamedElement {
      *            non empoty array with at least one element. The first element is plugin
      *            or package id, other elements are not parsed plugin/package attributes
      */
-    public ManifestEntry(String[] manifestEntries) {
-        super(fixName(manifestEntries[0]), getVersion(manifestEntries));
+    public ManifestEntry(List<String> manifestEntries) {
+        super(fixName(manifestEntries.get(0)), getVersion(manifestEntries));
         attributes = createAttributes(manifestEntries);
     }
 
@@ -53,15 +52,12 @@ public class ManifestEntry extends NamedElement {
         computeSystemFlags(xmlElement);
     }
 
-    private static List<String> createAttributes(String[] manifestEntries) {
-        if (manifestEntries.length <= 1) {
+    private static List<String> createAttributes(List<String> manifestEntries) {
+        if (manifestEntries.size() <= 1) {
             return Collections.emptyList();
         }
-        ArrayList<String> tmpAttributes = new ArrayList<>();
-        for (int i = 1; i < manifestEntries.length; i++) {
-            tmpAttributes.add(manifestEntries[i]);
-        }
-        return Collections.unmodifiableList(tmpAttributes);
+        manifestEntries.remove(0);
+        return Collections.unmodifiableList(manifestEntries);
     }
 
     private void computeSystemFlags(Element xmlElement) {
@@ -114,7 +110,7 @@ public class ManifestEntry extends NamedElement {
      * @return never null, empty string if no version information is available, otherwise
      *         valid OSGI version OR version range
      */
-    private static String getVersion(String[] manifestEntries) {
+    private static String getVersion(List<String> manifestEntries) {
         for (String attr : manifestEntries) {
             if (attr.contains("version=")) {
                 return StringUtil.extractVersionOrRange(attr);

@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.eclipselabs.plugindependencies.core.StringUtil.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,8 +63,8 @@ public class TestPlugin extends BaseTest {
         ManifestEntry entry2 = new ManifestEntry("org.eclipse.core.resources", null);
         ManifestEntry entry3 = new ManifestEntry("org.eclipse.core.filesystem", null);
         ManifestEntry entry4 = new ManifestEntry("org.eclipse.core.expressions", null);
-        ManifestEntry entry5 = new ManifestEntry(new String[] { "JSR305-ri",
-                "resolution:=optional" });
+        ManifestEntry entry5 = new ManifestEntry(asList( "JSR305-ri",
+                "resolution:=optional" ));
 
         List<ManifestEntry> compareReqPlugins = new ArrayList<>();
         Collections.addAll(compareReqPlugins, entry1, entry2, entry3, entry4, entry5);
@@ -77,19 +77,19 @@ public class TestPlugin extends BaseTest {
         plugin.setRequiredPackages(requPackages);
 
         ManifestEntry entry1 = new ManifestEntry("javax.xml.parsers", null);
-        ManifestEntry entry2 = new ManifestEntry(new String[] {
-                "org.eclipse.core.runtime.jobs", "resolution:=optional" });
-        ManifestEntry entry3 = new ManifestEntry(new String[] {
-                "org.eclipse.osgi.framework.console", "resolution:=optional" });
+        ManifestEntry entry2 = new ManifestEntry(asList(
+                "org.eclipse.core.runtime.jobs", "resolution:=optional" ));
+        ManifestEntry entry3 = new ManifestEntry(asList(
+                "org.eclipse.osgi.framework.console", "resolution:=optional" ));
         ManifestEntry entry4 = new ManifestEntry("org.eclipse.osgi.service.datalocation",
                 null);
         ManifestEntry entry5 = new ManifestEntry("org.eclipse.osgi.service.debug", null);
-        ManifestEntry entry6 = new ManifestEntry(new String[] {
-                "org.eclipse.osgi.service.environment", "resolution:=optional" });
-        ManifestEntry entry7 = new ManifestEntry(new String[] {
-                "org.eclipse.osgi.service.localization", "version=\"1.1.0\"" });
-        ManifestEntry entry8 = new ManifestEntry(new String[] {
-                "org.eclipse.osgi.service.resolver", "resolution:=optional" });
+        ManifestEntry entry6 = new ManifestEntry(asList(
+                "org.eclipse.osgi.service.environment", "resolution:=optional" ));
+        ManifestEntry entry7 = new ManifestEntry(asList(
+                "org.eclipse.osgi.service.localization", "version=\"1.1.0\"" ));
+        ManifestEntry entry8 = new ManifestEntry(asList(
+                "org.eclipse.osgi.service.resolver", "resolution:=optional" ));
         ManifestEntry entry9 = new ManifestEntry("org.eclipse.osgi.storagemanager", null);
         ManifestEntry entry10 = new ManifestEntry("org.eclipse.osgi.util", null);
         ManifestEntry entry11 = new ManifestEntry("org.osgi.framework", null);

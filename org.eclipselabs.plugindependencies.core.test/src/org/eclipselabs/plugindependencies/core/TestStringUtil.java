@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.eclipselabs.plugindependencies.core.StringUtil.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
@@ -55,6 +57,7 @@ public class TestStringUtil extends BaseTest {
 
     List<ManifestEntry> resultList;
 
+    @Override
     @Before
     public void setup() throws Exception {
         testString1 = "bundle-version=\"[3.2.0,4.0.0)\"";
@@ -97,58 +100,104 @@ public class TestStringUtil extends BaseTest {
 
     @Test
     public void testGetVersionOfString() {
-        assertEquals("", StringUtil.extractVersionOrRange(null));
-        assertEquals("", StringUtil.extractVersionOrRange(""));
-        assertEquals("[3.2.0,4.0.0)", StringUtil.extractVersionOrRange(testString1));
-        assertEquals("1.1.0", StringUtil.extractVersionOrRange(testString2));
-        assertEquals("(3.2.0,4.0.0]", StringUtil.extractVersionOrRange(testString3));
-        assertEquals("", StringUtil.extractVersionOrRange(testString4));
-        assertEquals("4.11.0", StringUtil.extractVersionOrRange(testString5));
-        assertEquals("99.0.0", StringUtil.extractVersionOrRange(testString6));
-        assertEquals("3.3.1", StringUtil.extractVersionOrRange(testString7));
-        assertEquals("[2.4,3.0)", StringUtil.extractVersionOrRange(testString8));
-        assertEquals("[3.2.0,4.0.0)", StringUtil.extractVersionOrRange(testString9));
-        assertEquals("99.0.0", StringUtil.extractVersionOrRange(testString10));
-        assertEquals("[1.6,1.7)", StringUtil.extractVersionOrRange("org.apache.felix.scr; version=\"[1.6,1.7)\""));
+        assertEquals("", extractVersionOrRange(null));
+        assertEquals("", extractVersionOrRange(""));
+        assertEquals("[3.2.0,4.0.0)", extractVersionOrRange(testString1));
+        assertEquals("1.1.0", extractVersionOrRange(testString2));
+        assertEquals("(3.2.0,4.0.0]", extractVersionOrRange(testString3));
+        assertEquals("", extractVersionOrRange(testString4));
+        assertEquals("4.11.0", extractVersionOrRange(testString5));
+        assertEquals("99.0.0", extractVersionOrRange(testString6));
+        assertEquals("3.3.1", extractVersionOrRange(testString7));
+        assertEquals("[2.4,3.0)", extractVersionOrRange(testString8));
+        assertEquals("[3.2.0,4.0.0)", extractVersionOrRange(testString9));
+        assertEquals("99.0.0", extractVersionOrRange(testString10));
+        assertEquals("[1.6,1.7)", extractVersionOrRange("org.apache.felix.scr; version=\"[1.6,1.7)\""));
     }
 
     @Test
     public void testSplitString() {
-        assertEquals(resultList1, StringUtil.splitListOfEntries(testString123));
+        assertEquals(resultList1, splitListOfEntries(testString123));
         List<String> resultList5 = new ArrayList<>();
         resultList5.add("");
-        assertEquals(resultList5, StringUtil.splitListOfEntries(""));
-        assertEquals(new ArrayList<>(), StringUtil.splitListOfEntries(null));
+        assertEquals(resultList5, splitListOfEntries(""));
+        assertEquals(new ArrayList<>(), splitListOfEntries(null));
 
         String test = testString1 + "," + testString3 + "," + testString2 + ","
                 + testString3 + "," + testString1;
-        assertEquals(resultList2, StringUtil.splitListOfEntries(test));
-        assertEquals(resultList3, StringUtil.splitListOfEntries(testString4));
+        assertEquals(resultList2, splitListOfEntries(test));
+        assertEquals(resultList3, splitListOfEntries(testString4));
+    }
+
+    @Test
+    public void testSplitString2() {
+        List<String> result = split("", ',');
+        assertEquals("[]", result.toString());
+
+        result = split(" ", ',');
+        assertEquals("[ ]", result.toString());
+
+        result = split(" ", ' ');
+        assertEquals("[]", result.toString());
+
+        result = split(",", ',');
+        assertEquals("[]", result.toString());
+
+        result = split(",,,,,", ',');
+        assertEquals("[]", result.toString());
+
+        result = split(" , ,", ',');
+        assertEquals("[]", result.toString());
+
+        result = split(" , ,", ',');
+        assertEquals("[]", result.toString());
+
+        result = split("a,b", ';');
+        assertEquals("[a,b]", result.toString());
+
+        result = split("a;b", ';');
+        assertEquals("[a, b]", result.toString());
+
+        result = split(";a;b;", ';');
+        assertEquals("[a, b]", result.toString());
+
+        result = split("; ; a ; b ; ;", ';');
+        assertEquals("[a, b]", result.toString());
+
+        result = split("; ; ab ; cd ; ; ", ';');
+        assertEquals("[ab, cd]", result.toString());
+
+        result = split("ab;cd", ';');
+        assertEquals("[ab, cd]", result.toString());
     }
 
     @Test
     public void testSplitIntoAttributes() {
         resultList = new ArrayList<>();
-        resultList.add(new ManifestEntry(new String[] { "org.eclipse.ui",
-                "bundle-version=\"[3.2.0,4.0.0)\"" }));
-        resultList.add(new ManifestEntry(new String[] { "org.hamcrest.core",
-                "bundle-version=\"1.1.0\"", "visibility:=reexport" }));
-        resultList.add(new ManifestEntry(new String[] { "org.eclipse.core.resources",
-                "bundle-version=\"(3.2.0,4.0.0]\"" }));
-        assertEquals(resultList, StringUtil.splitInManifestEntries(testString123));
+        resultList.add(new ManifestEntry( asList("org.eclipse.ui",
+                "bundle-version=\"[3.2.0,4.0.0)\"")));
+        resultList.add(new ManifestEntry(asList("org.hamcrest.core",
+                "bundle-version=\"1.1.0\"", "visibility:=reexport")));
+        resultList.add(new ManifestEntry(asList("org.eclipse.core.resources",
+                "bundle-version=\"(3.2.0,4.0.0]\"" )));
+        assertEquals(resultList, splitInManifestEntries(testString123));
         resultList.clear();
-        resultList.add(new ManifestEntry(new String[] { "" }));
-        assertEquals(resultList, StringUtil.splitInManifestEntries(""));
+        resultList.add(new ManifestEntry( asList("")));
+        assertEquals(resultList, splitInManifestEntries(""));
         resultList.clear();
-        assertEquals(resultList, StringUtil.splitInManifestEntries(null));
+        assertEquals(resultList, splitInManifestEntries(null));
+    }
+
+    private static List<String> asList(String ... strings) {
+        return new ArrayList<>(Arrays.asList(strings));
     }
 
     @Test
     public void testStringMultiply() {
-        assertEquals("", StringUtil.multiplyString("", 0));
-        assertEquals("", StringUtil.multiplyString("abc", 0));
-        assertEquals("abc", StringUtil.multiplyString("abc", 1));
-        assertEquals("abcabcabc", StringUtil.multiplyString("abc", 3));
+        assertEquals("", multiplyString("", 0));
+        assertEquals("", multiplyString("abc", 0));
+        assertEquals("abc", multiplyString("abc", 1));
+        assertEquals("abcabcabc", multiplyString("abc", 3));
         assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -157,6 +206,6 @@ public class TestStringUtil extends BaseTest {
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                StringUtil.multiplyString("a", 400));
+                multiplyString("a", 400));
     }
 }

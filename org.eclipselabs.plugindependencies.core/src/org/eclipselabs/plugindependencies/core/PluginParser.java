@@ -132,7 +132,7 @@ public class PluginParser {
         }
         String fragmentHost = readAttribute(mf, "Fragment-Host");
         boolean fragment = fragmentHost != null;
-        Plugin extractedPlugin = new Plugin(symbolicName.split(";")[0], version, fragment, symbolicName.contains("singleton:=true"));
+        Plugin extractedPlugin = new Plugin(StringUtil.firstEntry(symbolicName, ';'), version, fragment, symbolicName.contains("singleton:=true"));
 
         extractedPlugin.setRequiredPlugins(readAttribute(mf, "Require-Bundle"));
 
