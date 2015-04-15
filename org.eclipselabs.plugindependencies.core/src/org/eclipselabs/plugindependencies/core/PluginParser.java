@@ -17,12 +17,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -79,27 +75,27 @@ public class PluginParser {
         if (addedPlugin == plugin) {
             return 0;
         }
-        Set<Plugin> plugins = state.getPlugins(plugin.getName());
-        List<String> equalPluginPaths = new ArrayList<>();
-        for (Plugin plug : plugins) {
-            if (plug.equals(plugin)) {
-                if(plugin.getPath().equals(plug.getPath())){
-                    continue;
-                }
-                equalPluginPaths.add(plug.getPath());
-            }
-        }
-
-        StringBuilder output = new StringBuilder();
-        output.append("two plugins with equal symbolic name and version: ");
-        output.append(plugin.getNameAndVersion());
-
-        equalPluginPaths.add(plugin.getPath());
-        Collections.sort(equalPluginPaths);
-        for (String path : equalPluginPaths) {
-            output.append("\n").append(path);
-        }
-        Logging.writeErrorOut(output.toString());
+//        Set<Plugin> plugins = state.getPlugins(plugin.getName());
+//        List<String> equalPluginPaths = new ArrayList<>();
+//        for (Plugin plug : plugins) {
+//            if (plug.equals(plugin)) {
+//                if(plugin.getPath().equals(plug.getPath())){
+//                    continue;
+//                }
+//                equalPluginPaths.add(plug.getPath());
+//            }
+//        }
+//
+//        StringBuilder output = new StringBuilder();
+//        output.append("two plugins with equal symbolic name and version: ");
+//        output.append(plugin.getNameAndVersion());
+//
+//        equalPluginPaths.add(plugin.getPath());
+//        Collections.sort(equalPluginPaths);
+//        for (String path : equalPluginPaths) {
+//            output.append("\n").append(path);
+//        }
+//        Logging.writeErrorOut(output.toString());
         return -1;
     }
 

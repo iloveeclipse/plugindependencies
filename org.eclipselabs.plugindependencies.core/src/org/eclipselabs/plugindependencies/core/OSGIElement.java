@@ -51,7 +51,7 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
             for (OSGIElement dup : duplicates) {
                 sb.append("\n\t").append(dup.getPath());
             }
-            addWarningToLog(sb.toString());
+            addErrorToLog(sb.toString());
         }
     }
 

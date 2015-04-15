@@ -70,32 +70,51 @@ public class CommandLineInterpreter {
             printHelpPage();
             return -1;
         }
-        for (int j = 0; j < numOfArgs; j++) {
-            String argument = args[j];
-            if (argument.startsWith("-")) {
-                option = Options.getOption(argument);
-                if (option == Options.UNKNOWN) {
-                    Logging.getLogger().error("unknown option: '"+ argument +"'\n");
-                    printHelpPage();
-                } else {
-                    if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
-                        if (option.handle(this, "") == -1) {
-                            return -1;
-                        }
+        try {
+            for (int j = 0; j < numOfArgs; j++) {
+                String argument = args[j];
+                if (argument.startsWith("-")) {
+                    option = Options.getOption(argument);
+                    if (option == Options.UNKNOWN) {
+                        Logging.getLogger().error("unknown option: '"+ argument +"'\n");
+                        printHelpPage();
                     } else {
-                        List<String> argList = new ArrayList<>();
-                        while (j + 1 < numOfArgs && !args[j + 1].startsWith("-")) {
-                            argList.add(args[++j]);
-                        }
-                        if (option.handle(this, argList.toArray(new String[argList.size()])) == -1) {
-                            return -1;
+                        if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
+                            if (option.handle(this, "") == -1) {
+                                return -1;
+                            }
+                        } else {
+                            List<String> argList = new ArrayList<>();
+                            while (j + 1 < numOfArgs && !args[j + 1].startsWith("-")) {
+                                argList.add(args[++j]);
+                            }
+                            if (option.handle(this, argList.toArray(new String[argList.size()])) == -1) {
+                                return -1;
+                            }
                         }
                     }
                 }
             }
+        } finally {
+            Logging.writeStandardOut(evaluatePlatformLogs());
         }
         return 0;
     }
+
+    private String evaluatePlatformLogs() {
+        state.validate();
+        StringBuilder out = new StringBuilder();
+
+        out.append("Platform state:\n");
+        out.append("Features:\n");
+        out.append(printLogs(state.getFeatures(), true));
+        out.append("Plugins:\n");
+        out.append(printLogs(state.getPlugins(), true));
+        out.append("Packages:\n");
+        out.append(printPackageLogs(state.getPackages(), true));
+        return out.toString();
+    }
+
 
     void printProvidingPackage(String packageName) {
         ManifestEntry searchedPackage = new ManifestEntry(packageName, NamedElement.EMPTY_VERSION);
@@ -145,7 +164,6 @@ public class CommandLineInterpreter {
     }
 
     int writeErrorLogFile(String path) {
-        StringBuilder errorLog = new StringBuilder();
         File out = new File(path);
         try {
             if (out.exists() && !out.delete()) {
@@ -158,11 +176,8 @@ public class CommandLineInterpreter {
             }
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
-                errorLog.append("feature error log:\n");
-                errorLog.append(printUnresolvedDependencies(state.getFeatures(), true));
-                errorLog.append("plugin error log:\n");
-                errorLog.append(printUnresolvedDependencies(state.getPlugins(), true));
-                toFileOut.write(errorLog.toString());
+                String logs = evaluatePlatformLogs();
+                toFileOut.write(logs);
             }
             return 0;
         } catch (IOException e) {
@@ -418,57 +433,44 @@ public class CommandLineInterpreter {
         return returnSet;
     }
 
-    String printUnresolvedPlugins(boolean showWarnings) {
-        return printUnresolvedDependencies(state.getPlugins(), showWarnings);
-    }
-
-    String printUnresolvedFeatures(boolean showWarnings) {
-        return printUnresolvedDependencies(state.getFeatures(), showWarnings);
-    }
-
-    private static String printUnresolvedDependencies(Set<? extends OSGIElement> elements, boolean showWarnings) {
+    private static String printLogs(Set<? extends OSGIElement> elements, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
 
         for (OSGIElement element : elements) {
             List<String> log = element.getLog();
             if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
                 ret.append(element instanceof Plugin ? "plugin: " : "feature: ");
-                ret.append(element.getInformationLine() + "\n");
-                ret.append(printLog(element, showWarnings));
-                ret.append(backtrace(element, 0));
+                ret.append(element.getPath() + "\n");
+                ret.append(printLog(element, showWarnings, "\t"));
                 ret.append("\n");
             }
         }
         return ret.toString();
     }
 
-    private static String printLog(NamedElement element, boolean showWarnings) {
+    private static String printPackageLogs(Set<Package> elements, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
-        List<String> log = element.getLog();
-        for (String logEntry : log) {
-            if (logEntry.contains("Error") || showWarnings) {
-                ret.append("\t" + logEntry + "\n");
+
+        for (Package pack : elements) {
+            List<String> log = pack.getLog();
+            if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
+                ret.append("package: ").append(pack.getNameAndVersion());
+                ret.append("\n");
+                ret.append(printLog(pack, showWarnings, "\t"));
+                ret.append("\n");
             }
         }
         return ret.toString();
     }
 
-    private static String backtrace(OSGIElement element, int indentation) {
-        String indent = StringUtil.multiplyString("\t", indentation);
-        Set<Feature> containedIn = element.getIncludedInFeatures();
+    private static String printLog(NamedElement element, boolean showWarnings, String prefix) {
         StringBuilder ret = new StringBuilder();
-        if (!containedIn.isEmpty()) {
-            ret.append(indent + "contained in feature:\n");
-        }
-        for (Feature feat : containedIn) {
-            ret.append(indent + "\t");
-            ret.append(feat.getInformationLine() + "\n");
-            ret.append(backtrace(feat, indentation + 1));
-        }
-
-        if (element instanceof Plugin) {
-            String needingThis = ((Plugin) element).printRequiringThis();
-            ret.append(needingThis);
+        List<String> log = element.getLog();
+        for (String logEntry : log) {
+            if (logEntry.contains("Error") || showWarnings) {
+                ret.append(prefix);
+                ret.append(logEntry + "\n");
+            }
         }
         return ret.toString();
     }

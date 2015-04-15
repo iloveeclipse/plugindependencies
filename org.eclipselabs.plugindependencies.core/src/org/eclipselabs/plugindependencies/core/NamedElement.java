@@ -93,7 +93,7 @@ public abstract class NamedElement {
         if (note == null || note.isEmpty()) {
             return;
         }
-        note = PREFIX_ERROR + note;
+        note = PREFIX_ERROR + "[" + getNameAndVersion() + "] " + note;
         if (!log.contains(note)) {
             log.add(note);
         }
@@ -103,7 +103,7 @@ public abstract class NamedElement {
         if (note == null || note.isEmpty()) {
             return;
         }
-        note = PREFIX_WARN + note;
+        note = PREFIX_WARN + "[" + getNameAndVersion() + "] " + note;
         if (!log.contains(note)) {
             log.add(note);
         }

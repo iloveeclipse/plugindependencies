@@ -63,8 +63,7 @@ public class TestCLI extends BaseTest {
         String args[] = new String[] { "-eclipsePaths",
                 "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace", "-unresPlugin", "w",
-                "-unresPlugin", "-unresFeature", "w", "-unresFeature" };
+                "testdata_OutputGeneration/workspace"};
 
         File expectedOutput = new File("outputs/console_unres_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_unres");

@@ -13,9 +13,6 @@ package org.eclipselabs.plugindependencies.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -85,20 +82,6 @@ public class FeatureParser {
         if (addedFeature == feature) {
             return 0;
         }
-        List<String> equalFeaturePaths = new ArrayList<>();
-        equalFeaturePaths.add(feature.getPath());
-        for (Feature feat : state.getFeatures(feature.getName())) {
-            if (feat.equals(feature)) {
-                equalFeaturePaths.add(feat.getPath());
-            }
-        }
-        StringBuilder output = new StringBuilder("two features with equal id and version: ")
-                .append(feature.getName()).append(" ").append(feature.getVersion());
-        Collections.sort(equalFeaturePaths);
-        for (String featurePath : equalFeaturePaths) {
-            output.append("\n").append(featurePath);
-        }
-        Logging.getLogger().error(output.toString());
         return -1;
     }
 

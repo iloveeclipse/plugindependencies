@@ -37,40 +37,6 @@ enum Options {
         }
     },
 
-    UnresolvedDependenciesPlugins("-unresPlugin") {
-        @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(cli.printUnresolvedPlugins(showWarnings));
-            return 0;
-        }
-
-        @Override
-        void printHelp(String arg) {
-            String help = "-unresPlugin [w]" + "\t\t\t"
-                    + "Prints unresolved plugins with error logs."
-                    + " With optional w, warnings can be enabled for printing.";
-            Logging.writeStandardOut(help);
-        }
-    },
-
-    UnresolvedDependenciesFeatures("-unresFeature") {
-        @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            boolean showWarnings = args != null && args.length >0 && args[0].equals("w") ? true : false;
-            Logging.writeStandardOut(cli.printUnresolvedFeatures(showWarnings));
-            return 0;
-        }
-
-        @Override
-        void printHelp(String arg) {
-            String help = "-unresFeature [w]" + "\t\t\t"
-                    + "Prints unresolved features with error logs."
-                    + " With optional w, warnings can be enabled for printing.";
-            Logging.writeStandardOut(help);
-        }
-    },
-
     DependOnPlugin("-dependOnPlugin") {
         @Override
         int handle(CommandLineInterpreter cli, String... args) {

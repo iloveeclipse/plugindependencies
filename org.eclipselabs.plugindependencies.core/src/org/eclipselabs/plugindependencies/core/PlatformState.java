@@ -287,25 +287,32 @@ public class PlatformState {
        for (Plugin plugin : plugins) {
            List<OSGIElement> dups = plugin.getDuplicates();
            if(!dups.isEmpty()){
-               StringBuilder sb = new StringBuilder("duplicated plugins:\n");
-               for (OSGIElement elt : dups) {
-                   sb.append(elt).append(" at ").append(elt.getPath()).append("\n");
-               }
-               plugin.addErrorToLog(sb.toString());
+               logDuplicates(plugin, dups);
            }
        }
        for (Feature feature : features) {
            List<OSGIElement> dups = feature.getDuplicates();
            if(!dups.isEmpty()){
-               StringBuilder sb = new StringBuilder("duplicated features:\n");
-               for (OSGIElement elt : dups) {
-                   sb.append(elt).append(" at ").append(elt.getPath()).append("\n");
-               }
-               feature.addErrorToLog(sb.toString());
+               logDuplicates(feature, dups);
            }
        }
        // TODO validate packages with different versions used by different plugins in same dependency chain
        // TODO validate singleton plugins with different versions used by different plugins in same dependency chain
+   }
+
+   private static void logDuplicates(OSGIElement plugin, List<OSGIElement> dups) {
+       StringBuilder sb = new StringBuilder();
+       sb.append((dups.size() + 1));
+       if(plugin instanceof Feature){
+           sb.append(" features ");
+       } else {
+           sb.append(" plugins ");
+       }
+       sb.append("with equal symbolic name and version, located at:\n\t").append(plugin.getPath());
+       for (OSGIElement elt : dups) {
+           sb.append("\n\t").append(elt.getPath());
+       }
+       plugin.addErrorToLog(sb.toString());
    }
 
     static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {

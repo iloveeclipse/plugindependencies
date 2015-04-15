@@ -312,7 +312,6 @@ public class Plugin extends OSGIElement {
     }
 
     public void writePackageErrorLog(ManifestEntry requiredPackage, Set<Package> packages) {
-        StringBuilder logEntry = new StringBuilder();
         String rname = requiredPackage.getName();
         String rversion = requiredPackage.getVersion();
         String optional = requiredPackage.isOptional() ? " *optional*" : "";
@@ -320,18 +319,22 @@ public class Plugin extends OSGIElement {
                 : "";
         int packagesSize = packages.size();
         if (packagesSize > 1) {
-            logEntry.append(PREFIX_WARN).append("more than one package found for ");
+            StringBuilder logEntry = new StringBuilder("more than one package found for ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport + "\n");
             for (Package pack : packages) {
                 logEntry.append("\t" + pack.getInformationLine());
             }
+            addWarningToLog(logEntry.toString());
         }
-        if (packagesSize == 0 && optional.isEmpty()) {
-            String errortype = optional.isEmpty() && !requiredPackage.isDynamicImport() ? PREFIX_ERROR : PREFIX_WARN;
-            logEntry.append(errortype + "package not found: ");
+        if (packagesSize == 0 ) {
+            StringBuilder logEntry = new StringBuilder("package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
+            if(requiredPackage.isDynamicImport()) {
+                addWarningToLog(logEntry.toString());
+            } else {
+                addErrorToLog(logEntry.toString());
+            }
         }
-        addToLog(logEntry.toString());
     }
 
     @Override
