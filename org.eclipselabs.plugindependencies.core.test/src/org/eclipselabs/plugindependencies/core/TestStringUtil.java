@@ -86,8 +86,7 @@ public class TestStringUtil extends BaseTest {
 
         resultList3 = new ArrayList<>();
         resultList3.add("This text is not important");
-        resultList3
-                .add(" its just a text without any vers-ion and some comma \"abc,abc\" in quotation mark");
+        resultList3.add("its just a text without any vers-ion and some comma \"abc,abc\" in quotation mark");
     }
 
     @Override
@@ -125,8 +124,8 @@ public class TestStringUtil extends BaseTest {
 
         String test = testString1 + "," + testString3 + "," + testString2 + ","
                 + testString3 + "," + testString1;
-        assertEquals(resultList2, splitListOfEntries(test));
-        assertEquals(resultList3, splitListOfEntries(testString4));
+        assertEquals(resultList2.toString(), splitListOfEntries(test).toString());
+        assertEquals(resultList3.toString(), splitListOfEntries(testString4).toString());
     }
 
     @Test
