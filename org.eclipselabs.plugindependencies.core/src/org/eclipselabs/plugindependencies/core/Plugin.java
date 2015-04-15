@@ -329,9 +329,9 @@ public class Plugin extends OSGIElement {
         if (packagesSize == 0 ) {
             StringBuilder logEntry = new StringBuilder("package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
-            if(requiredPackage.isDynamicImport() || !optional.isEmpty()) {
+            if(requiredPackage.isDynamicImport()) {
                 addWarningToLog(logEntry.toString());
-            } else {
+            } else if(optional.isEmpty()){
                 addErrorToLog(logEntry.toString());
             }
         }

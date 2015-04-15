@@ -36,8 +36,6 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101
 	Warning: [org.eclipse.equinox.registry 3.5.101.R37x_v20110810-1611] this plugin is one of 3 plugins contributing package 'org.eclipse.core.runtime 3.4.0'
 
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
-	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet  *optional*
-	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet.http  *optional*
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet  *dynamicImport*
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet.http  *dynamicImport*
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.microedition.io  *dynamicImport*
