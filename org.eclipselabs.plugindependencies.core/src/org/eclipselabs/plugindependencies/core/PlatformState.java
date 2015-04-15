@@ -242,15 +242,12 @@ public class PlatformState {
                        // ignore packages from same plugin with different version
                        // ignore packages from fragments and hosts
                        if(p1 != p2 && (p1.getName().equals(p2.getName()) || p1.isFragmentOrHost(p2))){
-                           iterator.remove();
                            toRemove.add(p2);
-                       }
-                       if(toRemove.contains(p1)){
-                           iterator.remove();
+                           toRemove.add(p1);
                        }
                    }
-
                }
+               exportedBy.removeAll(toRemove);
 
                // exclude all plugins which might have dependencies to each other
                Map<Plugin, Plugin> required = new HashMap<>();
