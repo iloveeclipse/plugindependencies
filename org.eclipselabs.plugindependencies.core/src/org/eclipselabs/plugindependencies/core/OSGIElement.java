@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,7 +22,7 @@ import java.util.Set;
  * @class OSGi_Element
  * This class is superclass of Feature and Plugin.
  */
-public abstract class OSGIElement extends NamedElement {
+public abstract class OSGIElement extends NamedElement /* TODO implements Comparable */ {
 
     private Set<Plugin> resolvedPlugins;
 
@@ -28,19 +30,29 @@ public abstract class OSGIElement extends NamedElement {
 
     private String elementPath;
 
-    private Set<? super OSGIElement> duplicates;
+    private List<OSGIElement> duplicates;
 
     public OSGIElement(String name, String version) {
         super(name, version);
         this.resolvedPlugins = new LinkedHashSet<>();
         this.includedInFeatures = new LinkedHashSet<>();
-        this.duplicates = new LinkedHashSet<>();
+        this.duplicates = new ArrayList<>();
     }
 
     public void parsingDone(){
         resolvedPlugins = resolvedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(resolvedPlugins);
         includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
-        duplicates = duplicates.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(duplicates);
+        duplicates = duplicates.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(duplicates);
+
+        if(!duplicates.isEmpty()){
+            StringBuilder sb = new StringBuilder();
+            sb.append((duplicates.size() + 1) + " elements with equal symbolic name and version: ");
+            sb.append(getNameAndVersion()).append(", locations:\t\n").append(getPath());
+            for (OSGIElement dup : duplicates) {
+                sb.append("\n\t").append(dup.getPath());
+            }
+            addWarningToLog(sb.toString());
+        }
     }
 
     public Set<Plugin> getResolvedPlugins() {
@@ -79,7 +91,7 @@ public abstract class OSGIElement extends NamedElement {
         duplicates.add(dup);
     }
 
-    public Set<? super OSGIElement> getDuplicates() {
+    public List<OSGIElement> getDuplicates() {
         return duplicates;
     }
 
@@ -90,7 +102,7 @@ public abstract class OSGIElement extends NamedElement {
         return name + " " + version + " " + elementPath;
     }
 
-    public void writeErrorLog(ManifestEntry entry, Set<? extends OSGIElement> elements, String type) {
+    public void logBrokenEntry(ManifestEntry entry, Set<? extends OSGIElement> elements, String type) {
         String optional = entry.isOptional() ? " *optional*" : "";
         int setSize = elements.size();
 

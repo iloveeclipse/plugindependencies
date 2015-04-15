@@ -82,7 +82,7 @@ public class DependencyResolver {
         Set<Feature> features;
         features = searchInFeatureSet(requiredFeature);
         if (features.size() != 1) {
-            feature.writeErrorLog(requiredFeature, features, "feature");
+            feature.logBrokenEntry(requiredFeature, features, "feature");
         }
         feature.addIncludedFeatures(features);
     }
@@ -98,7 +98,7 @@ public class DependencyResolver {
         }
 
         if (setSize != 1) {
-            elt.writeErrorLog(requiredPlugin, plugins, "plugin");
+            elt.logBrokenEntry(requiredPlugin, plugins, "plugin");
         }
 
         if (highVersionPlugin != null) {
@@ -173,7 +173,7 @@ public class DependencyResolver {
             if(setSize > 1){
                 fragmentHost = getPluginWithHighestVersion(resultSet);
             }
-            fragment.writeErrorLog(entry, resultSet, "fragment host");
+            fragment.logBrokenEntry(entry, resultSet, "fragment host");
         }
         if(fragmentHost != null){
             fragment.setHost(fragmentHost);

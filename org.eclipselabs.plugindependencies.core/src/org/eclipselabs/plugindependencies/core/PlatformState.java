@@ -285,7 +285,7 @@ public class PlatformState {
            }
        }
        for (Plugin plugin : plugins) {
-           Set<OSGIElement> dups = (Set<OSGIElement>) plugin.getDuplicates();
+           List<OSGIElement> dups = plugin.getDuplicates();
            if(!dups.isEmpty()){
                StringBuilder sb = new StringBuilder("duplicated plugins:\n");
                for (OSGIElement elt : dups) {
@@ -295,7 +295,7 @@ public class PlatformState {
            }
        }
        for (Feature feature : features) {
-           Set<OSGIElement> dups = (Set<OSGIElement>) feature.getDuplicates();
+           List<OSGIElement> dups = feature.getDuplicates();
            if(!dups.isEmpty()){
                StringBuilder sb = new StringBuilder("duplicated features:\n");
                for (OSGIElement elt : dups) {

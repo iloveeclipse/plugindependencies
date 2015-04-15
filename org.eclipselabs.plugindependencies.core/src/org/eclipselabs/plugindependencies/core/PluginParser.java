@@ -44,13 +44,13 @@ public class PluginParser {
     public static int createPluginsAndAddToSet(File rootDir, PlatformState state) throws IOException {
 
         if (!rootDir.exists()) {
-            Logging.writeErrorOut("given directory does not exist: " + rootDir);
+            Logging.getLogger().error("given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("given directory is not a directory or is not readable: " + rootDir);
+            Logging.getLogger().error("given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         sortFiles(dirArray);

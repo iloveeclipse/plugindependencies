@@ -75,7 +75,7 @@ public class CommandLineInterpreter {
             if (argument.startsWith("-")) {
                 option = Options.getOption(argument);
                 if (option == Options.UNKNOWN) {
-                    Logging.writeStandardOut("Unknown option\n");
+                    Logging.getLogger().error("unknown option: '"+ argument +"'\n");
                     printHelpPage();
                 } else {
                     if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
@@ -149,11 +149,11 @@ public class CommandLineInterpreter {
         File out = new File(path);
         try {
             if (out.exists() && !out.delete()) {
-                Logging.writeErrorOut("failed to delete file " + path);
+                Logging.getLogger().error("failed to delete file " + path);
                 return -1;
             }
             if (!out.createNewFile()) {
-                Logging.writeErrorOut("failed to create file " + path);
+                Logging.getLogger().error("failed to create file " + path);
                 return -1;
             }
 
@@ -188,7 +188,7 @@ public class CommandLineInterpreter {
             }
             return 0;
         }
-        Logging.writeErrorOut("plugin with symbolic name " + pluginName + "not found.");
+        Logging.getLogger().error("plugin with symbolic name " + pluginName + "not found.");
         return -1;
     }
 

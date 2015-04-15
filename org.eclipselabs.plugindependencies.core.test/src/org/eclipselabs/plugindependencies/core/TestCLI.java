@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -166,7 +165,7 @@ public class TestCLI extends BaseTest {
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
             expectedOutputList = addNewlineToAllStrings(expectedOutputList);
             expectedOutputList.add(0, "\n");
-            expectedOutputList.add(0, "Unknown option\n");
+            expectedOutputList.add(0, "Error: unknown option: '-NotValidOption'\n");
 
             List<String> outputList = Files.readAllLines(outputFile.toPath(),
                     StandardCharsets.UTF_8);

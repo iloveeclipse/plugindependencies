@@ -49,13 +49,13 @@ public class FeatureParser {
     public static int createFeaturesAndAddToSet(File rootDir, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
         if (!rootDir.isDirectory()) {
-            Logging.writeErrorOut("given directory does not exist: " + rootDir);
+            Logging.getLogger().error("given directory does not exist: " + rootDir);
             return 2;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
-            Logging.writeErrorOut("given directory is not a directory or is not readable: " + rootDir);
+            Logging.getLogger().error("given directory is not a directory or is not readable: " + rootDir);
             return 3;
         }
         PluginParser.sortFiles(dirArray);
@@ -98,7 +98,7 @@ public class FeatureParser {
         for (String featurePath : equalFeaturePaths) {
             output.append("\n").append(featurePath);
         }
-        Logging.writeErrorOut(output.toString());
+        Logging.getLogger().error(output.toString());
         return -1;
     }
 
