@@ -43,16 +43,6 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
         resolvedPlugins = resolvedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(resolvedPlugins);
         includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
         duplicates = duplicates.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(duplicates);
-
-        if(!duplicates.isEmpty()){
-            StringBuilder sb = new StringBuilder();
-            sb.append((duplicates.size() + 1) + " elements with equal symbolic name and version: ");
-            sb.append(getNameAndVersion()).append(", locations:\t\n").append(getPath());
-            for (OSGIElement dup : duplicates) {
-                sb.append("\n\t").append(dup.getPath());
-            }
-            addErrorToLog(sb.toString());
-        }
     }
 
     public Set<Plugin> getResolvedPlugins() {

@@ -93,7 +93,11 @@ public abstract class NamedElement {
         if (note == null || note.isEmpty()) {
             return;
         }
-        note = PREFIX_ERROR + "[" + getNameAndVersion() + "] " + note;
+        if(Logging.prefixLogWithId){
+            note = PREFIX_ERROR + "[" + getNameAndVersion() + "] " + note;
+        } else {
+            note = PREFIX_ERROR + note;
+        }
         if (!log.contains(note)) {
             log.add(note);
         }
@@ -103,7 +107,11 @@ public abstract class NamedElement {
         if (note == null || note.isEmpty()) {
             return;
         }
-        note = PREFIX_WARN + "[" + getNameAndVersion() + "] " + note;
+        if(Logging.prefixLogWithId){
+            note = PREFIX_WARN + "[" + getNameAndVersion() + "] " + note;
+        } else {
+            note = PREFIX_WARN + note;
+        }
         if (!log.contains(note)) {
             log.add(note);
         }

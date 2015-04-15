@@ -22,6 +22,8 @@ public class Logging {
     public static final String PREFIX_ERROR = "Error: ";
     public static final String PREFIX_WARN = "Warning: ";
 
+    public static boolean prefixLogWithId = true;
+
     private static AbstractLogger logger;
     static {
         setLogger(null);
