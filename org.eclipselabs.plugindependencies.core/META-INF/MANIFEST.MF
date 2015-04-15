@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipselabs.plugindependencies.core;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Export-Package: org.eclipselabs.plugindependencies.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %Vendor
