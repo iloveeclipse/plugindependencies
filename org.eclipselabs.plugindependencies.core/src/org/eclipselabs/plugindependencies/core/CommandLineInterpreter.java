@@ -11,16 +11,19 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.*;
+import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,56 +50,88 @@ public class CommandLineInterpreter {
     }
 
     private final PlatformState state;
+    private String fullLog;
 
-    /**
-     *
-     */
     public CommandLineInterpreter() {
         super();
         state = new PlatformState();
     }
 
-    /**
-     * @return Returns the state.
-     */
     public PlatformState getState() {
         return state;
     }
 
     public int interpreteInput(String[] args) {
-        Options option = null;
         int numOfArgs = args.length;
         if(numOfArgs == 0){
             printHelpPage();
             return -1;
         }
-        try {
-            for (int j = 0; j < numOfArgs; j++) {
-                String argument = args[j];
-                if (argument.startsWith("-")) {
-                    option = Options.getOption(argument);
-                    if (option == Options.UNKNOWN) {
-                        Logging.getLogger().error("unknown option: '"+ argument +"'\n");
-                        printHelpPage();
-                    } else {
-                        if (j + 1 >= numOfArgs || args[j + 1].startsWith("-")) {
-                            if (option.handle(this, "") == -1) {
-                                return -1;
-                            }
-                        } else {
-                            List<String> argList = new ArrayList<>();
-                            while (j + 1 < numOfArgs && !args[j + 1].startsWith("-")) {
-                                argList.add(args[++j]);
-                            }
-                            if (option.handle(this, argList.toArray(new String[argList.size()])) == -1) {
-                                return -1;
-                            }
+        LinkedList<String> tmp = new LinkedList<>(Arrays.asList(args));
+        ListIterator<String> iterator = tmp.listIterator();
+        List<List<String>> commands = new ArrayList<>();
+        while (iterator.hasNext()) {
+            String argument = iterator.next();
+            if (argument.startsWith("-")) {
+                Options option = Options.getOption(argument);
+                if (option == Options.UNKNOWN) {
+                    Logging.getLogger().error("unknown option: '"+ argument +"'\n");
+                    printHelpPage();
+                    return -1;
+                } else if (option == Options.Help) {
+                    printHelpPage();
+                    return 0;
+                } else if (!option.isCommand()) {
+                    iterator.remove();
+                    List<String> options = new ArrayList<>();
+                    while (iterator.hasNext()){
+                        String next = iterator.next();
+                        if(next.startsWith("-")) {
+                            iterator.previous();
+                            break;
                         }
+                        iterator.remove();
+                        options.add(next);
+                    }
+                    option.handle(this, options);
+                } else {
+                    commands.add(new ArrayList<String>());
+                    commands.get(commands.size() - 1).add(argument);
+                    iterator.remove();
+                    while (iterator.hasNext()){
+                        String next = iterator.next();
+                        if(next.startsWith("-")) {
+                            iterator.previous();
+                            break;
+                        }
+                        iterator.remove();
+                        commands.get(commands.size() - 1).add(next);
                     }
                 }
             }
+
+        }
+
+        try {
+            for (List<String> list : commands) {
+                Options option = Options.getOption(list.remove(0));
+                int result = option.handle(this, list);
+                if(result == -1){
+                    return -1;
+                }
+            }
         } finally {
-            Logging.writeStandardOut(evaluatePlatformLogs());
+            if(getFullLog() != null){
+                String logs = evaluatePlatformLogs();
+                if(getFullLog().isEmpty()) {
+                    Logging.writeStandardOut(logs);
+                } else {
+                    int result = writeErrorLogFile(new File(getFullLog()), logs);
+                    if(result != 0){
+                        Logging.writeStandardOut(logs);
+                    }
+                }
+            }
         }
         return 0;
     }
@@ -163,25 +198,23 @@ public class CommandLineInterpreter {
         }
     }
 
-    int writeErrorLogFile(String path) {
-        File out = new File(path);
+    int writeErrorLogFile(File out, String logs) {
         try {
             if (out.exists() && !out.delete()) {
-                Logging.getLogger().error("failed to delete file " + path);
+                Logging.getLogger().error("failed to delete file " + out);
                 return -1;
             }
             if (!out.createNewFile()) {
-                Logging.getLogger().error("failed to create file " + path);
+                Logging.getLogger().error("failed to create file " + out);
                 return -1;
             }
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
-                String logs = evaluatePlatformLogs();
                 toFileOut.write(logs);
             }
             return 0;
         } catch (IOException e) {
-            Logging.getLogger().error("failed to write: " + path, e);
+            Logging.getLogger().error("failed to write: " + out, e);
             return -1;
         }
     }
@@ -439,8 +472,7 @@ public class CommandLineInterpreter {
         for (OSGIElement element : elements) {
             List<String> log = element.getLog();
             if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
-                ret.append(element instanceof Plugin ? "plugin: " : "feature: ");
-                ret.append(element.getPath() + "\n");
+                ret.append(element.getPath()).append("\n");
                 ret.append(printLog(element, showWarnings, "\t"));
                 ret.append("\n");
             }
@@ -454,8 +486,7 @@ public class CommandLineInterpreter {
         for (Package pack : elements) {
             List<String> log = pack.getLog();
             if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
-                ret.append("package: ").append(pack.getNameAndVersion());
-                ret.append("\n");
+                ret.append(pack.getNameAndVersion()).append("\n");
                 ret.append(printLog(pack, showWarnings, "\t"));
                 ret.append("\n");
             }
@@ -529,5 +560,13 @@ public class CommandLineInterpreter {
 
     public int readInPlugin(File directory) throws IOException {
         return PluginParser.createPluginAndAddToSet(directory, state);
+    }
+
+    public String getFullLog() {
+        return fullLog;
+    }
+
+    public void setFullLog(String fullLog) {
+        this.fullLog = fullLog;
     }
 }

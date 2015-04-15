@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.StringUtil.*;
-import static org.junit.Assert.*;
+import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -145,7 +146,7 @@ public class TestPlugin extends BaseTest {
             plugin.addImportedPackage(pack);
         }
         plugin.parsingDone();
-        assertEquals("Warning: plugin imports and exports same package: [name=org.eclipse.core.internal.adapter, version=]", plugin.getLog().get(0));
+        assertEquals("Warning: [myPlugin 2.3.4] plugin imports and exports same package: [name=org.eclipse.core.internal.adapter, version=]", plugin.getLog().get(0));
     }
 
     @Test
@@ -157,7 +158,7 @@ public class TestPlugin extends BaseTest {
     @Test
     public void testSetMoreThanOneFragmentHost() {
         plugin.setFragmentHost("org.frag.host1,org.frag.host2");
-        assertEquals("Error: fragment has more than one host", plugin.getLog().get(0));
+        assertEquals("Error: [myPlugin 2.3.4] fragment has more than one host", plugin.getLog().get(0));
     }
 
     @Test

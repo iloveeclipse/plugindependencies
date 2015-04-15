@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +64,8 @@ public class TestCLI extends BaseTest {
         String args[] = new String[] { "-eclipsePaths",
                 "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace"};
+                "testdata_OutputGeneration/workspace",
+                "-fullLog"};
 
         File expectedOutput = new File("outputs/console_unres_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_unres");
@@ -159,7 +161,7 @@ public class TestCLI extends BaseTest {
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
 
-            assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(-1, SecurityMan.runMain(args));
 
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
             expectedOutputList = addNewlineToAllStrings(expectedOutputList);
@@ -201,7 +203,7 @@ public class TestCLI extends BaseTest {
 
     @Test
     public void testReadEqualFeatures() throws IOException {
-        String args[] = new String[] { "-eclipsePaths", "testdata_equalFeatures" };
+        String args[] = new String[] { "-eclipsePaths", "testdata_equalFeatures", "-fullLog" };
 
         File expectedOutput = new File("outputs/console_equalFeatures_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_equalFeatures");
@@ -213,12 +215,10 @@ public class TestCLI extends BaseTest {
 
             assertEquals(-1, SecurityMan.runMain(args));
 
-            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                    StandardCharsets.UTF_8);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
             expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-            List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                    StandardCharsets.UTF_8);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(), StandardCharsets.UTF_8);
             outputList = addNewlineToAllStrings(outputList);
 
             assertEquals(expectedOutputList.toString(), outputList.toString());
@@ -227,7 +227,7 @@ public class TestCLI extends BaseTest {
 
     @Test
     public void testReadEqualPlugins() throws IOException {
-        String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins" };
+        String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins", "-fullLog" };
 
         File expectedOutput = new File("outputs/console_equalPlugins_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_equalPlugins");
@@ -253,7 +253,7 @@ public class TestCLI extends BaseTest {
 
     @Test
     public void testReadEqualPlugins2() throws IOException {
-        String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins2" };
+        String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins2", "-fullLog" };
 
         File expectedOutput = new File("outputs/console_equalPlugins2_expected");
         File outputFile = new File(tempDir.getCanonicalPath() + "/console_equalPlugins2");

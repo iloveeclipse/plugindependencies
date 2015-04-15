@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -241,8 +242,8 @@ public class TestDepResResolving  extends BaseTest {
         // plugin1
         forCompare = getPlugin("org.eclipse.plugin1", pluginSet);
 
-        compareLog.add("Error: fragment host not found: host.not.found 2.0.0");
-        compareLog.add("Error: plugin not found: plugin.not.found.test 1.1.1");
+        compareLog.add("Error: [org.eclipse.plugin1 2.0.0.201306111332] fragment host not found: host.not.found 2.0.0");
+        compareLog.add("Error: [org.eclipse.plugin1 2.0.0.201306111332] plugin not found: plugin.not.found.test 1.1.1");
         assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());

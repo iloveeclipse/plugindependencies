@@ -43,10 +43,10 @@ public class TestDependencyResolver extends BaseTest {
         PlatformState ps = new PlatformState(plugins, null, null);
         ps.computeAllDependenciesRecursive();
 
-        assertEquals("[Warning: package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
-        assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello']", p1.getLog().toString());
-        assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello']", p2.getLog().toString());
-        assertEquals("[Warning: this plugin uses package 'hello' contributed by multiple plugins]", p3.getLog().toString());
+        assertEquals("[Warning: [hello] package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
+        assertEquals("[Warning: [p1 1.0.0] this plugin is one of 2 plugins contributing package 'hello']", p1.getLog().toString());
+        assertEquals("[Warning: [p2 1.0.0] this plugin is one of 2 plugins contributing package 'hello']", p2.getLog().toString());
+        assertEquals("[Warning: [p3 1.0.0] this plugin uses package 'hello' contributed by multiple plugins]", p3.getLog().toString());
     }
 
     @Test
@@ -69,10 +69,10 @@ public class TestDependencyResolver extends BaseTest {
         ps.computeAllDependenciesRecursive();
 
 
-        assertEquals("[Warning: package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
-        assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p1.getLog().toString());
-        assertEquals("[Warning: this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p2.getLog().toString());
-        assertEquals("[Warning: this plugin uses package 'hello 0.5.0' contributed by multiple plugins]", p3.getLog().toString());
+        assertEquals("[Warning: [hello 0.5.0] package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
+        assertEquals("[Warning: [p1 1.0.0] this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p1.getLog().toString());
+        assertEquals("[Warning: [p2 1.0.0] this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p2.getLog().toString());
+        assertEquals("[Warning: [p3 1.0.0] this plugin uses package 'hello 0.5.0' contributed by multiple plugins]", p3.getLog().toString());
     }
 
     @Test

@@ -1,3 +1,10 @@
-Error: two features with equal id and version: org.eclipse.zest 1.5.1.201308190730
+Platform state:
+Features:
 testdata_equalFeatures/features/org.eclipse.zest/feature.xml
-testdata_equalFeatures/features/org.eclipse.zest_1.5.1.201308190730/feature.xml
+	Error: [org.eclipse.zest 1.5.1.201308190730] 2 features with equal symbolic name and version, located at:
+	testdata_equalFeatures/features/org.eclipse.zest/feature.xml
+	testdata_equalFeatures/features/org.eclipse.zest_1.5.1.201308190730/feature.xml
+
+Plugins:
+Packages:
+

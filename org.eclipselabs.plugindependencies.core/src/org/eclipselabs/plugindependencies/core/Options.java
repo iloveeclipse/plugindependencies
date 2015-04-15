@@ -12,7 +12,7 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -20,9 +20,9 @@ import org.xml.sax.SAXException;
 
 enum Options {
 
-    Providing("-providing") {
+    Providing("-providing", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 cli.printProvidingPackage(arg);
             }
@@ -37,9 +37,9 @@ enum Options {
         }
     },
 
-    DependOnPlugin("-dependOnPlugin") {
+    DependOnPlugin("-dependOnPlugin", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 cli.printDependingOnPlugin(arg);
             }
@@ -54,9 +54,9 @@ enum Options {
         }
     },
 
-    DependOnPackage("-dependOnPackage") {
+    DependOnPackage("-dependOnPackage", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 cli.printDependingOnPackage(arg);
             }
@@ -72,9 +72,9 @@ enum Options {
         }
     },
 
-    GenerateRequirementsFile("-generateReqFile") {
+    GenerateRequirementsFile("-generateReqFile", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 int result = cli.generateRequirementsFile(arg);
                 if(result != 0){
@@ -95,13 +95,13 @@ enum Options {
         }
     },
 
-    GenerateBuildFile("-generateBuildFile") {
+    GenerateBuildFile("-generateBuildFile", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            if(args.length > 1) {
-                OutputCreator.setTargetFolder(args[1]);
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            if(args.size() > 1) {
+                OutputCreator.setTargetFolder(args.get(1));
             }
-            return cli.generateBuildFile(args[0]);
+            return cli.generateBuildFile(args.get(0));
         }
 
         @Override
@@ -116,13 +116,13 @@ enum Options {
         }
     },
 
-    GenerateAllBuildFiles("-generateAllBuild") {
+    GenerateAllBuildFiles("-generateAllBuild", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            if(args.length > 1) {
-                OutputCreator.setTargetFolder(args[1]);
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            if(args.size() > 1) {
+                OutputCreator.setTargetFolder(args.get(1));
             }
-            return cli.generateAllBuildFiles(args[0]);
+            return cli.generateAllBuildFiles(args.get(0));
         }
 
         @Override
@@ -137,9 +137,9 @@ enum Options {
         }
     },
 
-    Help("-h") {
+    Help("-h", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             CommandLineInterpreter.printHelpPage();
             return 0;
         }
@@ -150,25 +150,26 @@ enum Options {
         }
     },
 
-    FullLogFile("-fullLog") {
+    FullLogFile("-fullLog", false) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            return cli.writeErrorLogFile(args[0]);
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            cli.setFullLog(args.size() > 0? args.get(0) : "");
+            return 0;
         }
 
         @Override
         void printHelp(String arg) {
-            String help = "-fullLog file"
+            String help = "-fullLog [file]"
                     + "\t\t\t"
-                    + "Writes the full error log to the specified file."
+                    + "Writes the full error log to the specified file (optional, if no file given, to standard out)."
                     + " Warnings are included.";
             Logging.writeStandardOut(help);
         }
     },
 
-    EclipsePaths("-eclipsePaths") {
+    EclipsePaths("-eclipsePaths", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             try {
                 for (String arg : args) {
                     int result = cli.readInEclipseFolder(arg);
@@ -179,7 +180,7 @@ enum Options {
                 cli.getState().resolveDependencies();
                 return 0;
             } catch (IOException | SAXException | ParserConfigurationException e) {
-                Logging.getLogger().error("failed to read from: " + Arrays.toString(args), e);
+                Logging.getLogger().error("failed to read from: " + args, e);
             }
             return -1;
         }
@@ -195,11 +196,11 @@ enum Options {
         }
     },
 
-    JavaHome("-javaHome") {
+    JavaHome("-javaHome", false) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             try {
-                cli.getState().setJavaHome(args[0]);
+                cli.getState().setJavaHome(args.get(0));
             } catch (IllegalArgumentException e) {
                 Logging.getLogger().error(e.getMessage(), e);
                 return -1;
@@ -216,13 +217,13 @@ enum Options {
         }
     },
 
-    EclipseRoot("-deploymentRoot") {
+    EclipseRoot("-deploymentRoot", false) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             try {
-                OutputCreator.setEclipseRoot(args[0]);
+                OutputCreator.setEclipseRoot(args.get(0));
             } catch (IOException e) {
-                Logging.getLogger().error(" failed to resolve deployment root: " + Arrays.toString(args), e);
+                Logging.getLogger().error(" failed to resolve deployment root: " + args, e);
                 return -1;
             }
             return 0;
@@ -237,10 +238,10 @@ enum Options {
         }
     },
 
-    BundleVersion("-bundleVersion") {
+    BundleVersion("-bundleVersion", false) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
-            OutputCreator.setBundleVersion(args[0]);
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            OutputCreator.setBundleVersion(args.get(0));
             return 0;
         }
 
@@ -253,9 +254,9 @@ enum Options {
         }
     },
 
-    Focus("-focus") {
+    Focus("-focus", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 cli.printFocusedOSGIElement(arg);
             }
@@ -272,9 +273,9 @@ enum Options {
         }
     },
 
-    PrintAllPluginsAndFeatures("-printAll") {
+    PrintAllPluginsAndFeatures("-printAll", true) {
         @Override
-        int handle(CommandLineInterpreter cli, String... args) {
+        int handle(CommandLineInterpreter cli, List<String> args) {
             cli.printAllPluginsAndFeatures();
             return 0;
         }
@@ -288,15 +289,21 @@ enum Options {
         }
     },
 
-    UNKNOWN("");
+    UNKNOWN("", false);
 
     private final String optionName;
+    private final boolean command;
 
-    Options(String name) {
+    Options(String name, boolean command) {
         optionName = name;
+        this.command = command;
     }
 
-    int handle(CommandLineInterpreter cli, String... args) {
+    boolean isCommand(){
+        return command;
+    }
+
+    int handle(CommandLineInterpreter cli, List<String> args) {
         throw new UnsupportedOperationException();
     }
 
