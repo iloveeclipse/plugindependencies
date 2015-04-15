@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
+import static org.eclipselabs.plugindependencies.core.Logging.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -475,6 +475,9 @@ public class CommandLineInterpreter {
 
     public int readInEclipseFolder(String eclipsePath)
             throws IOException, SAXException, ParserConfigurationException {
+        if(eclipsePath.startsWith("#")){
+            return 0;
+        }
         File root = new File(eclipsePath);
         File pluginsDir = new File(root, "plugins");
         int result = 0;
