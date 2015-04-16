@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
@@ -116,6 +117,9 @@ public class PlatformState {
         Plugin oldOne = null;
         if(existing >= 0){
             oldOne = list.get(existing);
+            if(Objects.equals(oldOne.getPath(), newOne.getPath())) {
+                return oldOne;
+            }
             oldOne.addDuplicate(newOne);
         }
         list.add(newOne);

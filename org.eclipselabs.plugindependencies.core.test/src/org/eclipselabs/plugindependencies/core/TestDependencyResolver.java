@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -197,4 +197,41 @@ public class TestDependencyResolver extends BaseTest {
         }
     }
 
+
+    @Test
+    public void testImportSourcePlugin() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+
+        p2.setRequiredPlugins("p1;version=\"1.0.0\"");
+        p2.setRequiredPlugins("p1.source;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Warning: [p2 1.0.0] plugin not found: p1.source 1.0.0]", p2.getLog().toString());
+    }
+
+    @Test
+    public void testMultipleOccurenciesOfSamePluginInPlatform() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        p1.setPath("/tmp");
+        Plugin p2 = new Plugin("p1", "1.0.0", false, false);
+        p2.setPath("/tmp");
+
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.addPlugin(p2);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[]", p1.getLog().toString());
+        assertEquals("[]", p2.getLog().toString());
+    }
 }
