@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.StringUtil.*;
-import static org.junit.Assert.*;
+import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,19 +96,19 @@ public class TestPluginParser  extends BaseTest {
         ManifestEntry entry;
 
         compareReqPluginsOfTestPlugin = new ArrayList<>();
-        entry = new ManifestEntry("org.eclipse.core.runtime", null);
+        entry = new ManifestEntry("org.eclipse.core.runtime", "");
         compareReqPluginsOfTestPlugin.add(entry);
-        entry = new ManifestEntry("org.eclipse.core.resources", null);
+        entry = new ManifestEntry("org.eclipse.core.resources", "");
         compareReqPluginsOfTestPlugin.add(entry);
-        entry = new ManifestEntry("org.eclipse.core.filesystem", null);
+        entry = new ManifestEntry("org.eclipse.core.filesystem", "");
         compareReqPluginsOfTestPlugin.add(entry);
-        entry = new ManifestEntry("org.eclipse.core.expressions", null);
+        entry = new ManifestEntry("org.eclipse.core.expressions", "");
         compareReqPluginsOfTestPlugin.add(entry);
         entry = new ManifestEntry(asList("JSR305-ri", "resolution:=optional" ));
         compareReqPluginsOfTestPlugin.add(entry);
 
         compareReqPackagesOfTestPlugin = new ArrayList<>();
-        entry = new ManifestEntry("org.eclipse.swt.widgets", null);
+        entry = new ManifestEntry("org.eclipse.swt.widgets", "");
         compareReqPackagesOfTestPlugin.add(entry);
 
         expPackagesOfTestPlugin = new LinkedHashSet<>();

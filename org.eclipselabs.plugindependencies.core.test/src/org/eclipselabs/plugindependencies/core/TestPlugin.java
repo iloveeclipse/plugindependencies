@@ -60,10 +60,10 @@ public class TestPlugin extends BaseTest {
     @Test
     public void testSetRequiredPlugins() {
         plugin.setRequiredPlugins(requPlugins);
-        ManifestEntry entry1 = new ManifestEntry("org.eclipse.core.runtime", null);
-        ManifestEntry entry2 = new ManifestEntry("org.eclipse.core.resources", null);
-        ManifestEntry entry3 = new ManifestEntry("org.eclipse.core.filesystem", null);
-        ManifestEntry entry4 = new ManifestEntry("org.eclipse.core.expressions", null);
+        ManifestEntry entry1 = new ManifestEntry("org.eclipse.core.runtime", "");
+        ManifestEntry entry2 = new ManifestEntry("org.eclipse.core.resources", "");
+        ManifestEntry entry3 = new ManifestEntry("org.eclipse.core.filesystem", "");
+        ManifestEntry entry4 = new ManifestEntry("org.eclipse.core.expressions", "");
         ManifestEntry entry5 = new ManifestEntry(asList( "JSR305-ri",
                 "resolution:=optional" ));
 
@@ -77,27 +77,22 @@ public class TestPlugin extends BaseTest {
     public void testSetRequiredPackages() {
         plugin.setRequiredPackages(requPackages);
 
-        ManifestEntry entry1 = new ManifestEntry("javax.xml.parsers", null);
-        ManifestEntry entry2 = new ManifestEntry(asList(
-                "org.eclipse.core.runtime.jobs", "resolution:=optional" ));
-        ManifestEntry entry3 = new ManifestEntry(asList(
-                "org.eclipse.osgi.framework.console", "resolution:=optional" ));
-        ManifestEntry entry4 = new ManifestEntry("org.eclipse.osgi.service.datalocation",
-                null);
-        ManifestEntry entry5 = new ManifestEntry("org.eclipse.osgi.service.debug", null);
-        ManifestEntry entry6 = new ManifestEntry(asList(
-                "org.eclipse.osgi.service.environment", "resolution:=optional" ));
-        ManifestEntry entry7 = new ManifestEntry(asList(
-                "org.eclipse.osgi.service.localization", "version=\"1.1.0\"" ));
-        ManifestEntry entry8 = new ManifestEntry(asList(
-                "org.eclipse.osgi.service.resolver", "resolution:=optional" ));
-        ManifestEntry entry9 = new ManifestEntry("org.eclipse.osgi.storagemanager", null);
-        ManifestEntry entry10 = new ManifestEntry("org.eclipse.osgi.util", null);
-        ManifestEntry entry11 = new ManifestEntry("org.osgi.framework", null);
-        ManifestEntry entry12 = new ManifestEntry("org.osgi.service.packageadmin", null);
-        ManifestEntry entry13 = new ManifestEntry("org.osgi.util.tracker", null);
-        ManifestEntry entry14 = new ManifestEntry("org.xml.sax", null);
-        ManifestEntry entry15 = new ManifestEntry("org.xml.sax.helpers", null);
+        ManifestEntry entry1 = new ManifestEntry("javax.xml.parsers", "");
+        ManifestEntry entry2 = new ManifestEntry(asList("org.eclipse.core.runtime.jobs", "resolution:=optional"));
+        ManifestEntry entry3 = new ManifestEntry(asList("org.eclipse.osgi.framework.console", "resolution:=optional"));
+        ManifestEntry entry4 = new ManifestEntry("org.eclipse.osgi.service.datalocation", "");
+        ManifestEntry entry5 = new ManifestEntry("org.eclipse.osgi.service.debug", "");
+        ManifestEntry entry6 = new ManifestEntry(
+                asList("org.eclipse.osgi.service.environment", "resolution:=optional"));
+        ManifestEntry entry7 = new ManifestEntry(asList("org.eclipse.osgi.service.localization", "version=\"1.1.0\""));
+        ManifestEntry entry8 = new ManifestEntry(asList("org.eclipse.osgi.service.resolver", "resolution:=optional"));
+        ManifestEntry entry9 = new ManifestEntry("org.eclipse.osgi.storagemanager", "");
+        ManifestEntry entry10 = new ManifestEntry("org.eclipse.osgi.util", "");
+        ManifestEntry entry11 = new ManifestEntry("org.osgi.framework", "");
+        ManifestEntry entry12 = new ManifestEntry("org.osgi.service.packageadmin", "");
+        ManifestEntry entry13 = new ManifestEntry("org.osgi.util.tracker", "");
+        ManifestEntry entry14 = new ManifestEntry("org.xml.sax", "");
+        ManifestEntry entry15 = new ManifestEntry("org.xml.sax.helpers", "");
 
         List<ManifestEntry> compareReqPackages = new ArrayList<>();
         Collections.addAll(compareReqPackages, entry1, entry2, entry3, entry4, entry5,
