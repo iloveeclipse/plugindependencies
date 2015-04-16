@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,36 +56,6 @@ public class TestCLI extends BaseTest {
             throw new Exception("Can not remove Directory: " + tempDir.getCanonicalPath());
         }
         super.tearDown();
-    }
-
-    @Test
-    public void testUnresolvedOutput() throws IOException {
-        String args[] = new String[] { "-eclipsePaths",
-                "testdata_OutputGeneration/eclipseRE",
-                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace",
-                "-fullLog"};
-
-        File expectedOutput = new File("outputs/console_unres_expected");
-        File outputFile = new File(tempDir.getCanonicalPath() + "/console_unres");
-        if (!outputFile.createNewFile()) {
-            fail("Output file can not be created in " + tempDir.getCanonicalPath());
-        }
-        try(PrintStream out = new PrintStream(outputFile);){
-            Logging.setLogger(new Logging.SimpleLogger(out));
-
-            assertEquals(0, SecurityMan.runMain(args));
-
-            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                    StandardCharsets.UTF_8);
-            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
-
-            List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                    StandardCharsets.UTF_8);
-            outputList = addNewlineToAllStrings(outputList);
-
-            assertEquals(expectedOutputList.toString(), outputList.toString());
-        }
     }
 
     @Test
@@ -177,28 +146,51 @@ public class TestCLI extends BaseTest {
     }
 
     @Test
-    public void testFullLog() throws IOException {
+    public void testFullLogToFile() throws IOException {
         File fullLog = new File(tempDir.getCanonicalPath() + "/fullLog");
 
-        String args[] = new String[] { "-eclipsePaths",
-                "testdata_OutputGeneration/eclipseRE",
+        String args[] = new String[] { "-eclipsePaths", "testdata_OutputGeneration/eclipseRE",
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
-                "testdata_OutputGeneration/workspace", "-fullLog",
-                fullLog.getCanonicalPath() };
+                "testdata_OutputGeneration/workspace", "-fullLog", fullLog.getCanonicalPath() };
 
         assertEquals(0, SecurityMan.runMain(args));
 
         File expectedOutput = new File("outputs/fullLog_expected");
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
+        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
         expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(fullLog.toPath(),
-                StandardCharsets.UTF_8);
+        List<String> outputList = Files.readAllLines(fullLog.toPath(), StandardCharsets.UTF_8);
         outputList = addNewlineToAllStrings(outputList);
 
         assertEquals(expectedOutputList.toString(), outputList.toString());
+    }
+
+    @Test
+    public void testFullLogToStdOut() throws IOException {
+        String args[] = new String[] { "-eclipsePaths", "testdata_OutputGeneration/eclipseRE",
+                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
+                "testdata_OutputGeneration/workspace", "-fullLog" };
+
+        File expectedOutput = new File("outputs/fullLog_expected");
+        File outputFile = new File(tempDir.getCanonicalPath() + "/console_unres");
+        if (!outputFile.createNewFile()) {
+            fail("Output file can not be created in " + tempDir.getCanonicalPath());
+        }
+
+        try (PrintStream out = new PrintStream(outputFile);) {
+            Logging.setLogger(new Logging.SimpleLogger(out));
+
+            assertEquals(0, SecurityMan.runMain(args));
+
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+
+            List<String> outputList = Files.readAllLines(outputFile.toPath(), StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
+
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test

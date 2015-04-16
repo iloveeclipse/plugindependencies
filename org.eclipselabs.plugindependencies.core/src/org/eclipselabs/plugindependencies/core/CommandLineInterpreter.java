@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
+import static org.eclipselabs.plugindependencies.core.Logging.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -211,6 +211,7 @@ public class CommandLineInterpreter {
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
                 toFileOut.write(logs);
+                toFileOut.write("\n");
             }
             return 0;
         } catch (IOException e) {
@@ -499,8 +500,7 @@ public class CommandLineInterpreter {
         List<String> log = element.getLog();
         for (String logEntry : log) {
             if (logEntry.contains("Error") || showWarnings) {
-                ret.append(prefix);
-                ret.append(logEntry + "\n");
+                ret.append(prefix).append(logEntry).append("\n");
             }
         }
         return ret.toString();
