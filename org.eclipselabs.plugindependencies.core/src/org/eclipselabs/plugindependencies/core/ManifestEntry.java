@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.util.Collections;
 import java.util.List;
@@ -115,15 +116,13 @@ public class ManifestEntry extends NamedElement {
     }
 
     /**
-     * Checks if the Plugin has the right SymbolicName and the right version to fit the
-     * ManifestEntry.
+     * Checks if the given element has same symbolic name and compatible version (greater or equals)
      *
      * @param element
-     *            Plugin to check
-     * @return true for fit
+     *            to check
+     * @return true for matching name and compatible version
      */
     public boolean isMatching(NamedElement element) {
-        // DO NOT extract to local variables, takes 10 times longer
         return getName().equals(element.getName())
                 && DependencyResolver.isCompatibleVersion(getVersion(), element.getVersion());
     }

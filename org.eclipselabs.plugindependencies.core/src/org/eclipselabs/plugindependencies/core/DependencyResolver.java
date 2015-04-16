@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.NamedElement.*;
+import static org.eclipselabs.plugindependencies.core.NamedElement.ZERO_VERSION;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -249,8 +249,7 @@ public class DependencyResolver {
      * Stack element for resolving plugin dependencies. If {@link #toVisit} is empty, plugin is resolved.
      */
     static class PluginElt {
-        static final Plugin DUMMY_PLUGIN = new Plugin("", NamedElement.EMPTY_VERSION);
-        static final PluginElt EMPTY = new PluginElt(null,  DUMMY_PLUGIN);
+        static final PluginElt EMPTY = new PluginElt(null, Plugin.DUMMY_PLUGIN);
         final Plugin plugin;
         final PluginElt parent;
 
@@ -421,6 +420,9 @@ public class DependencyResolver {
 
     static final Pattern RANGE = Pattern.compile("[(|\\[]" + VER_STR + "," + VER_STR + "[)|\\]]");
 
+    /**
+     * @return true if the 'givenVersion' greater or equals to the 'rangeOrLowerLimit'
+     */
     public static boolean isCompatibleVersion(String rangeOrLowerLimit,  String givenVersion) {
         if (rangeOrLowerLimit == null || givenVersion == null) {
             return false;
@@ -441,7 +443,7 @@ public class DependencyResolver {
                 return isVersionInRange(givenVersion, rangeOrLowerLimit);
             }
         }
-        boolean isVersion = VERSION.matcher(rangeOrLowerLimit).matches();
+        boolean isVersion = rangeOrLowerLimit == ZERO_VERSION || VERSION.matcher(rangeOrLowerLimit).matches();
         if (isVersion) {
             return compareVersions(rangeOrLowerLimit, givenVersion) <= 0 ? true : false;
         }

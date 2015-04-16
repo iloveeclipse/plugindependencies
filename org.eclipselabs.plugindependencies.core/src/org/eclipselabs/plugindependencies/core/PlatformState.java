@@ -44,6 +44,8 @@ public class PlatformState {
     private static String dummyVersion;
     private static String realVersion = NamedElement.ZERO_VERSION;
 
+    private final Set<ManifestEntry> hiddenElements;
+
     /**
      *
      */
@@ -52,6 +54,7 @@ public class PlatformState {
     }
 
     public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features) {
+        hiddenElements = new LinkedHashSet<>();
         this.plugins = plugins == null? new LinkedHashSet<Plugin>() : plugins;
         this.packages = packages == null? new LinkedHashSet<Package>() : packages;
         this.features = features == null? new LinkedHashSet<Feature>() : features;
@@ -94,6 +97,13 @@ public class PlatformState {
         return javaHome;
     }
 
+    public void hideElement(ManifestEntry elt){
+        if(dependenciesresolved || !plugins.isEmpty() || ! features.isEmpty()){
+            throw new IllegalStateException("Can't change already existing state");
+        }
+        hiddenElements.add(elt);
+    }
+
     void setJavaHome(String newHome) {
         if (newHome == null || newHome.trim().isEmpty()) {
             javaHome = DEFAULT_JAVA_HOME;
@@ -108,6 +118,10 @@ public class PlatformState {
     }
 
     public Plugin addPlugin(Plugin newOne){
+        newOne = checkIfHidden(newOne);
+        if(newOne == Plugin.DUMMY_PLUGIN){
+            return newOne;
+        }
         plugins.add(newOne);
 
         List<Plugin> list = nameToPlugins.get(newOne.getName());
@@ -135,6 +149,40 @@ public class PlatformState {
         return oldOne != null? oldOne : newOne;
     }
 
+    private Plugin checkIfHidden(Plugin newOne) {
+        if(!hiddenElements.isEmpty()){
+            for (ManifestEntry hidden : hiddenElements) {
+                if(hidden.hasDefaultVersion()){
+                    if(hidden.isMatching(newOne)){
+                        return Plugin.DUMMY_PLUGIN;
+                    }
+                } else {
+                    if(hidden.exactMatch(newOne)){
+                        return Plugin.DUMMY_PLUGIN;
+                    }
+                }
+            }
+        }
+        return newOne;
+    }
+
+    private Feature checkIfHidden(Feature newOne) {
+        if(!hiddenElements.isEmpty()){
+            for (ManifestEntry hidden : hiddenElements) {
+                if(hidden.hasDefaultVersion()){
+                    if(hidden.isMatching(newOne)){
+                        return Feature.DUMMY_FEATURE;
+                    }
+                } else {
+                    if(hidden.exactMatch(newOne)){
+                        return Feature.DUMMY_FEATURE;
+                    }
+                }
+            }
+        }
+        return newOne;
+    }
+
     public Package addPackage(Package newOne){
         packages.add(newOne);
 
@@ -152,6 +200,10 @@ public class PlatformState {
     }
 
     public Feature addFeature(Feature newOne){
+        newOne = checkIfHidden(newOne);
+        if(newOne == Feature.DUMMY_FEATURE){
+            return newOne;
+        }
         features.add(newOne);
 
         List<Feature> list = nameToFeatures.get(newOne.getName());

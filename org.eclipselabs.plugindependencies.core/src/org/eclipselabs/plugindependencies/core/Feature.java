@@ -26,6 +26,8 @@ import org.w3c.dom.NodeList;
  */
 public class Feature extends OSGIElement {
 
+    public final static Feature DUMMY_FEATURE = new Feature("", NamedElement.EMPTY_VERSION);
+
     private List<ManifestEntry> requiredPlugins;
 
     private List<ManifestEntry> requiredFeatures;

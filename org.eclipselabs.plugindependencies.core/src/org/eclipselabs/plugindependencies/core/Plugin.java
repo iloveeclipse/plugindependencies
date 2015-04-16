@@ -27,6 +27,8 @@ import java.util.Set;
  */
 public class Plugin extends OSGIElement {
 
+    public final static Plugin DUMMY_PLUGIN = new Plugin("", NamedElement.EMPTY_VERSION);
+
     private static final String EXTERNAL = "external:";
 
     private List<String> bundleClassPath;

@@ -37,9 +37,12 @@ import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.ui.PlatformUI;
 import org.eclipselabs.plugindependencies.core.CommandLineInterpreter;
 import org.eclipselabs.plugindependencies.core.Feature;
+import org.eclipselabs.plugindependencies.core.ManifestEntry;
+import org.eclipselabs.plugindependencies.core.NamedElement;
 import org.eclipselabs.plugindependencies.core.Package;
 import org.eclipselabs.plugindependencies.core.PlatformState;
 import org.eclipselabs.plugindependencies.core.Plugin;
+import org.eclipselabs.plugindependencies.core.StringUtil;
 import org.eclipselabs.plugindependencies.ui.Activator;
 import org.xml.sax.SAXException;
 
@@ -277,8 +280,26 @@ public class ViewContentProvider implements ITreeContentProvider {
         List<String> paths = target.getPaths();
 
         for (String somePath : paths) {
+            if(somePath.startsWith("-") && somePath.length() > 1){
+                List<String> idAndVers = StringUtil.split(somePath.substring(1), ' ');
+                ManifestEntry me = null;
+                if(idAndVers.size() > 1){
+                    me = new ManifestEntry(idAndVers.get(0), idAndVers.get(1));
+                } else if(idAndVers.size() > 0){
+                    me = new ManifestEntry(idAndVers.get(0), NamedElement.EMPTY_VERSION);
+                }
+                if(me != null) {
+                    parser.getState().hideElement(me);
+                }
+            }
+        }
+
+        for (String somePath : paths) {
             if(monitor.isCanceled()){
                 return ms;
+            }
+            if(isNotValidPath(somePath)){
+                continue;
             }
             try {
                 parser.readInEclipseFolder(somePath);
@@ -290,6 +311,10 @@ public class ViewContentProvider implements ITreeContentProvider {
 
         readWorkspace(monitor, parser, ms);
         return ms;
+    }
+
+    private static boolean isNotValidPath(String somePath) {
+        return somePath.trim().isEmpty() || somePath.startsWith("#") || somePath.startsWith("-");
     }
 
     private static void readWorkspace(IProgressMonitor monitor, CommandLineInterpreter parser, MultiStatus ms) {

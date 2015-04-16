@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -53,6 +54,9 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -61,9 +65,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
@@ -72,6 +77,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipselabs.plugindependencies.core.OSGIElement;
 import org.eclipselabs.plugindependencies.ui.Activator;
 
 public class PluginTreeView extends ViewPart {
@@ -99,6 +105,8 @@ public class PluginTreeView extends ViewPart {
     private Action showErrors;
 
     private boolean showErrorsOnly;
+
+    private Action copyToClipboardAction;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -216,6 +224,7 @@ public class PluginTreeView extends ViewPart {
 
     private void fillContextMenu(IMenuManager manager) {
         if (drillDownAdapter != null) {
+            manager.add(copyToClipboardAction);
             manager.add(showProperties);
             drillDownAdapter.addNavigationActions(manager);
         }
@@ -301,6 +310,43 @@ public class PluginTreeView extends ViewPart {
 
             }
         };
+
+        copyToClipboardAction = new Action() {
+            @Override
+            public void run() {
+                ISelection selection = viewer.getSelection();
+                if(selection.isEmpty() || !(selection instanceof IStructuredSelection)){
+                    return;
+                }
+                copyToClipboard((IStructuredSelection) selection);
+            }
+        };
+        copyToClipboardAction.setText("&Copy");
+        copyToClipboardAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+        copyToClipboardAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+        IActionBars actionBars = getViewSite().getActionBars();
+        actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyToClipboardAction);
+    }
+
+    protected void copyToClipboard(IStructuredSelection selection) {
+        StringBuilder sb = new StringBuilder();
+        for (Object object : (List<?>) selection.toList()) {
+            if(object instanceof TreeParent){
+                TreeParent tp = (TreeParent) object;
+                object = tp.getNamedElement();
+                if(object instanceof OSGIElement){
+                    OSGIElement elt = (OSGIElement) object;
+                    sb.append(elt.getNameAndVersion()).append("\n");
+                }
+            }
+        }
+        TextTransfer textTransfer = TextTransfer.getInstance();
+        final Clipboard cb = new Clipboard(getSite().getShell().getDisplay());
+        try {
+        cb.setContents(new Object[]{sb.toString()}, new Transfer[]{textTransfer});
+        } finally {
+            cb.dispose();
+        }
     }
 
     protected void readTargetDefinition() {
@@ -385,9 +431,7 @@ public class PluginTreeView extends ViewPart {
             TreeFeature treeFeature = (TreeFeature) obj;
             String featureXMLPath = treeFeature.getNamedElement().getPath();
             fileStore = EFS.getLocalFileSystem().getStore(new Path(featureXMLPath));
-
-        }
-        if (obj instanceof TreePlugin) {
+        } else if (obj instanceof TreePlugin) {
             TreePlugin treePlugin = (TreePlugin) obj;
             File plugin = new File(treePlugin.getNamedElement().getPath());
             try {
@@ -397,21 +441,19 @@ public class PluginTreeView extends ViewPart {
                     }
                 }
                 if (plugin != null) {
-                    String manifestPath = plugin.getCanonicalPath()
-                            + "/META-INF/MANIFEST.MF";
+                    String manifestPath = plugin.getCanonicalPath() + "/META-INF/MANIFEST.MF";
                     fileStore = EFS.getLocalFileSystem().getStore(new Path(manifestPath));
                 }
             } catch (IOException e) {
                 IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor");
                 StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+                return;
             }
-
         }
 
-        IWorkbenchPage page = getViewSite().getPage();
         if (fileStore != null) {
             try {
-                IDE.openEditorOnFileStore(page, fileStore);
+                IDE.openEditorOnFileStore(getViewSite().getPage(), fileStore);
             } catch (PartInitException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG | StatusManager.SHOW);
             }
