@@ -29,18 +29,12 @@ import java.util.Set;
 public class OutputCreator {
     private static File eclipseFolder = new File(".");
 
-    private static String bundleVersion = NamedElement.ZERO_VERSION;
-
     private static String sourceFolder = "./";
 
     static String targetFolder = "eclipse/plugins";
 
     public static void setEclipseRoot(String eclipseRoot) throws IOException {
         eclipseFolder = new File(eclipseRoot).getCanonicalFile();
-    }
-
-    public static void setBundleVersion(String bundleVersion) {
-        OutputCreator.bundleVersion = bundleVersion;
     }
 
     private static int writeToFile(String fileName, StringBuilder toWrite)
@@ -163,6 +157,7 @@ public class OutputCreator {
     }
 
     private static String getTargetLocation(Plugin plugin) throws IOException {
+        String versionForDummy = PlatformState.getBundleVersionForDummy();
         StringBuilder ret = new StringBuilder();
         String targetDir = plugin.getTargetDirectory();
         if (targetDir == null) {
@@ -172,9 +167,9 @@ public class OutputCreator {
 
         String pluginTargetFolder;
         if(Paths.get(targetFolder).toFile().exists()){
-            pluginTargetFolder = targetDir + "/" + plugin.getName() + "_" + bundleVersion;
+            pluginTargetFolder = targetDir + "/" + plugin.getName() + "_" + versionForDummy;
         } else {
-            pluginTargetFolder = eclipseFolder + "/" + targetDir + "/" + plugin.getName() + "_" + bundleVersion;
+            pluginTargetFolder = eclipseFolder + "/" + targetDir + "/" + plugin.getName() + "_" + versionForDummy;
         }
 
         if (bundleClassPathList.isEmpty()) {

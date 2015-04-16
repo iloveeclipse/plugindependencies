@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class ManifestEntry extends NamedElement {
     private boolean linuxgtkx86_64;
 
     public ManifestEntry(String name, String vers) {
-        super(fixName(name), vers);
+        super(fixName(name), fixVersion(vers));
         attributes = Collections.emptyList();
     }
 
@@ -36,7 +38,7 @@ public class ManifestEntry extends NamedElement {
      *            or package id, other elements are not parsed plugin/package attributes
      */
     public ManifestEntry(List<String> manifestEntries) {
-        super(fixName(manifestEntries.get(0)), getVersion(manifestEntries));
+        super(fixName(manifestEntries.get(0)), fixVersion(getVersion(manifestEntries)));
         attributes = createAttributes(manifestEntries);
     }
 
@@ -47,7 +49,7 @@ public class ManifestEntry extends NamedElement {
      *            from feature.xml
      */
     public ManifestEntry(Element xmlElement) {
-        super(fixName(xmlElement.getAttribute("id")), xmlElement.getAttribute("version"));
+        super(fixName(xmlElement.getAttribute("id")), fixVersion(xmlElement.getAttribute("version")));
         attributes = Collections.emptyList();
         computeSystemFlags(xmlElement);
     }
@@ -71,13 +73,6 @@ public class ManifestEntry extends NamedElement {
         } else {
             linuxgtkx86_64 = false;
         }
-    }
-
-    private static String fixName(String name) {
-        if ("system.bundle".equals(name)) {
-            return "org.eclipse.osgi";
-        }
-        return name.trim();
     }
 
     private boolean attributesContain(String text) {

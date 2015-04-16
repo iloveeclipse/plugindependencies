@@ -41,6 +41,8 @@ public class PlatformState {
     private final Map<String, List<Feature>> nameToFeatures;
     private String javaHome;
     private boolean dependenciesresolved;
+    private static String dummyVersion;
+    private static String realVersion = NamedElement.ZERO_VERSION;
 
     /**
      *
@@ -394,5 +396,39 @@ public class PlatformState {
         return depres;
     }
 
+    static String fixName(String name) {
+        name = name.trim();
+        if ("system.bundle".equals(name)) {
+            return "org.eclipse.osgi";
+        }
+        return name;
+    }
+
+    static String fixVersion(String version) {
+        version = version.trim();
+        if(realVersion == null || dummyVersion == null){
+            return version;
+        }
+        if (dummyVersion.equals(version)) {
+            return realVersion;
+        }
+        return version;
+    }
+
+    public static String getDummyBundleVersion() {
+        return dummyVersion;
+    }
+
+    public static void setDummyBundleVersion(String dummyBundleVersion) {
+        dummyVersion = dummyBundleVersion;
+    }
+
+    public static String getBundleVersionForDummy() {
+        return realVersion;
+    }
+
+    public static void setBundleVersionForDummy(String realBundleVersion) {
+        realVersion = realBundleVersion;
+    }
 
 }

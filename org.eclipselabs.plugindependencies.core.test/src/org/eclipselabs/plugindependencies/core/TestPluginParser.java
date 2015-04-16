@@ -358,4 +358,19 @@ public class TestPluginParser  extends BaseTest {
         assertTrue(pluginSet.isEmpty());
     }
 
+    @Test
+    public void testDummyManifestVersions() {
+        String dummy = PlatformState.getBundleVersionForDummy();
+        PlatformState.setBundleVersionForDummy("8.0.1");
+        PlatformState.setDummyBundleVersion("99.0.0");
+        try {
+            ManifestEntry me = new ManifestEntry("a", "1.0.0");
+            assertEquals("1.0.0", me.getVersion());
+            me = new ManifestEntry("a", "99.0.0");
+            assertEquals("8.0.1", me.getVersion());
+        } finally {
+            PlatformState.setBundleVersionForDummy(dummy);
+        }
+    }
+
 }

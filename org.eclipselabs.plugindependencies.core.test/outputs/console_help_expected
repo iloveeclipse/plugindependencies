@@ -7,9 +7,9 @@ java plugin_dependencies [-javaHome path] -eclipsePath folder1 folder2.. [Option
 -generateBuildFile sourceFolder [targetFolder]		Generates the build file with all classpaths of the specified plugin. Optionally path to the extra plugins directory can be specified with targetFolder. Generated file is saved in the plugin folder. Eclipse root and bundle version have to be set before.
 -generateAllBuild sourceFolder [targetFolder]		Generates a build file with all classpaths of every plugin in the specified folder. Optionally path to the extra plugins directory can be specified with targetFolder. Generated files are saved in each plugin folder. Eclipse root and bundle version have to be set before.
 -fullLog [file]			Writes the full error log to the specified file (optional, if no file given, to standard out). Warnings are included.
--eclipsePaths folder1 folder2 ...	Eclipse target platform plugin and feature folders are specified here (canonical paths). Either Eclipse folder with subfolders "plugins" and "features" or a folder just containing plugins is possible.
+-eclipsePaths folder1 [folder2 ...]	Eclipse target platform plugin and feature folders are specified here (canonical paths). Either Eclipse folder with subfolders "plugins" and "features" or a folder just containing plugins is possible.
 -javaHome path				Changes the Java home path to the specified path. Default is the Java home of the running Java.
 -deploymentRoot path			Changes the target deployment root path used for final plugins deployment to the specified path. Default is empty string.
--bundleVersion version			Changes the default bundle version to the specified version. Default is 0.0.0.
+-bundleVersion version [dummyVersion]			Changes the bundle version of source plugins to the specified version. Default is 0.0.0. If 'dummyVersion' is given, replaces this version with 'version'.
 -focus name[,version] name[,version]...	Focus on plugin/feature with given name. Optionally you can specify a version. It is possible to focus on more than one element.
 -printAll				Prints all plugins and features found in the specified folders.

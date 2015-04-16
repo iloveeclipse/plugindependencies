@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +52,7 @@ public class TestBuildFileGen extends BaseTest {
         System.setSecurityManager(null);
     }
 
+    @Override
     @Before
     public void setup() {
         root = Paths.get("testdata_OutputGeneration");

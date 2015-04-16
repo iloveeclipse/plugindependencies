@@ -187,7 +187,7 @@ enum Options {
 
         @Override
         void printHelp(String arg) {
-            String help = "-eclipsePaths folder1 folder2 ..."
+            String help = "-eclipsePaths folder1 [folder2 ...]"
                     + "\t"
                     + "Eclipse target platform plugin and feature folders are specified here (canonical paths)."
                     + " Either Eclipse folder with subfolders \"plugins\" and \"features\" "
@@ -241,15 +241,18 @@ enum Options {
     BundleVersion("-bundleVersion", false) {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
-            OutputCreator.setBundleVersion(args.get(0));
+            cli.setBundleVersionForDummy(args.get(0));
+            if(args.size() > 1) {
+                cli.setBundleVersionDummy(args.get(1));
+            }
             return 0;
         }
 
         @Override
         void printHelp(String arg) {
-            String help = "-bundleVersion version" + "\t\t\t"
-                    + "Changes the default bundle version to the specified version."
-                    + " Default is 0.0.0.";
+            String help = "-bundleVersion version [dummyVersion]" + "\t\t\t"
+                    + "Changes the bundle version of source plugins to the specified version."
+                    + " Default is 0.0.0. If 'dummyVersion' is given, replaces this version with 'version'.";
             Logging.writeStandardOut(help);
         }
     },

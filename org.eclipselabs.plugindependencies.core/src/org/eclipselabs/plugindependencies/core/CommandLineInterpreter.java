@@ -569,4 +569,12 @@ public class CommandLineInterpreter {
     public void setFullLog(String fullLog) {
         this.fullLog = fullLog;
     }
+
+    public void setBundleVersionDummy(String dummy) {
+        PlatformState.setDummyBundleVersion(dummy);
+    }
+
+    public void setBundleVersionForDummy(String real) {
+        PlatformState.setBundleVersionForDummy(real);
+    }
 }
