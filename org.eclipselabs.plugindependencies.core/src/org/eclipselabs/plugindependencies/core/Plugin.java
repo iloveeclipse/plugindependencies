@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -67,7 +69,7 @@ public class Plugin extends OSGIElement {
     }
 
     public Plugin(String symbName, String vers, boolean fragment, boolean singleton) {
-        super(symbName, vers);
+        super(symbName, fixVersion(vers));
         isSingleton = singleton;
         this.requiredPackages = new ArrayList<>();
         this.requiredPlugins = new ArrayList<>();
