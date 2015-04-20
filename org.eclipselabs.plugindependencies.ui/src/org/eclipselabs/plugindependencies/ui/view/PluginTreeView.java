@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -107,6 +108,8 @@ public class PluginTreeView extends ViewPart {
     private boolean showErrorsOnly;
 
     private Action copyToClipboardAction;
+
+    private Action openPluginXmlAction;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -225,6 +228,7 @@ public class PluginTreeView extends ViewPart {
     private void fillContextMenu(IMenuManager manager) {
         if (drillDownAdapter != null) {
             manager.add(copyToClipboardAction);
+            manager.add(openPluginXmlAction);
             manager.add(showProperties);
             drillDownAdapter.addNavigationActions(manager);
         }
@@ -306,10 +310,25 @@ public class PluginTreeView extends ViewPart {
                     return;
                 }
                 Object obj = ((IStructuredSelection) selection).getFirstElement();
-                openEditor(obj);
+                openEditor(obj,  "META-INF/MANIFEST.MF");
 
             }
         };
+
+        openPluginXmlAction = new Action() {
+            @Override
+            public void run() {
+                ISelection selection = viewer.getSelection();
+                if(selection.isEmpty()){
+                    return;
+                }
+                Object obj = ((IStructuredSelection) selection).getFirstElement();
+                openEditor(obj,  "plugin.xml");
+
+            }
+        };
+        openPluginXmlAction.setText("Open plugin.xml");
+        openPluginXmlAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 
         copyToClipboardAction = new Action() {
             @Override
@@ -424,7 +443,7 @@ public class PluginTreeView extends ViewPart {
         return disposed;
     }
 
-    private void openEditor(Object obj) {
+    private void openEditor(Object obj, String pluginRelativePath) {
         IFileStore fileStore = null;
 
         if (obj instanceof TreeFeature) {
@@ -433,19 +452,19 @@ public class PluginTreeView extends ViewPart {
             fileStore = EFS.getLocalFileSystem().getStore(new Path(featureXMLPath));
         } else if (obj instanceof TreePlugin) {
             TreePlugin treePlugin = (TreePlugin) obj;
-            File plugin = new File(treePlugin.getNamedElement().getPath());
+            File pluginDir = new File(treePlugin.getNamedElement().getPath());
             try {
-                if (!plugin.isDirectory()) {
-                    try (JarFile pluginJar = new JarFile(plugin)) {
-                        plugin = extractManifestToTmpDir(pluginJar);
+                if (!pluginDir.isDirectory()) {
+                    try (JarFile pluginJar = new JarFile(pluginDir)) {
+                        pluginDir = extractFileToTmpDir(pluginJar, pluginRelativePath);
                     }
                 }
-                if (plugin != null) {
-                    String manifestPath = plugin.getCanonicalPath() + "/META-INF/MANIFEST.MF";
-                    fileStore = EFS.getLocalFileSystem().getStore(new Path(manifestPath));
+                if (pluginDir != null) {
+                    IPath path = new Path(pluginDir.getCanonicalPath()).append(pluginRelativePath);
+                    fileStore = EFS.getLocalFileSystem().getStore(path);
                 }
             } catch (IOException e) {
-                IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor");
+                IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath, e);
                 StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
                 return;
             }
@@ -468,23 +487,25 @@ public class PluginTreeView extends ViewPart {
         }
     }
 
-    private static File extractManifestToTmpDir(JarFile pluginJar) throws IOException {
+    private static File extractFileToTmpDir(JarFile pluginJar, String path) throws IOException {
+        JarEntry entry = pluginJar.getJarEntry(path);
+        if(entry == null){
+            return null;
+        }
+
         File dir = Files.createTempDirectory("Plugin").toFile();
-        String tmpDir = dir.getCanonicalPath();
+        File tmpFile = new File(dir.getCanonicalPath(), entry.getName());
 
-        JarEntry manifest = pluginJar.getJarEntry("META-INF/MANIFEST.MF");
-        File manifestFile = new File(tmpDir, manifest.getName());
-
-        if (!manifestFile.getParentFile().mkdirs()) {
+        if (!tmpFile.getParentFile().exists() && !tmpFile.getParentFile().mkdirs()) {
             return null;
         }
 
-        if (!manifestFile.createNewFile()) {
+        if (!tmpFile.createNewFile()) {
             return null;
         }
 
-        try (OutputStream out = new FileOutputStream(manifestFile);
-                InputStream is = pluginJar.getInputStream(manifest)) {
+        try (OutputStream out = new FileOutputStream(tmpFile);
+                InputStream is = pluginJar.getInputStream(entry)) {
             int data;
             while ((data = is.read()) >= 0) {
                 out.write(data);
