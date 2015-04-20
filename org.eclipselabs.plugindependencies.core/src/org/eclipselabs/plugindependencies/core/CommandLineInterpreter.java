@@ -51,10 +51,12 @@ public class CommandLineInterpreter {
 
     private final PlatformState state;
     private String fullLog;
+    private final PluginParser pp;
 
     public CommandLineInterpreter() {
         super();
         state = new PlatformState();
+        pp = new PluginParser();
     }
 
     public PlatformState getState() {
@@ -516,7 +518,7 @@ public class CommandLineInterpreter {
         int result = 0;
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
-            if (PluginParser.createPluginsAndAddToSet(pluginsDir, state) == -1) {
+            if (pp.createPluginsAndAddToSet(pluginsDir, state) == -1) {
                 result = -1;
             }
             hasPlugins = true;
@@ -544,7 +546,7 @@ public class CommandLineInterpreter {
 
     public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
         int result = 0;
-        if (PluginParser.createPluginsAndAddToSet(directory, state) == -1) {
+        if (pp.createPluginsAndAddToSet(directory, state) == -1) {
             result = -1;
         }
         if (FeatureParser.createFeaturesAndAddToSet(directory, state) == -1) {
@@ -559,7 +561,7 @@ public class CommandLineInterpreter {
     }
 
     public int readInPlugin(File directory) throws IOException {
-        return PluginParser.createPluginAndAddToSet(directory, state);
+        return pp.createPluginAndAddToSet(directory, state);
     }
 
     public String getFullLog() {
@@ -576,5 +578,13 @@ public class CommandLineInterpreter {
 
     public void setBundleVersionForDummy(String real) {
         PlatformState.setBundleVersionForDummy(real);
+    }
+
+    public void setParseEarlyStartup(boolean parseEarlyStartup) {
+        pp.setParseEarlyStartup(parseEarlyStartup);
+    }
+
+    public PluginParser getPluginParser() {
+        return pp;
     }
 }

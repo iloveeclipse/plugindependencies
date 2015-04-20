@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,12 +22,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 /**
  * @author obroesam
  *
  */
 public class PluginParser {
+
+    private boolean parseEarlyStartup;
+
+    public PluginParser() {
+        super();
+    }
+
     /**
      * Parses all Plugins located in pluginDirectoryPath and adds them to the Plugin set.
      * Parsing is done through reading of Manifest located in each Plugin at
@@ -37,7 +46,7 @@ public class PluginParser {
      * @throws IOException
      *             Reading in file system throws IOException
      */
-    public static int createPluginsAndAddToSet(File rootDir, PlatformState state) throws IOException {
+    public int createPluginsAndAddToSet(File rootDir, PlatformState state) throws IOException {
 
         if (!rootDir.exists()) {
             Logging.getLogger().error("given directory does not exist: " + rootDir);
@@ -60,7 +69,7 @@ public class PluginParser {
         return result;
     }
 
-    public static int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {
+    public int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {
         Plugin plugin;
         Manifest manifest = getManifest(pluginOrDirectory);
         if (manifest == null) {
@@ -71,11 +80,24 @@ public class PluginParser {
             return 0;
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
+        if(parseEarlyStartup){
+            plugin.setEarlyStartup(parseEarlyStartup(pluginOrDirectory));
+        }
         Plugin addedPlugin = state.addPlugin(plugin);
         if (addedPlugin == plugin) {
             return 0;
         }
         return -1;
+    }
+
+    private static boolean parseEarlyStartup(File pluginOrDirectory) throws IOException {
+        // <extension point="org.eclipse.ui.startup">
+        String pluginXml = getPluginXml(pluginOrDirectory);
+        if(pluginXml == null){
+            return false;
+        }
+        // TODO use real xml parser
+        return pluginXml.contains("\"org.eclipse.ui.startup\"");
     }
 
     public static File[] sortFiles(File[] dirArray) {
@@ -176,5 +198,53 @@ public class PluginParser {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the Manifest of the pluginFolder. pluginFolder could be folder or Jar Archive.
+     * In both cases the Manifest is located at pluginFolder/META-INF/MANIFEST.MF .
+     *
+     * @param pluginOrFolder
+     *            Folder or Jar Archive in which the Manifest could be found
+     * @return Manifest that is found in the folder or JAR Archive
+     * @throws IOException
+     *             From reading file system
+     */
+    public static String getPluginXml(File pluginOrFolder) throws IOException {
+        if (pluginOrFolder.getName().endsWith(".jar")) {
+            try (JarFile jarfile = new JarFile(pluginOrFolder)) {
+                ZipEntry entry = jarfile.getEntry("plugin.xml");
+                if(entry != null) {
+                    InputStream is = jarfile.getInputStream(entry);
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    byte[] data = new byte[16384];
+                    int nRead;
+                    while ((nRead = is.read(data, 0, data.length)) != -1) {
+                        buffer.write(data, 0, nRead);
+                    }
+                    buffer.flush();
+                    return new String(buffer.toByteArray());
+                }
+            }
+        }
+        Path path = Paths.get(pluginOrFolder.getPath(), "plugin.xml");
+        if (path.toFile().exists() && !pluginOrFolder.isHidden()) {
+            return new String(Files.readAllBytes(path));
+        }
+        return null;
+    }
+
+    /**
+     * @return Returns the parseEarlyStartup.
+     */
+    public boolean isParseEarlyStartup() {
+        return parseEarlyStartup;
+    }
+
+    /**
+     * @param parseEarlyStartup The parseEarlyStartup to set.
+     */
+    public void setParseEarlyStartup(boolean parseEarlyStartup) {
+        this.parseEarlyStartup = parseEarlyStartup;
     }
 }

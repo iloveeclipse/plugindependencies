@@ -169,6 +169,16 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot.addChild(plugins);
         invisibleRoot.addChild(packages);
         invisibleRoot.addChild(features);
+        // EarlyStartups
+        TreeParent early = new TreeParent("EarlyStartup", invisibleRoot);
+        for (Plugin plugin : state.getPlugins()) {
+            if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
+                if(plugin.isEarlyStartup()) {
+                    early.addChild(new TreePlugin(plugin, plugins));
+                }
+            }
+        }
+        invisibleRoot.addChild(early);
     }
 
     private LoadTarget createResolveDependenciesJob() {
@@ -198,6 +208,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             monitor.subTask("Reading platform plugins");
             state = new PlatformState();
             CommandLineInterpreter parser = new CommandLineInterpreter();
+            parser.setParseEarlyStartup(true);
 
             MultiStatus ms;
             if(itd != null){

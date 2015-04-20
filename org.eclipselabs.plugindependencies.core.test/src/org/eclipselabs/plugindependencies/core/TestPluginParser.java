@@ -11,12 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.eclipselabs.plugindependencies.core.StringUtil.*;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -233,7 +229,7 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser.createPluginsAndAddToSet(new File(dirPath), new PlatformState(pluginSet, packageSet, null));
+        new PluginParser().createPluginsAndAddToSet(new File(dirPath), new PlatformState(pluginSet, packageSet, null));
         assertEquals(packages, packageSet);
         assertEquals(plugins.toString(), pluginSet.toString());
 
@@ -346,7 +342,7 @@ public class TestPluginParser  extends BaseTest {
         packageSet = new LinkedHashSet<>();
 
         try {
-            PluginParser.createPluginsAndAddToSet(null, new PlatformState(pluginSet, packageSet, null));
+            new PluginParser().createPluginsAndAddToSet(null, new PlatformState(pluginSet, packageSet, null));
             fail();
         } catch (NullPointerException e) {
             // expected
@@ -358,7 +354,7 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser.createPluginsAndAddToSet(new File("/folder/does/not/exist"), new PlatformState(pluginSet, packageSet, null));
+        new PluginParser().createPluginsAndAddToSet(new File("/folder/does/not/exist"), new PlatformState(pluginSet, packageSet, null));
         assertTrue(pluginSet.isEmpty());
     }
 

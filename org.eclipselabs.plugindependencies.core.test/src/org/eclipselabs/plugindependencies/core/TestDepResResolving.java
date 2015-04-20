@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class TestDepResResolving  extends BaseTest {
         featureSet = new LinkedHashSet<Feature>();
         PlatformState state = new PlatformState(pluginSet, packageSet, featureSet);
         FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), state);
-        PluginParser.createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), state);
+        new PluginParser().createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"), state);
         featureLeft = new Feature("org.example.left", "2.1.1.v20120113-1346");
         featureRight = new Feature("org.company.right", "1.6.0");
         featureRR = new Feature("org.eclipse.right.right",

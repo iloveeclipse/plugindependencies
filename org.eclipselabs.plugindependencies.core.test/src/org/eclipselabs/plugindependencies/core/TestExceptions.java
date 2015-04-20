@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class TestExceptions extends BaseTest {
         String dir = "testdata_exceptions/plugins";
 
         PlatformState state = new PlatformState(plugins, packages, features);
-        PluginParser.createPluginsAndAddToSet(new File(dir), state);
+        new PluginParser().createPluginsAndAddToSet(new File(dir), state);
         state.resolveDependencies();
         Plugin orgExpect = new Plugin("", "");
         for (Plugin plugin : plugins) {

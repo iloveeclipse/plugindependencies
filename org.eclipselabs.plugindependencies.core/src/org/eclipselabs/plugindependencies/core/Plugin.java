@@ -59,6 +59,8 @@ public class Plugin extends OSGIElement {
 
     private String fullClassPaths;
 
+    private boolean earlyStartup;
+
 
     public Plugin(String symbName, String vers) {
         this(symbName, vers, false, false);
@@ -503,4 +505,11 @@ public class Plugin extends OSGIElement {
         return "<fragment>" + super.toString() + rs;
     }
 
+    public void setEarlyStartup(boolean earlyStartup) {
+        this.earlyStartup = earlyStartup;
+    }
+
+    public boolean isEarlyStartup() {
+        return earlyStartup;
+    }
 }
