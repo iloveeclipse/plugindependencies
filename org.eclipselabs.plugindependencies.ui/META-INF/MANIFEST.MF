@@ -15,3 +15,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %Vendor
+Export-Package: org.eclipselabs.plugindependencies.ui,
+ org.eclipselabs.plugindependencies.ui.adapter,
+ org.eclipselabs.plugindependencies.ui.view
