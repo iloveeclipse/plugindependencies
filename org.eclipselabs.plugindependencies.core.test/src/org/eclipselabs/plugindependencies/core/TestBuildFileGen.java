@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class TestBuildFileGen extends BaseTest {
         int undeletedFiles = 0;
         for (File plugin : workspacePlugins) {
             String path = plugin.getCanonicalPath();
-            File classpathfile = new File(path + "/.classpath-gen");
+            File classpathfile = new File(path + "/.classpath-generated");
             if (classpathfile.exists() && !classpathfile.delete()) {
                 undeletedFiles++;
             }

@@ -53,6 +53,7 @@ public class TestBuildFileGen2 extends BaseTest {
         System.setSecurityManager(null);
     }
 
+    @Override
     @Before
     public void setup() {
         root = Paths.get("testdata_dependencies");
@@ -66,7 +67,7 @@ public class TestBuildFileGen2 extends BaseTest {
         int undeletedFiles = 0;
         for (File plugin : pluginDirs) {
             String path = plugin.getCanonicalPath();
-            File classpathfile = new File(path + "/.classpath-gen");
+            File classpathfile = new File(path + "/.classpath-generated");
             if (classpathfile.exists() && !classpathfile.delete()) {
                 undeletedFiles++;
             }
