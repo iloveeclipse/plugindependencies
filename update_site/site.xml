@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipselabs.plugindependencies_1.0.0.201508302302.jar" id="org.eclipselabs.plugindependencies" version="1.0.0.201508302302"/>
+</site>
