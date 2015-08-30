@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,23 +138,23 @@ public class TestFeatureParser  extends BaseTest {
         assertEquals("org.eclipse.cdt", feature.getName());
         assertEquals("8.0.2.201202111925", feature.getVersion());
 
-        entry = feature.getRequiredFeatureEntries().get(0);
+        entry = feature.getIncludedFeatureEntries().get(0);
         entry2 = new ManifestEntry("org.eclipse.cdt.platform", "8.0.2.201202111925");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredFeatureEntries().get(1);
+        entry = feature.getIncludedFeatureEntries().get(1);
         entry2 = new ManifestEntry("org.eclipse.cdt.gnu.build", "8.0.2.201202111925");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredFeatureEntries().get(2);
+        entry = feature.getIncludedFeatureEntries().get(2);
         entry2 = new ManifestEntry("org.eclipse.cdt.gdb", "7.0.0.201202111925");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredFeatureEntries().get(3);
+        entry = feature.getIncludedFeatureEntries().get(3);
         entry2 = new ManifestEntry("org.eclipse.cdt.gnu.debug", "7.1.1.201202111925");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredFeatureEntries().get(4);
+        entry = feature.getIncludedFeatureEntries().get(4);
         entry2 = new ManifestEntry("org.eclipse.cdt.gnu.dsf", "4.0.1.201202111925");
         assertEquals(entry2, entry);
 
@@ -164,15 +167,15 @@ public class TestFeatureParser  extends BaseTest {
         assertEquals("org.eclipse.cdt.gdb", feature.getName());
         assertEquals("7.0.0.201202111925", feature.getVersion());
 
-        entry = feature.getRequiredPluginEntries().get(0);
+        entry = feature.getIncludedPluginEntries().get(0);
         entry2 = new ManifestEntry("org.eclipse.cdt.gdb", "7.0.0.201202111925");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredPluginEntries().get(1);
+        entry = feature.getIncludedPluginEntries().get(1);
         entry2 = new ManifestEntry("org.eclipse.cdt.gdb.ui", "7.0.0.201202111925");
         assertEquals(entry2, entry);
 
-        assertTrue(feature.getRequiredFeatureEntries().isEmpty());
+        assertTrue(feature.getIncludedFeatureEntries().isEmpty());
     }
 
     @Test
@@ -181,15 +184,15 @@ public class TestFeatureParser  extends BaseTest {
         assertEquals("org.eclipse.zest", feature.getName());
         assertEquals("1.5.1.201308190730", feature.getVersion());
 
-        entry = feature.getRequiredPluginEntries().get(0);
+        entry = feature.getIncludedPluginEntries().get(0);
         entry2 = new ManifestEntry("org.eclipse.zest.core", "1.5.0.201308190730");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredPluginEntries().get(1);
+        entry = feature.getIncludedPluginEntries().get(1);
         entry2 = new ManifestEntry("org.eclipse.zest.layouts", "1.1.0.201308190730");
         assertEquals(entry2, entry);
 
-        entry = feature.getRequiredFeatureEntries().get(0);
+        entry = feature.getIncludedFeatureEntries().get(0);
         entry2 = new ManifestEntry("org.eclipse.draw2d", "3.9.1.201308190730");
         assertEquals(entry2, entry);
     }

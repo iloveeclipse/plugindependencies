@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -159,7 +160,7 @@ public class TestDepResResolving  extends BaseTest {
         assertEquals(compareSetFeature, topFeat.getIncludedFeatures());
 
         compareSetPlugin.add(plugin1);
-        assertEquals(compareSetPlugin.toString(), topFeat.getRequiredPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), topFeat.getIncludedPlugins().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(topFeat);
@@ -179,13 +180,13 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin2);
         compareSetPlugin.add(plugin3);
-        assertEquals(compareSetPlugin.toString(), leftFeat.getRequiredPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), leftFeat.getIncludedPlugins().toString());
 
         assertEquals(new LinkedHashSet<Feature>().toString(), leftFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(leftFeat);
-        for (Plugin plugin : leftFeat.getRequiredPlugins()) {
+        for (Plugin plugin : leftFeat.getIncludedPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureLeft end
@@ -199,7 +200,7 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin5);
         compareSetPlugin.add(plugin6);
-        assertEquals(compareSetPlugin.toString(), rightFeat.getRequiredPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), rightFeat.getIncludedPlugins().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(featureRR);
@@ -207,7 +208,7 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetFeature.clear();
         compareSetFeature.add(rightFeat);
-        for (Plugin plugin : rightFeat.getRequiredPlugins()) {
+        for (Plugin plugin : rightFeat.getIncludedPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureRight end
@@ -219,13 +220,13 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin7);
-        assertEquals(compareSetPlugin, rightrightFeat.getRequiredPlugins());
+        assertEquals(compareSetPlugin, rightrightFeat.getIncludedPlugins());
 
         assertEquals(new LinkedHashSet<>().toString(), rightrightFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(rightrightFeat);
-        for (Plugin plugin : rightrightFeat.getRequiredPlugins()) {
+        for (Plugin plugin : rightrightFeat.getIncludedPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureRR end
