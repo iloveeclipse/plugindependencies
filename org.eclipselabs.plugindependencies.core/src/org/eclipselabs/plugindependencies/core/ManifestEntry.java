@@ -28,11 +28,20 @@ public class ManifestEntry extends NamedElement {
 
     final List<String> attributes;
     private final PlatformSpecs platformSpecs;
+    private final boolean optional;
 
     public ManifestEntry(String name, String vers) {
         super(fixName(name), fixVersion(vers));
         attributes = Collections.emptyList();
         platformSpecs = readPlatformSpecs();
+        optional = hasOptionalAttr();
+    }
+
+    public ManifestEntry(String name, String vers, boolean optional) {
+        super(fixName(name), fixVersion(vers));
+        attributes = Collections.emptyList();
+        platformSpecs = readPlatformSpecs();
+        this.optional = optional;
     }
 
     /**
@@ -44,6 +53,7 @@ public class ManifestEntry extends NamedElement {
         super(fixName(manifestEntries.get(0)), fixVersion(getVersion(manifestEntries)));
         attributes = createAttributes(manifestEntries);
         platformSpecs = readPlatformSpecs();
+        optional = hasOptionalAttr();
     }
 
     /**
@@ -56,6 +66,7 @@ public class ManifestEntry extends NamedElement {
         super(fixName(xmlElement.getAttribute("id")), fixVersion(xmlElement.getAttribute("version")));
         attributes = Collections.emptyList();
         platformSpecs = computeSystemFlags(xmlElement);
+        optional = false;
     }
 
     private PlatformSpecs readPlatformSpecs() {
@@ -119,8 +130,12 @@ public class ManifestEntry extends NamedElement {
         return null;
     }
 
-    public boolean isOptional() {
+    private boolean hasOptionalAttr() {
         return attributesContain("optional");
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     public boolean isDynamicImport() {
