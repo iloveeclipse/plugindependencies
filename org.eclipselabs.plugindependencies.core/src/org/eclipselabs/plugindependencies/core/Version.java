@@ -48,6 +48,13 @@ public class Version implements Comparable<Version> {
         }
     }
 
+    private Version(int major, int minor, int micro, String qualifier) {
+        this.major = major;
+        this.minor = minor;
+        this.micro = micro;
+        this.qualifier = qualifier;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -106,4 +113,28 @@ public class Version implements Comparable<Version> {
 
         return qualifier.compareTo(other.qualifier);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(major);
+        s.append('.').append(minor);
+        s.append('.').append(micro);
+        if (!qualifier.isEmpty()) {
+            s.append('.').append(qualifier);
+        }
+        return s.toString();
+    }
+
+    static String createCompatibleRightBound(String str) {
+        Version v = new Version(str);
+        return new Version(v.major + 1, 0, 0, "").toString();
+    }
+
+    static String createEquivalentRightBound(String str) {
+        Version v = new Version(str);
+        return new Version(v.major, v.minor + 1, 0, "").toString();
+    }
+
+
 }
