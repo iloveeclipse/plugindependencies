@@ -87,13 +87,13 @@ public class DependencyResolver {
 
     private void resolveRequiredFeature(Feature feature, ManifestEntry requiredFeature) {
         Set<Feature> features;
-        features = searchInFeatureSet(requiredFeature);
-        if (features.size() != 1) {
+        features = searchInFeatureSet(requiredFeature, false);
+        if (features.size() == 0) {
             feature.logBrokenEntry(requiredFeature, features, "feature");
         }
         int setSize = features.size();
         Feature highVersionFeature = null;
-        if (setSize >= 1) {
+        if (setSize > 0) {
             highVersionFeature = getFeatureWithHighestVersion(features);
         }
         if(highVersionFeature != null) {
@@ -103,7 +103,7 @@ public class DependencyResolver {
 
     private void resolveIncludedFeature(Feature feature, ManifestEntry includedFeature) {
         Set<Feature> features;
-        features = searchInFeatureSet(includedFeature);
+        features = searchInFeatureSet(includedFeature, true);
         if (features.size() != 1) {
             feature.logBrokenEntry(includedFeature, features, "feature");
         }
@@ -456,7 +456,7 @@ public class DependencyResolver {
         return ret;
     }
 
-    public Set<Feature> searchInFeatureSet(ManifestEntry entry) {
+    public Set<Feature> searchInFeatureSet(ManifestEntry entry, boolean exact) {
         if (entry == null) {
             return Collections.emptySet();
         }
@@ -465,8 +465,14 @@ public class DependencyResolver {
         Set<Feature> ret = new LinkedHashSet<Feature>();
 
         for (Feature feature : state.getFeatures(id)) {
-            if (feature.matches(id, version)) {
-                ret.add(feature);
+            if(exact) {
+                if (feature.matches(id, version)) {
+                    ret.add(feature);
+                }
+            } else {
+                if(entry.isMatching(feature)) {
+                    ret.add(feature);
+                }
             }
         }
         return ret;

@@ -67,10 +67,10 @@ public class TestDepResSearchMethodFeature  extends BaseTest {
     @Test
     public void testSearchFeatureWrongPara() {
         depres = new DependencyResolver(pluginSet, packageSet, featureSet);
-        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(null).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(null, true).toString());
 
         ManifestEntry featureEntry = new ManifestEntry("WrongElement", "");
-        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(featureEntry).toString());
+        assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(featureEntry, true).toString());
     }
 
     @Test
@@ -82,11 +82,11 @@ public class TestDepResSearchMethodFeature  extends BaseTest {
         resultSet.add(feature1);
         String id = feature1.getName();
         String version = feature1.getVersion();
-        assertEquals(resultSet, depres.searchInFeatureSet(new ManifestEntry(id, version)));
+        assertEquals(resultSet, depres.searchInFeatureSet(new ManifestEntry(id, version), true));
 
         String version2 = "99.0.0";
         assertNotEquals(resultSet,
-                depres.searchInFeatureSet(new ManifestEntry(id, version2)));
+                depres.searchInFeatureSet(new ManifestEntry(id, version2), true));
     }
 
 }
