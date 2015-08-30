@@ -159,11 +159,11 @@ public class TestDepResResolving  extends BaseTest {
         assertEquals(compareSetFeature, topFeat.getIncludedFeatures());
 
         compareSetPlugin.add(plugin1);
-        assertEquals(compareSetPlugin.toString(), topFeat.getResolvedPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), topFeat.getRequiredPlugins().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(topFeat);
-        for (Plugin plugin : topFeat.getResolvedPlugins()) {
+        for (Plugin plugin : topFeat.getRequiredPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
 
@@ -179,13 +179,13 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin2);
         compareSetPlugin.add(plugin3);
-        assertEquals(compareSetPlugin.toString(), leftFeat.getResolvedPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), leftFeat.getRequiredPlugins().toString());
 
         assertEquals(new LinkedHashSet<Feature>().toString(), leftFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(leftFeat);
-        for (Plugin plugin : leftFeat.getResolvedPlugins()) {
+        for (Plugin plugin : leftFeat.getRequiredPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureLeft end
@@ -199,7 +199,7 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin5);
         compareSetPlugin.add(plugin6);
-        assertEquals(compareSetPlugin.toString(), rightFeat.getResolvedPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), rightFeat.getRequiredPlugins().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(featureRR);
@@ -207,7 +207,7 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetFeature.clear();
         compareSetFeature.add(rightFeat);
-        for (Plugin plugin : rightFeat.getResolvedPlugins()) {
+        for (Plugin plugin : rightFeat.getRequiredPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureRight end
@@ -219,13 +219,13 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin7);
-        assertEquals(compareSetPlugin, rightrightFeat.getResolvedPlugins());
+        assertEquals(compareSetPlugin, rightrightFeat.getRequiredPlugins());
 
         assertEquals(new LinkedHashSet<>().toString(), rightrightFeat.getIncludedFeatures().toString());
 
         compareSetFeature.clear();
         compareSetFeature.add(rightrightFeat);
-        for (Plugin plugin : rightrightFeat.getResolvedPlugins()) {
+        for (Plugin plugin : rightrightFeat.getRequiredPlugins()) {
             assertEquals(compareSetFeature, plugin.getIncludedInFeatures());
         }
         // featureRR end
@@ -245,7 +245,7 @@ public class TestDepResResolving  extends BaseTest {
         compareLog.add("Error: [org.eclipse.plugin1 2.0.0.201306111332] plugin not found: plugin.not.found.test 1.1.1");
         assertEquals(compareLog.toString(), forCompare.getLog().toString());
 
-        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredPlugins().toString());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
@@ -283,7 +283,7 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin5);
         compareSetPlugin.add(plugin6);
-        assertEquals(compareSetPlugin, forCompare.getResolvedPlugins());
+        assertEquals(compareSetPlugin, forCompare.getRequiredPlugins());
 
         compareSetPackage.clear();
         compareSetPackage.add(package1);
@@ -309,7 +309,7 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin7);
-        assertEquals(compareSetPlugin, forCompare.getResolvedPlugins());
+        assertEquals(compareSetPlugin, forCompare.getRequiredPlugins());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
@@ -328,7 +328,7 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin5);
         compareSetPlugin.add(plugin6);
         compareSetPlugin.add(plugin7);
-        assertEquals(compareSetPlugin, forCompare.getResolvedPlugins());
+        assertEquals(compareSetPlugin, forCompare.getRequiredPlugins());
 
         compareSetPackage.clear();
         compareSetPackage.add(package15);
@@ -345,7 +345,7 @@ public class TestDepResResolving  extends BaseTest {
 
         assertTrue(forCompare.getLog().isEmpty());
 
-        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredPlugins().toString());
 
         compareSetPackage.clear();
         compareSetPackage.add(package5);
@@ -384,7 +384,7 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin5);
-        assertEquals(compareSetPlugin.toString(), forCompare.getResolvedPlugins().toString());
+        assertEquals(compareSetPlugin.toString(), forCompare.getRequiredPlugins().toString());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getImportedPackages().toString());
 
@@ -413,7 +413,7 @@ public class TestDepResResolving  extends BaseTest {
 
         assertTrue(forCompare.getLog().isEmpty());
 
-        assertEquals(new LinkedHashSet<>().toString(), forCompare.getResolvedPlugins().toString());
+        assertEquals(new LinkedHashSet<>().toString(), forCompare.getRequiredPlugins().toString());
 
         assertEquals(compareSetPackage.toString(), forCompare.getImportedPackages().toString());
 

@@ -28,64 +28,98 @@ public class Feature extends OSGIElement {
 
     public final static Feature DUMMY_FEATURE = new Feature("", NamedElement.EMPTY_VERSION);
 
-    private List<ManifestEntry> requiredPlugins;
 
-    private List<ManifestEntry> requiredFeatures;
+    private List<ManifestEntry> requiredFeatureEntries;
+
+    private List<ManifestEntry> includedPluginEntries;
+
+    private List<ManifestEntry> includedFeatureEntries;
 
     private Set<Feature> includedFeatures;
+    private Set<Plugin> includedPlugins;
+    private Set<Feature> requiredFeatures;
 
     public Feature(String name, String vers) {
         super(name, vers);
         includedFeatures = new LinkedHashSet<>();
-        requiredPlugins = new ArrayList<>();
-        requiredFeatures = new ArrayList<>();
+        includedPlugins = new LinkedHashSet<>();
+
+        requiredFeatureEntries = new ArrayList<>();
+
+        includedPluginEntries = new ArrayList<>();
+        includedFeatureEntries = new ArrayList<>();
+        requiredFeatures = new LinkedHashSet<>();
     }
 
-    public List<ManifestEntry> getRequiredPlugins() {
-        return requiredPlugins;
-    }
-
-    public void addRequiredPlugins(NodeList requiredplugins) {
-        for (int i = 0; i < requiredplugins.getLength(); i++) {
-            this.requiredPlugins.add(new ManifestEntry((Element)requiredplugins.item(i)));
-        }
-    }
-
-    public List<ManifestEntry> getRequiredFeatures() {
+    public Set<Feature> getRequiredFeatures() {
         return requiredFeatures;
     }
 
-    public void addRequiredFeatures(NodeList requiredfeatures) {
+    public void addRequiredFeatureEntry(ManifestEntry required) {
+        this.requiredFeatureEntries.add(required);
+    }
+
+    public void addIncludedPluginEntries(NodeList requiredplugins) {
+        for (int i = 0; i < requiredplugins.getLength(); i++) {
+            this.includedPluginEntries.add(new ManifestEntry((Element)requiredplugins.item(i)));
+        }
+    }
+
+    public void addIncludedFeatureEntries(NodeList requiredplugins) {
+        for (int i = 0; i < requiredplugins.getLength(); i++) {
+            this.includedFeatureEntries.add(new ManifestEntry((Element)requiredplugins.item(i)));
+        }
+    }
+
+    public List<ManifestEntry> getRequiredFeatureEntries() {
+        return requiredFeatureEntries;
+    }
+
+    public void addRequiredFeatureEntries(NodeList requiredfeatures) {
         for (int i = 0; i < requiredfeatures.getLength(); i++) {
-            this.requiredFeatures.add(new ManifestEntry((Element)requiredfeatures.item(i)));
+            this.requiredFeatureEntries.add(new ManifestEntry((Element)requiredfeatures.item(i)));
         }
     }
 
     public Set<Feature> getIncludedFeatures() {
-        return Collections.unmodifiableSet(includedFeatures);
+        return includedFeatures;
+    }
+    public Set<Plugin> getIncludedPlugins() {
+        return includedPlugins;
     }
 
-    public void addIncludedFeatures(Set<Feature> includedFeatureSet) {
-        this.includedFeatures.addAll(includedFeatureSet);
-        for (Feature feature : includedFeatureSet) {
-            feature.addIncludingFeature(this);
-        }
+    public List<ManifestEntry> getIncludedFeatureEntries() {
+        return includedFeatureEntries;
     }
 
-    @Override
-    public void addResolvedPlugin(Plugin plugin) {
-        super.addResolvedPlugin(plugin);
-        if (plugin != null) {
-            plugin.addIncludingFeature(this);
-        }
+    public List<ManifestEntry> getIncludedPluginEntries() {
+        return includedPluginEntries;
+    }
+
+    public void addRequiredFeature(Feature requires) {
+        this.requiredFeatures.add(requires);
+    }
+
+    public void addIncludedFeature(Feature included) {
+        this.includedFeatures.add(included);
+        included.addIncludingFeature(this);
+    }
+    public void addIncludedPlugin(Plugin included) {
+        this.includedPlugins.add(included);
+        included.addIncludingFeature(this);
     }
 
     @Override
     public void parsingDone() {
         super.parsingDone();
         includedFeatures = includedFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedFeatures);
-        requiredPlugins = requiredPlugins.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredPlugins);
-        requiredFeatures = requiredFeatures.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredFeatures);
+        includedPlugins = includedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedPlugins);
+        requiredFeatures = requiredFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredFeatures);
+
+        requiredFeatureEntries = requiredFeatureEntries.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredFeatureEntries);
+
+        includedFeatureEntries = includedFeatureEntries.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(includedFeatureEntries);
+        includedPluginEntries = includedPluginEntries.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(includedPluginEntries);
     }
 
     @Override

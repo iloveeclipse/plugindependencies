@@ -70,12 +70,12 @@ public class TestPlugin extends BaseTest {
         List<ManifestEntry> compareReqPlugins = new ArrayList<>();
         Collections.addAll(compareReqPlugins, entry1, entry2, entry3, entry4, entry5);
 
-        assertEquals(compareReqPlugins, plugin.getRequiredPlugins());
+        assertEquals(compareReqPlugins, plugin.getRequiredPluginEntries());
     }
 
     @Test
     public void testSetRequiredPackages() {
-        plugin.setRequiredPackages(requPackages);
+        plugin.setImportedPackageEntries(requPackages);
 
         ManifestEntry entry1 = new ManifestEntry("javax.xml.parsers", "");
         ManifestEntry entry2 = new ManifestEntry(asList("org.eclipse.core.runtime.jobs", "resolution:=optional"));
@@ -99,7 +99,7 @@ public class TestPlugin extends BaseTest {
                 entry6, entry7, entry8, entry9, entry10, entry11, entry12, entry13,
                 entry14, entry15);
 
-        assertEquals(compareReqPackages, plugin.getRequiredPackages());
+        assertEquals(compareReqPackages, plugin.getImportedPackageEntries());
     }
 
     @Test
@@ -135,8 +135,8 @@ public class TestPlugin extends BaseTest {
     @Test
     public void testImportedPackages() {
         plugin.setExportedPackages(exportedPackages);
-        plugin.setRequiredPackages(importedPackages);
-        for (ManifestEntry entry : plugin.getRequiredPackages()) {
+        plugin.setImportedPackageEntries(importedPackages);
+        for (ManifestEntry entry : plugin.getImportedPackageEntries()) {
             Package pack = new Package(entry.getName(), entry.getVersion());
             plugin.addImportedPackage(pack);
         }

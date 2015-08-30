@@ -294,14 +294,14 @@ public class CommandLineInterpreter {
             out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
             out.append(plugin.getName() + " " + plugin.getVersion() + "\n");
             out.append("required plugins:\n");
-            for (ManifestEntry requiredPlugin : plugin.getRequiredPlugins()) {
+            for (ManifestEntry requiredPlugin : plugin.getRequiredPluginEntries()) {
                 String sep = requiredPlugin.getVersion().isEmpty()? "" : " ";
                 out.append("\t" + requiredPlugin.getName() + sep + requiredPlugin.getVersion());
                 if (requiredPlugin.isOptional()) {
                     out.append(" *optional*");
                 }
                 out.append("\n");
-                for (Plugin resolvedPlugin : plugin.getResolvedPlugins()) {
+                for (Plugin resolvedPlugin : plugin.getRequiredPlugins()) {
                     if (requiredPlugin.isMatching(resolvedPlugin)) {
                         out.append("\t-> " + resolvedPlugin.getName() + " "
                                 + resolvedPlugin.getVersion() + "\n");
@@ -309,7 +309,7 @@ public class CommandLineInterpreter {
                 }
             }
             out.append("required packages:\n");
-            for (ManifestEntry requiredPackage : plugin.getRequiredPackages()) {
+            for (ManifestEntry requiredPackage : plugin.getImportedPackageEntries()) {
                 String sep = requiredPackage.getVersion().isEmpty()? "" : " ";
                 out.append("\t" + requiredPackage.getName() + sep + requiredPackage.getVersion());
                 if (requiredPackage.isDynamicImport()) {
@@ -345,7 +345,7 @@ public class CommandLineInterpreter {
                 out.append("\t" + feature.getName() + " " + feature.getVersion() + "\n");
             }
             out.append("required by plugins:\n");
-            for (Plugin neededBy : plugin.getRequiredBy()) {
+            for (OSGIElement neededBy : plugin.getRequiredBy()) {
                 out.append("\t");
                 if (neededBy.isOptional(plugin)) {
                     out.append("*optional* for ");
@@ -389,7 +389,7 @@ public class CommandLineInterpreter {
                 out.append("\t" + included.getName() + " " + included.getVersion() + "\n");
             }
             out.append("included plugins:\n");
-            for (Plugin included : feature.getResolvedPlugins()) {
+            for (Plugin included : feature.getRequiredPlugins()) {
                 out.append("\t");
                 out.append(included.isFragment() ? "fragment: " : "plugin: ");
                 out.append(included.getName() + " " + included.getVersion() + "\n");

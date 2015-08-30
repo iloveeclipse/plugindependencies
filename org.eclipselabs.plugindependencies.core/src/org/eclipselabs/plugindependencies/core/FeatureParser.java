@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -19,8 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 /**
  * @author obroesam
  *
@@ -102,10 +105,67 @@ public class FeatureParser {
             String version = root.getAttribute("version");
             Feature ret = new Feature(id, version);
 
-            ret.addRequiredPlugins(root.getElementsByTagName("plugin"));
-            ret.addRequiredFeatures(root.getElementsByTagName("includes"));
+            ret.addIncludedPluginEntries(root.getElementsByTagName("plugin"));
+            ret.addIncludedFeatureEntries(root.getElementsByTagName("includes"));
+            NodeList list = root.getElementsByTagName("import");
+            for (int i = 0; i < list.getLength(); i++) {
+                Element e = (Element)list.item(i);
+                String feat = e.getAttribute("feature").trim();
+                String plug = e.getAttribute("plugin").trim();
+                boolean optional = Boolean.parseBoolean(e.getAttribute("optional").trim());
+                if(feat.isEmpty() && !plug.isEmpty()) {
+                    addRequiredPlugin(e, ret, plug, optional);
+                } else if(!feat.isEmpty() && plug.isEmpty()) {
+                    addRequiredFeature(e, ret, feat, optional);
+                }
+            }
             return ret;
         }
         return null;
+    }
+
+    private static void addRequiredFeature(Element e, Feature ret, String feat, boolean optional) {
+        String version = createVersion(e);
+        ret.addRequiredFeatureEntry(new ManifestEntry(fixName(feat), fixVersion(version), optional));
+    }
+
+//    <import plugin="bbb"/>
+//    <import plugin="aaa"  version="1.2.3" match="perfect"/>
+//    <import plugin="ccc"  version="1"     match="greaterOrEqual"/>
+//    <import plugin="eee"  version="1"     match="equivalent"/>
+//    <import feature="ddd" version="1.2.3.qualifier" match="compatible"/>
+    private static String createVersion(Element e) {
+        String v = e.getAttribute("version").trim();
+        if(v.isEmpty()) {
+            return NamedElement.EMPTY_VERSION;
+        }
+        String match = e.getAttribute("match").trim();
+        if(match.isEmpty()) {
+            return v;
+        }
+        // https://dzone.com/articles/manifestmf-and-featurexml
+        // http://help.eclipse.org/topic/org.eclipse.platform.doc.isv/reference/misc/feature_manifest.html
+        switch (match) {
+        case "perfect":
+            // [1.2.3,1.2.3]
+            return "[" + v + "," + v + "]";
+        case "compatible":
+            // [1.2.3,2.0)
+            return "[" + v + "," + Version.createCompatibleRightBound(v) + ")";
+        case "equivalent":
+            //  [1.2.3,1.3)
+            return "[" + v + "," + Version.createEquivalentRightBound(v) + ")";
+        case "greaterOrEqual":
+            return v;
+
+        default:
+            break;
+        }
+        return NamedElement.EMPTY_VERSION;
+    }
+
+    private static void addRequiredPlugin(Element e, Feature ret, String plug, boolean optional) {
+        String version = createVersion(e);
+        ret.addRequiredPluginEntry(new ManifestEntry(fixName(plug), fixVersion(version), optional));
     }
 }

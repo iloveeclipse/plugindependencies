@@ -53,13 +53,20 @@ public class DependencyResolver {
     }
 
     public void resolveFeatureDependency(Feature feature) {
-        for (ManifestEntry requiredFeature : feature.getRequiredFeatures()) {
+        for (ManifestEntry requiredFeature : feature.getRequiredFeatureEntries()) {
             resolveRequiredFeature(feature, requiredFeature);
         }
-
-        for (ManifestEntry requiredPlugin : feature.getRequiredPlugins()) {
+        for (ManifestEntry requiredPlugin : feature.getRequiredPluginEntries()) {
             if (requiredPlugin.isMatchingPlatform(state.getPlatformSpecs())) {
                 resolveRequiredPlugin(feature, requiredPlugin);
+            }
+        }
+        for (ManifestEntry included : feature.getIncludedFeatureEntries()) {
+            resolveIncludedFeature(feature, included);
+        }
+        for (ManifestEntry included : feature.getIncludedPluginEntries()) {
+            if (included.isMatchingPlatform(state.getPlatformSpecs())) {
+                resolveIncludedPlugin(feature, included);
             }
         }
     }
@@ -69,11 +76,11 @@ public class DependencyResolver {
             searchHost(startPlugin);
         }
 
-        for (ManifestEntry requiredPlugin : startPlugin.getRequiredPlugins()) {
+        for (ManifestEntry requiredPlugin : startPlugin.getRequiredPluginEntries()) {
             resolveRequiredPlugin(startPlugin, requiredPlugin);
         }
 
-        for (ManifestEntry requiredPackage : startPlugin.getRequiredPackages()) {
+        for (ManifestEntry requiredPackage : startPlugin.getImportedPackageEntries()) {
             resolveRequiredPackage(startPlugin, requiredPackage);
         }
     }
@@ -84,14 +91,37 @@ public class DependencyResolver {
         if (features.size() != 1) {
             feature.logBrokenEntry(requiredFeature, features, "feature");
         }
-        feature.addRequiredByFeatures(features);
+        int setSize = features.size();
+        Feature highVersionFeature = null;
+        if (setSize >= 1) {
+            highVersionFeature = getFeatureWithHighestVersion(features);
+        }
+        if(highVersionFeature != null) {
+            feature.addRequiredFeature(highVersionFeature);
+        }
+    }
+
+    private void resolveIncludedFeature(Feature feature, ManifestEntry includedFeature) {
+        Set<Feature> features;
+        features = searchInFeatureSet(includedFeature);
+        if (features.size() != 1) {
+            feature.logBrokenEntry(includedFeature, features, "feature");
+        }
+        int setSize = features.size();
+        Feature highVersionFeature = null;
+        if (setSize >= 1) {
+            highVersionFeature = getFeatureWithHighestVersion(features);
+        }
+        if(highVersionFeature != null) {
+            feature.addIncludedFeature(highVersionFeature);
+        }
     }
 
     private void resolveRequiredPlugin(OSGIElement elt, ManifestEntry requiredPlugin) {
-        boolean elementIsPlugin = elt instanceof Plugin;
+        boolean elementIsFragment = (elt instanceof Plugin) && (((Plugin)elt).isFragment());
         Plugin highVersionPlugin = null;
 
-        Set<Plugin> plugins = searchInPluginSet(requiredPlugin, !elementIsPlugin);
+        Set<Plugin> plugins = searchInPluginSet(requiredPlugin, elementIsFragment);
         int setSize = plugins.size();
         if (setSize >= 1) {
             highVersionPlugin = getPluginWithHighestVersion(plugins);
@@ -102,15 +132,33 @@ public class DependencyResolver {
         }
 
         if (highVersionPlugin != null) {
-            elt.addResolvedPlugin(highVersionPlugin);
+            elt.addRequiredPlugin(highVersionPlugin);
 
-            if (requiredPlugin.isReexport()) {
+            if (elt instanceof Plugin && requiredPlugin.isReexport()) {
                 Set<Package> reexportPackages = highVersionPlugin.getExportedPackages();
                 ((Plugin) elt).addReexportedPackages(reexportPackages);
                 for (Package reexported : reexportPackages) {
                     reexported.addReExportPlugin((Plugin) elt);
                 }
             }
+        }
+    }
+
+    private void resolveIncludedPlugin(Feature elt, ManifestEntry includedPlugin) {
+        Plugin highVersionPlugin = null;
+
+        Set<Plugin> plugins = searchInPluginSet(includedPlugin, true);
+        int setSize = plugins.size();
+        if (setSize >= 1) {
+            highVersionPlugin = getPluginWithHighestVersion(plugins);
+        }
+
+        if (setSize != 1) {
+            elt.logBrokenEntry(includedPlugin, plugins, "plugin");
+        }
+
+        if (highVersionPlugin != null) {
+            elt.addIncludedPlugin(highVersionPlugin);
         }
     }
 
@@ -122,6 +170,16 @@ public class DependencyResolver {
             }
         }
         return highestPlugin;
+    }
+
+    private static Feature getFeatureWithHighestVersion(Set<Feature> features) {
+        Feature highestFeature = features.iterator().next();
+        for (Feature feature : features) {
+            if (compareVersions(feature.getVersion(), highestFeature.getVersion()) > 0) {
+                highestFeature = feature;
+            }
+        }
+        return highestFeature;
     }
 
     private static Package getPackageWithHighestVersion(Set<Package> packages) {
@@ -302,7 +360,7 @@ public class DependencyResolver {
         }
 
         void addDirectDependencies(){
-            for (Plugin pluginToVisit : plugin.getResolvedPlugins()) {
+            for (Plugin pluginToVisit : plugin.getRequiredPlugins()) {
                 addToVisit(pluginToVisit);
             }
             if(plugin.isFragment()) {

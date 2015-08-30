@@ -52,9 +52,36 @@ public class TreeFeature extends TreeParent {
     @Override
     public TreeParent[] getChildren() {
         if (children.isEmpty()) {
+            // Required plugins
+            TreeParent resPlugins = new TreeParent("Required Plugins", this);
+            for (Plugin plug : feature.getRequiredPlugins()) {
+                resPlugins.addChild(new TreePlugin(plug, resPlugins));
+            }
+            if (resPlugins.hasChildren()) {
+                this.addChild(resPlugins);
+            }
+
+            // Resolved features
+            TreeParent reqFeatures = new TreeParent("Required Features", this);
+            for (Feature feat : feature.getRequiredFeatures()) {
+                reqFeatures.addChild(new TreeFeature(feat, reqFeatures));
+            }
+            if (reqFeatures.hasChildren()) {
+                this.addChild(reqFeatures);
+            }
+
+//            // TODO Resolved plugins recursive
+//            resPlugins = new TreeParent(TreePlugin.ALL_REQUIRED_PLUGINS, this);
+//            for (Plugin plug : feature.getRecursiveResolvedPlugins()) {
+//                resPlugins.addChild(new TreePlugin(plug, resPlugins));
+//            }
+//            if (resPlugins.hasChildren()) {
+//                this.addChild(resPlugins);
+//            }
+
             // Included Plugins
             TreeParent inclPlugins = new TreeParent("Included Plugins", this);
-            for (Plugin plug : feature.getResolvedPlugins()) {
+            for (Plugin plug : feature.getIncludedPlugins()) {
                 inclPlugins.addChild(new TreePlugin(plug, inclPlugins));
             }
             if (inclPlugins.hasChildren()) {
@@ -87,7 +114,7 @@ public class TreeFeature extends TreeParent {
 
     @Override
     public boolean hasChildren() {
-        boolean hasResolvedPlugins = !feature.getResolvedPlugins().isEmpty();
+        boolean hasResolvedPlugins = !feature.getRequiredPlugins().isEmpty();
         boolean hasIncludedFeatures = !feature.getIncludedFeatures().isEmpty();
         boolean isIncludedInFeatures = !feature.getIncludedFeatures().isEmpty();
 

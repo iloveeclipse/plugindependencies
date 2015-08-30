@@ -70,11 +70,28 @@ public class FeatureAdapter implements IPropertySource {
         PropertyDescriptor incFeatures = new PropertyDescriptor("IncludedFeatures",
                 "Included Features");
         incFeatures.setCategory("Requirements");
+        PropertyDescriptor reqPlugins = new PropertyDescriptor("RequiredPlugins",
+                "Required Plugins");
+        reqPlugins.setCategory("Requirements");
+        PropertyDescriptor reqFeatures = new PropertyDescriptor("RequiredFeatures",
+                "Required Features");
+        reqFeatures.setCategory("Requirements");
+
+        PropertyDescriptor resReqPlugins = new PropertyDescriptor("ResolvedRequiredPlugins", "Required Plugins (resolved)");
+        resReqPlugins.setCategory("Resolution");
+        PropertyDescriptor resReqFeatures = new PropertyDescriptor("ResolvedRequiredFeatures", "Required Features (resolved)");
+        resReqFeatures.setCategory("Resolution");
+        PropertyDescriptor resIncPlugins = new PropertyDescriptor("ResolvedIncludedPlugins", "Included Plugins (resolved)");
+        resIncPlugins.setCategory("Resolution");
+        PropertyDescriptor resIncFeatures = new PropertyDescriptor("ResolvedIncludedFeatures", "Included Features (resolved)");
+        resIncFeatures.setCategory("Resolution");
+
 
         PropertyDescriptor includedIn = new PropertyDescriptor("IncludedIn",
                 "Included In");
 
         Collections.addAll(list, name, version, path, log, incPlugins, incFeatures,
+                reqPlugins, reqFeatures, resReqPlugins, resReqFeatures, resIncPlugins, resIncFeatures,
                 includedIn);
 
         return list.toArray(new IPropertyDescriptor[list.size()]);
@@ -95,11 +112,32 @@ public class FeatureAdapter implements IPropertySource {
             return feature.getLog();
         }
         if (id.equals("IncludedPlugins")) {
-            return new IPropertySourceList(feature.getResolvedPlugins());
+            return new IPropertySourceList(feature.getIncludedPluginEntries());
         }
         if (id.equals("IncludedFeatures")) {
+            return new IPropertySourceList(feature.getIncludedFeatureEntries());
+        }
+        if (id.equals("RequiredPlugins")) {
+            return new IPropertySourceList(feature.getRequiredPluginEntries());
+        }
+        if (id.equals("RequiredFeatures")) {
+            return new IPropertySourceList(feature.getRequiredFeatureEntries());
+        }
+
+        if (id.equals("ResolvedIncludedPlugins")) {
+            return new IPropertySourceList(feature.getIncludedPlugins());
+        }
+        if (id.equals("ResolvedIncludedFeatures")) {
             return new IPropertySourceList(feature.getIncludedFeatures());
         }
+        if (id.equals("ResolvedRequiredPlugins")) {
+            return new IPropertySourceList(feature.getRequiredPlugins());
+        }
+        if (id.equals("ResolvedRequiredFeatures")) {
+            return new IPropertySourceList(feature.getRequiredFeatures());
+        }
+
+
         if (id.equals("IncludedIn")) {
             return new IPropertySourceList(feature.getIncludedInFeatures());
         }

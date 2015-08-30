@@ -33,7 +33,7 @@ public class TestDependencyResolver extends BaseTest {
         p1.setExportedPackages("hello");
         p2.setExportedPackages("hello");
 
-        p3.setRequiredPackages("hello");
+        p3.setImportedPackageEntries("hello");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
@@ -58,7 +58,7 @@ public class TestDependencyResolver extends BaseTest {
         p1.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setExportedPackages("hello;version=\"0.5.0\"");
 
-        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
@@ -84,7 +84,7 @@ public class TestDependencyResolver extends BaseTest {
         p1.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setExportedPackages("hello");
 
-        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
@@ -114,7 +114,7 @@ public class TestDependencyResolver extends BaseTest {
         p2.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setRequiredPlugins("p1;version=\"1.0.0\"");
 
-        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
@@ -144,7 +144,7 @@ public class TestDependencyResolver extends BaseTest {
         p1.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setExportedPackages("hello;version=\"0.5.0\"");
 
-        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
@@ -176,7 +176,7 @@ public class TestDependencyResolver extends BaseTest {
 
         p1.setFragmentHost("p2");
 
-        p3.setRequiredPackages("hello;version=\"[0.5.0,1.0.0]\"");
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);

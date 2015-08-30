@@ -133,7 +133,7 @@ public class PluginParser {
 
         extractedPlugin.setRequiredPlugins(readAttribute(mf, "Require-Bundle"));
 
-        extractedPlugin.setRequiredPackages(readCompleteImport(mf));
+        extractedPlugin.setImportedPackageEntries(readCompleteImport(mf));
 
         extractedPlugin.setExportedPackages(readAttribute(mf, "Export-Package"));
 

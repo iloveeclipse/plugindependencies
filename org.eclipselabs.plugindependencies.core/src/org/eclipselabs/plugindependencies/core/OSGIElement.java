@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public abstract class OSGIElement extends NamedElement /* TODO implements Comparable */ {
 
-    private Set<Plugin> resolvedPlugins;
+    private Set<Plugin> requiredPlugins;
 
     private Set<Feature> includedInFeatures;
 
@@ -32,27 +32,56 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
 
     private List<OSGIElement> duplicates;
 
+    private Set<OSGIElement> requiredBy;
+
+    private List<ManifestEntry> requiredPluginEntries;
+
     public OSGIElement(String name, String version) {
         super(name, version);
-        this.resolvedPlugins = new LinkedHashSet<>();
+        this.requiredPlugins = new LinkedHashSet<>();
         this.includedInFeatures = new LinkedHashSet<>();
+        this.requiredPluginEntries = new ArrayList<>();
         this.duplicates = new ArrayList<>();
+        this.requiredBy = new LinkedHashSet<>();
+    }
+
+    public Set<OSGIElement> getRequiredBy() {
+        return requiredBy;
+    }
+
+    void addRequiring(OSGIElement requires) {
+        this.requiredBy.add(requires);
+    }
+
+    public List<ManifestEntry> getRequiredPluginEntries() {
+        return requiredPluginEntries;
+    }
+
+    public void setRequiredPlugins(String requplugins) {
+        requiredPluginEntries = StringUtil.splitInManifestEntries(requplugins);
     }
 
     public void parsingDone(){
-        resolvedPlugins = resolvedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(resolvedPlugins);
+        requiredPlugins = requiredPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredPlugins);
         includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
         duplicates = duplicates.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(duplicates);
+        requiredBy = requiredBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredBy);
+        requiredPluginEntries = requiredPluginEntries.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(requiredPluginEntries);
     }
 
-    public Set<Plugin> getResolvedPlugins() {
-        return resolvedPlugins;
+    public Set<Plugin> getRequiredPlugins() {
+        return requiredPlugins;
     }
 
-    public void addResolvedPlugin(Plugin plugin) {
+    public void addRequiredPlugin(Plugin plugin) {
         if (plugin != null) {
-            resolvedPlugins.add(plugin);
+            requiredPlugins.add(plugin);
+            plugin.addRequiring(this);
         }
+    }
+
+    public void addRequiredPluginEntry(ManifestEntry required) {
+        this.requiredPluginEntries.add(required);
     }
 
     public Set<Feature> getIncludedInFeatures() {
@@ -111,5 +140,59 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
                 addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional);
             }
         }
+    }
+
+    /**
+     * Searches the reqPlugin in requiredPlugins and returns if the reqPlugin is optional.
+     *
+     * @param reqPlugin
+     *            reqPlugin that should be checked for optional
+     * @return true if reqPlugin is optional
+     */
+    public boolean isOptional(OSGIElement reqPlugin) {
+        if (requiredPluginEntries.isEmpty()) {
+            return false;
+        }
+        for (ManifestEntry entry : requiredPluginEntries) {
+            if (entry.isMatching(reqPlugin) && entry.isOptional()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a string with the plugins that require this plugin. If this plugin is
+     * optional for the other plugin "*optional* for " will be printed before the plugin.
+     * <p>
+     * String has the following form:
+     * <p>
+     * "is required by: <br>
+     * plugin: symbolicName version path <br>
+     * plugin: *optional* for symbolicName version path"
+     *
+     * @return string with information about plugins needing this
+     */
+    public String printRequiringThis() {
+        StringBuilder out = new StringBuilder();
+        if (requiredBy.size() == 0) {
+            return out.toString();
+        }
+        out.append("is required by:\n");
+        for (OSGIElement elt : this.requiredBy) {
+            out.append("\t");
+            if (elt.isOptional(this)) {
+                out.append("*optional* for ");
+            }
+            if(elt instanceof Plugin) {
+                Plugin plugin = (Plugin) elt;
+                out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
+                out.append(plugin.getInformationLine() + "\n");
+            } else {
+                out.append("feature: ");
+                out.append(elt.getInformationLine() + "\n");
+            }
+        }
+        return out.toString();
     }
 }

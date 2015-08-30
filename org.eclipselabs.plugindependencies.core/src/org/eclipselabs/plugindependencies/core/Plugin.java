@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,11 +35,7 @@ public class Plugin extends OSGIElement {
 
     private List<String> bundleClassPath;
 
-    private List<ManifestEntry> requiredPlugins;
-
-    private List<ManifestEntry> requiredPackages;
-
-    private Set<Plugin> requiredBy;
+    private List<ManifestEntry> importedPackageEntries;
 
     private Set<Package> exportedPackages;
 
@@ -71,22 +67,14 @@ public class Plugin extends OSGIElement {
     public Plugin(String symbName, String vers, boolean fragment, boolean singleton) {
         super(symbName, fixVersion(vers));
         isSingleton = singleton;
-        this.requiredPackages = new ArrayList<>();
-        this.requiredPlugins = new ArrayList<>();
+        this.importedPackageEntries = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
         this.importedPackages = new LinkedHashSet<>();
-        this.requiredBy = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
         this.isFragment = fragment;
     }
 
-    public Set<Plugin> getRequiredBy() {
-        return requiredBy;
-    }
 
-    void addRequiring(Plugin requires) {
-        this.requiredBy.add(requires);
-    }
 
     public Plugin getHost() {
         return host;
@@ -128,14 +116,6 @@ public class Plugin extends OSGIElement {
         return new Version(fragmentHostEntry.getVersion());
     }
 
-    public List<ManifestEntry> getRequiredPlugins() {
-        return requiredPlugins;
-    }
-
-    public void setRequiredPlugins(String requplugins) {
-        requiredPlugins = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requplugins));
-    }
-
     public Set<Package> getImportedPackages() {
         return importedPackages;
     }
@@ -145,12 +125,12 @@ public class Plugin extends OSGIElement {
         importedPackage.addImportedBy(this);
     }
 
-    public List<ManifestEntry> getRequiredPackages() {
-        return requiredPackages;
+    public List<ManifestEntry> getImportedPackageEntries() {
+        return importedPackageEntries;
     }
 
-    public void setRequiredPackages(String requPackages) {
-        requiredPackages = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requPackages));
+    public void setImportedPackageEntries(String requPackages) {
+        importedPackageEntries = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requPackages));
     }
 
     public Set<Package> getExportedPackages() {
@@ -251,25 +231,6 @@ public class Plugin extends OSGIElement {
     }
 
     /**
-     * Searches the reqPlugin in requiredPlugins and returns if the reqPlugin is optional.
-     *
-     * @param reqPlugin
-     *            reqPlugin that should be checked for optional
-     * @return true if reqPlugin is optional
-     */
-    public boolean isOptional(Plugin reqPlugin) {
-        if (requiredPlugins.isEmpty()) {
-            return false;
-        }
-        for (ManifestEntry entry : requiredPlugins) {
-            if (entry.isMatching(reqPlugin) && entry.isOptional()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Searches the reqPack in requiredPackages and returns if the reqPack is optional.
      *
      * @param reqPack
@@ -277,44 +238,15 @@ public class Plugin extends OSGIElement {
      * @return true if reqPlugin is optional
      */
     public boolean isOptional(Package reqPack) {
-        if (requiredPackages.isEmpty()) {
+        if (importedPackageEntries.isEmpty()) {
             return false;
         }
-        for (ManifestEntry entry : requiredPackages) {
+        for (ManifestEntry entry : importedPackageEntries) {
             if (entry.isMatching(reqPack) && entry.isOptional()) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Returns a string with the plugins that require this plugin. If this plugin is
-     * optional for the other plugin "*optional* for " will be printed before the plugin.
-     * <p>
-     * String has the following form:
-     * <p>
-     * "is required by: <br>
-     * plugin: symbolicName version path <br>
-     * plugin: *optional* for symbolicName version path"
-     *
-     * @return string with information about plugins needing this
-     */
-    public String printRequiringThis() {
-        StringBuilder out = new StringBuilder();
-        if (requiredBy.size() == 0) {
-            return out.toString();
-        }
-        out.append("is required by:\n");
-        for (Plugin plugin : this.requiredBy) {
-            out.append("\t");
-            if (plugin.isOptional(this)) {
-                out.append("*optional* for ");
-            }
-            out.append(plugin.isFragment ? "fragment: " : "plugin: ");
-            out.append(plugin.getInformationLine() + "\n");
-        }
-        return out.toString();
     }
 
     public void writePackageErrorLog(ManifestEntry requiredPackage, Set<Package> packages) {
@@ -442,7 +374,6 @@ public class Plugin extends OSGIElement {
     @Override
     public void parsingDone() {
         super.parsingDone();
-        requiredBy = requiredBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredBy);
         fragments = fragments.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(fragments);
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
@@ -450,7 +381,7 @@ public class Plugin extends OSGIElement {
         if(!exportedPackages.isEmpty()){
             for (Package ip : importedPackages) {
                 if(exportedPackages.contains(ip)){
-                    for (ManifestEntry rp : requiredPackages) {
+                    for (ManifestEntry rp : importedPackageEntries) {
 //                        if(rp.isMatching(ip)) {
                             if (rp.exactMatch(ip)) {
                                 // the resolved packages might have different version as required (still matching however)
@@ -480,14 +411,6 @@ public class Plugin extends OSGIElement {
             recursiveResolvedPlugins = Collections.emptySet();
         } else {
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
-        }
-    }
-
-    @Override
-    public void addResolvedPlugin(Plugin plugin) {
-        super.addResolvedPlugin(plugin);
-        if (plugin != null) {
-            plugin.addRequiring(this);
         }
     }
 

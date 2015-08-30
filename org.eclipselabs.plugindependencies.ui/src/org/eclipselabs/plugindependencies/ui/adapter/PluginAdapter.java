@@ -72,16 +72,16 @@ public class PluginAdapter implements IPropertySource {
         PropertyDescriptor reqPlugins = new PropertyDescriptor("RequiredPlugins", "Required Plugins");
         reqPlugins.setCategory("Requirements");
 
-        PropertyDescriptor reqPackages = new PropertyDescriptor("RequiredPackages", "Required Packages");
+        PropertyDescriptor reqPackages = new PropertyDescriptor("ImportedPackages", "Imported Packages");
         reqPackages.setCategory("Requirements");
 
-        PropertyDescriptor resPlugins = new PropertyDescriptor("ResolvedPlugins", "Resolved Plugins");
+        PropertyDescriptor resPlugins = new PropertyDescriptor("ResolvedRequiredPlugins", "Required Plugins (resolved)");
         resPlugins.setCategory("Resolution");
 
-        PropertyDescriptor resPackages = new PropertyDescriptor("ImportedPackages", "Imported Packages");
+        PropertyDescriptor resPackages = new PropertyDescriptor("ResolvedImportedPackages", "Imported Packages (resolved)");
         resPackages.setCategory("Resolution");
 
-        PropertyDescriptor allDeps = new PropertyDescriptor("AllDependencies", "All Dependencies");
+        PropertyDescriptor allDeps = new PropertyDescriptor("AllDependencies", "All Dependencies (resolved)");
         allDeps.setCategory("Resolution");
 
         PropertyDescriptor expPackages = new PropertyDescriptor("ExportedPackages", "Exported Packages");
@@ -111,15 +111,15 @@ public class PluginAdapter implements IPropertySource {
             return plugin.getLog();
         }
         if (id.equals("RequiredPlugins")) {
-            return new IPropertySourceList(plugin.getRequiredPlugins());
-        }
-        if (id.equals("RequiredPackages")) {
-            return new IPropertySourceList(plugin.getRequiredPackages());
-        }
-        if (id.equals("ResolvedPlugins")) {
-            return new IPropertySourceList(plugin.getResolvedPlugins());
+            return new IPropertySourceList(plugin.getRequiredPluginEntries());
         }
         if (id.equals("ImportedPackages")) {
+            return new IPropertySourceList(plugin.getImportedPackageEntries());
+        }
+        if (id.equals("ResolvedRequiredPlugins")) {
+            return new IPropertySourceList(plugin.getRequiredPlugins());
+        }
+        if (id.equals("ResolvedImportedPackages")) {
             return new IPropertySourceList(plugin.getImportedPackages());
         }
         if (id.equals("ExportedPackages")) {

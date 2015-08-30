@@ -263,8 +263,8 @@ public class TestPluginParser  extends BaseTest {
         Plugin plugin = PluginParser.parseManifest(mf);
         assertEquals("com.company.itee.core", plugin.getName());
         assertEquals("99.0.0", plugin.getVersion());
-        assertEquals(compareReqPluginsOfTestPlugin, plugin.getRequiredPlugins());
-        assertEquals(compareReqPackagesOfTestPlugin, plugin.getRequiredPackages());
+        assertEquals(compareReqPluginsOfTestPlugin, plugin.getRequiredPluginEntries());
+        assertEquals(compareReqPackagesOfTestPlugin, plugin.getImportedPackageEntries());
         assertEquals(expPackagesOfTestPlugin, plugin.getExportedPackages());
         assertFalse(plugin.isFragment());
         assertNull(plugin.getFragmentHost());
@@ -286,8 +286,8 @@ public class TestPluginParser  extends BaseTest {
         Plugin plugin = PluginParser.parseManifest(mf);
         assertEquals("org.eclipse.ant.optional.junit", plugin.getName());
         assertEquals("3.3.0", plugin.getVersion());
-        assertEquals(compareReqPluginsOforgEclipseAnt, plugin.getRequiredPlugins());
-        assertEquals(compareReqPackagesOforgEclipseAnt, plugin.getRequiredPackages());
+        assertEquals(compareReqPluginsOforgEclipseAnt, plugin.getRequiredPluginEntries());
+        assertEquals(compareReqPackagesOforgEclipseAnt, plugin.getImportedPackageEntries());
         assertEquals(new LinkedHashSet<>().toString(), plugin.getExportedPackages().toString());
         assertTrue(plugin.isFragment());
         assertEquals(fragmentHost, plugin.getFragmentHost());
@@ -299,8 +299,8 @@ public class TestPluginParser  extends BaseTest {
         Plugin plugin = PluginParser.parseManifest(mf);
         assertEquals("org.eclipse.equinox.app", plugin.getName());
         assertEquals("1.3.100.v20110321", plugin.getVersion());
-        assertEquals(compareReqPluginsOfOrgEclipseEqu, plugin.getRequiredPlugins());
-        assertEquals(compareReqPackagesOfOrgEclipseEqu.toString(), plugin.getRequiredPackages().toString());
+        assertEquals(compareReqPluginsOfOrgEclipseEqu, plugin.getRequiredPluginEntries());
+        assertEquals(compareReqPackagesOfOrgEclipseEqu.toString(), plugin.getImportedPackageEntries().toString());
         assertEquals(expPackagesOfOrgEclipseEqu, plugin.getExportedPackages());
         assertFalse(plugin.isFragment());
         assertTrue(plugin.isSingleton());
