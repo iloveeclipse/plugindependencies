@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -41,6 +42,7 @@ import org.eclipselabs.plugindependencies.core.ManifestEntry;
 import org.eclipselabs.plugindependencies.core.NamedElement;
 import org.eclipselabs.plugindependencies.core.Package;
 import org.eclipselabs.plugindependencies.core.PlatformState;
+import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
 import org.eclipselabs.plugindependencies.core.Plugin;
 import org.eclipselabs.plugindependencies.core.StringUtil;
 import org.eclipselabs.plugindependencies.ui.Activator;
@@ -206,9 +208,13 @@ public class ViewContentProvider implements ITreeContentProvider {
         protected IStatus run(IProgressMonitor monitor) {
             monitor.beginTask(getName(), 4);
             monitor.subTask("Reading platform plugins");
-            state = new PlatformState();
             CommandLineInterpreter parser = new CommandLineInterpreter();
+            state = parser.getState();
             parser.setParseEarlyStartup(true);
+            parser.setPlatformSpecs(new PlatformSpecs(
+                    Platform.getOS(),
+                    Platform.getWS(),
+                    Platform.getOSArch()));
 
             MultiStatus ms;
             if(itd != null){

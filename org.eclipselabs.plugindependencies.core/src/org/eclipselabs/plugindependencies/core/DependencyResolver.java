@@ -58,7 +58,7 @@ public class DependencyResolver {
         }
 
         for (ManifestEntry requiredPlugin : feature.getRequiredPlugins()) {
-            if (requiredPlugin.isLinuxgtkx86_64()) {
+            if (requiredPlugin.isMatchingPlatform(state.getPlatformSpecs())) {
                 resolveRequiredPlugin(feature, requiredPlugin);
             }
         }
@@ -84,7 +84,7 @@ public class DependencyResolver {
         if (features.size() != 1) {
             feature.logBrokenEntry(requiredFeature, features, "feature");
         }
-        feature.addIncludedFeatures(features);
+        feature.addRequiredByFeatures(features);
     }
 
     private void resolveRequiredPlugin(OSGIElement elt, ManifestEntry requiredPlugin) {

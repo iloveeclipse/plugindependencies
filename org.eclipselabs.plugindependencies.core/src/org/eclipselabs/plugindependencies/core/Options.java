@@ -257,6 +257,27 @@ enum Options {
         }
     },
 
+    PlatformSpecs("-platform", false) {
+        @Override
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            if(args.size() != 3) {
+                String message = "Platform requires 3 arguments: OS, WS, ARCH";
+                Logging.getLogger().error(message);
+                return -1;
+            }
+            cli.setPlatformSpecs(new PlatformState.PlatformSpecs(args.get(0), args.get(1), args.get(2)));
+            return 0;
+        }
+
+        @Override
+        void printHelp(String arg) {
+            String help = "-platform os ws arch" + "\t\t\t"
+                    + "Changes the platform OS/WS/ARCH to the specified values."
+                    + " Default is unset";
+            Logging.writeStandardOut(help);
+        }
+    },
+
     Focus("-focus", true) {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {

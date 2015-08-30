@@ -33,6 +33,8 @@ public class PlatformState {
 
     private final static String DEFAULT_JAVA_HOME = System.getProperty("java.home");
 
+    public static PlatformSpecs UNDEFINED_SPECS = new PlatformSpecs(null, null, null);
+
     private Set<Plugin> plugins;
     private Set<Package> packages;
     private Set<Feature> features;
@@ -46,6 +48,8 @@ public class PlatformState {
 
     private final Set<ManifestEntry> hiddenElements;
 
+    private PlatformSpecs platformSpecs;
+
     /**
      *
      */
@@ -55,6 +59,7 @@ public class PlatformState {
 
     public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features) {
         hiddenElements = new LinkedHashSet<>();
+        platformSpecs = new PlatformSpecs(null, null, null);
         this.plugins = plugins == null? new LinkedHashSet<Plugin>() : plugins;
         this.packages = packages == null? new LinkedHashSet<Package>() : packages;
         this.features = features == null? new LinkedHashSet<Feature>() : features;
@@ -483,4 +488,67 @@ public class PlatformState {
         realVersion = realBundleVersion;
     }
 
+    public PlatformSpecs getPlatformSpecs() {
+        return platformSpecs;
+    }
+
+    public void setPlatformSpecs(PlatformSpecs platformSpecs) {
+        this.platformSpecs = platformSpecs;
+    }
+
+    public static class PlatformSpecs {
+        public final String os;
+        public final String ws;
+        public final String arch;
+
+        public PlatformSpecs(String os, String ws, String arch) {
+            super();
+            this.os = os;
+            this.ws = ws;
+            this.arch = arch;
+        }
+
+        public boolean matches(PlatformSpecs p) {
+            if (this == p) {
+                return true;
+            }
+            if (p == null) {
+                return true;
+            }
+            if (arch != null && p.arch != null && !arch.equals(p.arch)) {
+                return false;
+            }
+            if (os != null && p.os != null && !os.equals(p.os)) {
+                return false;
+            }
+            if (ws != null && p.ws != null && !ws.equals(p.ws)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("PlatformSpecs [");
+            if (os != null) {
+                builder.append("os=");
+                builder.append(os);
+                builder.append(", ");
+            }
+            if (ws != null) {
+                builder.append("ws=");
+                builder.append(ws);
+                builder.append(", ");
+            }
+            if (arch != null) {
+                builder.append("arch=");
+                builder.append(arch);
+            }
+            builder.append("]");
+            return builder.toString();
+        }
+
+
+    }
 }

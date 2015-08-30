@@ -17,6 +17,7 @@ import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
 import org.w3c.dom.Element;
 
 /**
@@ -26,11 +27,12 @@ import org.w3c.dom.Element;
 public class ManifestEntry extends NamedElement {
 
     final List<String> attributes;
-    private boolean linuxgtkx86_64;
+    private final PlatformSpecs platformSpecs;
 
     public ManifestEntry(String name, String vers) {
         super(fixName(name), fixVersion(vers));
         attributes = Collections.emptyList();
+        platformSpecs = readPlatformSpecs();
     }
 
     /**
@@ -41,6 +43,7 @@ public class ManifestEntry extends NamedElement {
     public ManifestEntry(List<String> manifestEntries) {
         super(fixName(manifestEntries.get(0)), fixVersion(getVersion(manifestEntries)));
         attributes = createAttributes(manifestEntries);
+        platformSpecs = readPlatformSpecs();
     }
 
     /**
@@ -52,7 +55,32 @@ public class ManifestEntry extends NamedElement {
     public ManifestEntry(Element xmlElement) {
         super(fixName(xmlElement.getAttribute("id")), fixVersion(xmlElement.getAttribute("version")));
         attributes = Collections.emptyList();
-        computeSystemFlags(xmlElement);
+        platformSpecs = computeSystemFlags(xmlElement);
+    }
+
+    private PlatformSpecs readPlatformSpecs() {
+        String filter = attribute("Eclipse-PlatformFilter");
+        if(filter == null) {
+            return PlatformState.UNDEFINED_SPECS;
+        }
+        // Eclipse-PlatformFilter: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86_64))
+        String os = readLdapAttr(filter, "osgi.os");
+        String ws = readLdapAttr(filter, "osgi.ws");
+        String arch = readLdapAttr(filter, "osgi.arch");
+        return new PlatformSpecs(os, ws, arch);
+    }
+
+    private static String readLdapAttr(String filter, String key) {
+        int idx = filter.indexOf(key);
+        if(idx <= 0) {
+            return null;
+        }
+        int startValueIdx = idx + key.length() + "=".length();
+        int idxBrace = filter.indexOf(')', startValueIdx);
+        if(idxBrace <= startValueIdx) {
+            return null;
+        }
+        return filter.substring(startValueIdx, idxBrace).trim();
     }
 
     private static List<String> createAttributes(List<String> manifestEntries) {
@@ -63,17 +91,14 @@ public class ManifestEntry extends NamedElement {
         return Collections.unmodifiableList(manifestEntries);
     }
 
-    private void computeSystemFlags(Element xmlElement) {
-        String os = xmlElement.getAttribute("os");
-        String ws = xmlElement.getAttribute("ws");
-        String arch = xmlElement.getAttribute("arch");
-        // XXX this should not be hard coded here
-        if ((os.isEmpty() || os.equals("linux")) && (ws.isEmpty() || ws.equals("gtk"))
-                && (arch.isEmpty() || arch.equals("x86_64"))) {
-            linuxgtkx86_64 = true;
-        } else {
-            linuxgtkx86_64 = false;
-        }
+    private static PlatformSpecs computeSystemFlags(Element xmlElement) {
+        String os = xmlElement.getAttribute("os").trim();
+        os = os.isEmpty() ? null : os;
+        String ws = xmlElement.getAttribute("ws").trim();
+        ws = ws.isEmpty() ? null : ws;
+        String arch = xmlElement.getAttribute("arch").trim();
+        arch = arch.isEmpty() ? null : arch;
+        return new PlatformSpecs(os, ws, arch);
     }
 
     private boolean attributesContain(String text) {
@@ -83,6 +108,15 @@ public class ManifestEntry extends NamedElement {
             }
         }
         return false;
+    }
+
+    private String attribute(String id) {
+        for (String attr : attributes) {
+            if (attr.startsWith(id)) {
+                return attr;
+            }
+        }
+        return null;
     }
 
     public boolean isOptional() {
@@ -97,8 +131,8 @@ public class ManifestEntry extends NamedElement {
         return attributesContain("visibility:=\"reexport\"");
     }
 
-    public boolean isLinuxgtkx86_64() {
-        return linuxgtkx86_64;
+    public boolean isMatchingPlatform(PlatformSpecs p) {
+        return platformSpecs.matches(p);
     }
 
     /**

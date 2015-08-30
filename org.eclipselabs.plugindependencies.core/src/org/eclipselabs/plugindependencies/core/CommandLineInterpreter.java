@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.*;
+import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
 import org.xml.sax.SAXException;
 
 /**
@@ -586,5 +587,9 @@ public class CommandLineInterpreter {
 
     public PluginParser getPluginParser() {
         return pp;
+    }
+
+    public void setPlatformSpecs(PlatformSpecs platformSpecs) {
+        state.setPlatformSpecs(platformSpecs);
     }
 }
