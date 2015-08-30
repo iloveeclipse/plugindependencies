@@ -273,7 +273,7 @@ enum Options {
         void printHelp(String arg) {
             String help = "-platform os ws arch" + "\t\t\t"
                     + "Changes the platform OS/WS/ARCH to the specified values."
-                    + " Default is unset";
+                    + " Default is unset.";
             Logging.writeStandardOut(help);
         }
     },

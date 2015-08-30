@@ -11,5 +11,6 @@ java plugin_dependencies [-javaHome path] -eclipsePath folder1 folder2.. [Option
 -javaHome path				Changes the Java home path to the specified path. Default is the Java home of the running Java.
 -deploymentRoot path			Changes the target deployment root path used for final plugins deployment to the specified path. Default is empty string.
 -bundleVersion version [dummyVersion]			Changes the bundle version of source plugins to the specified version. Default is 0.0.0. If 'dummyVersion' is given, replaces this version with 'version'.
+-platform os ws arch			Changes the platform OS/WS/ARCH to the specified values. Default is unset.
 -focus name[,version] name[,version]...	Focus on plugin/feature with given name. Optionally you can specify a version. It is possible to focus on more than one element.
 -printAll				Prints all plugins and features found in the specified folders.
