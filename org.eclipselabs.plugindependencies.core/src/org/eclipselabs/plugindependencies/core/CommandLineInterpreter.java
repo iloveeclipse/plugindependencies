@@ -344,13 +344,14 @@ public class CommandLineInterpreter {
             for (Feature feature : plugin.getIncludedInFeatures()) {
                 out.append("\t" + feature.getName() + " " + feature.getVersion() + "\n");
             }
-            out.append("required by plugins:\n");
+            out.append("required by:\n");
             for (OSGIElement neededBy : plugin.getRequiredBy()) {
                 out.append("\t");
                 if (neededBy.isOptional(plugin)) {
                     out.append("*optional* for ");
                 }
-                out.append(neededBy.getName() + " " + neededBy.getVersion() + "\n");
+                out.append(neededBy.getName() + " " + neededBy.getVersion()
+                        + ((neededBy instanceof Feature)? " (feature)" : "") + "\n");
             }
             out.append("exported packages:\n");
             for (Package exportedPackage : plugin.getExportedPackages()) {
@@ -389,14 +390,29 @@ public class CommandLineInterpreter {
                 out.append("\t" + included.getName() + " " + included.getVersion() + "\n");
             }
             out.append("included plugins:\n");
-            for (Plugin included : feature.getRequiredPlugins()) {
+            for (Plugin included : feature.getIncludedPlugins()) {
                 out.append("\t");
                 out.append(included.isFragment() ? "fragment: " : "plugin: ");
                 out.append(included.getName() + " " + included.getVersion() + "\n");
             }
+            out.append("required features:\n");
+            for (Feature required : feature.getRequiredFeatures()) {
+                out.append("\t" + required.getName() + " " + required.getVersion() + "\n");
+            }
+            out.append("required plugins:\n");
+            for (Plugin required : feature.getRequiredPlugins()) {
+                out.append("\t");
+                out.append(required.isFragment() ? "fragment: " : "plugin: ");
+                out.append(required.getName() + " " + required.getVersion() + "\n");
+            }
             out.append("included in features:\n");
             for (Feature includedIn : feature.getIncludedInFeatures()) {
                 out.append("\t" + includedIn.getName() + " " + includedIn.getVersion()
+                + "\n");
+            }
+            out.append("required by features:\n");
+            for (OSGIElement requiredBy : feature.getRequiredBy()) {
+                out.append("\t" + requiredBy.getName() + " " + requiredBy.getVersion()
                 + "\n");
             }
             Logging.writeStandardOut(out.toString());

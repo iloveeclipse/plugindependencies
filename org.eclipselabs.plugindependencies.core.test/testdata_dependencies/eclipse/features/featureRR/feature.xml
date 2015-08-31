@@ -5,8 +5,15 @@
       version="3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8"
       provider-name="%providerName">
 
+   <requires>
+      <import feature="org.company.right" version="1.6.0" match="perfect"/>
+      <import plugin="org.company.test.framework" version="8.4.0" match="equivalent"/>
+   </requires>
+
    <plugin
          id="org.eclipse.equinox.core"
+         download-size="0"
+         install-size="0"
          version="1.0.0"/>
 
 </feature>

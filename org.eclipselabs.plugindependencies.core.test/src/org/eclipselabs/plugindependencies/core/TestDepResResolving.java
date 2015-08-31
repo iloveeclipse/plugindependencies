@@ -234,10 +234,10 @@ public class TestDepResResolving  extends BaseTest {
 
     @Test
     public void testPluginLinking() {
-        Set<Plugin> compareSetPlugin = new LinkedHashSet<Plugin>();
-        Set<Package> compareSetPackage = new LinkedHashSet<Package>();
+        Set<OSGIElement> compareSetPlugin = new LinkedHashSet<>();
+        Set<Package> compareSetPackage = new LinkedHashSet<>();
         Plugin forCompare;
-        List<String> compareLog = new ArrayList<String>();
+        List<String> compareLog = new ArrayList<>();
 
         // plugin1
         forCompare = getPlugin("org.eclipse.plugin1", pluginSet);
@@ -337,6 +337,7 @@ public class TestDepResResolving  extends BaseTest {
 
         compareSetPlugin.clear();
         compareSetPlugin.add(plugin2);
+        compareSetPlugin.add(featureRight);
         assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
@@ -362,6 +363,7 @@ public class TestDepResResolving  extends BaseTest {
         compareSetPlugin.add(plugin4);
         compareSetPlugin.add(plugin6);
         compareSetPlugin.add(plugin2);
+        compareSetPlugin.add(featureRR);
         assertEquals(compareSetPlugin.toString(), forCompare.getRequiredBy().toString());
 
         String output = "is required by:\n"
@@ -373,7 +375,10 @@ public class TestDepResResolving  extends BaseTest {
                 + "/testdata_dependencies/eclipse/plugins/org.company.workcenter\n"
                 + "\tfragment: org.eclipse.adv 1.2.3 "
                 + HOME
-                + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
+                + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n"
+                + "\tfeature: org.eclipse.right.right 3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8 "
+                + HOME
+                + "/testdata_dependencies/eclipse/features/featureRR/feature.xml\n";
         assertEquals(output, forCompare.printRequiringThis());
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());

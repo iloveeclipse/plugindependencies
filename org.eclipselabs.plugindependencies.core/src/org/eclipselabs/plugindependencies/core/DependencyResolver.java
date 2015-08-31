@@ -53,20 +53,20 @@ public class DependencyResolver {
     }
 
     public void resolveFeatureDependency(Feature feature) {
-        for (ManifestEntry requiredFeature : feature.getRequiredFeatureEntries()) {
-            resolveRequiredFeature(feature, requiredFeature);
-        }
-        for (ManifestEntry requiredPlugin : feature.getRequiredPluginEntries()) {
-            if (requiredPlugin.isMatchingPlatform(state.getPlatformSpecs())) {
-                resolveRequiredPlugin(feature, requiredPlugin);
-            }
-        }
         for (ManifestEntry included : feature.getIncludedFeatureEntries()) {
             resolveIncludedFeature(feature, included);
         }
         for (ManifestEntry included : feature.getIncludedPluginEntries()) {
             if (included.isMatchingPlatform(state.getPlatformSpecs())) {
                 resolveIncludedPlugin(feature, included);
+            }
+        }
+        for (ManifestEntry requiredFeature : feature.getRequiredFeatureEntries()) {
+            resolveRequiredFeature(feature, requiredFeature);
+        }
+        for (ManifestEntry requiredPlugin : feature.getRequiredPluginEntries()) {
+            if (requiredPlugin.isMatchingPlatform(state.getPlatformSpecs())) {
+                resolveRequiredPlugin(feature, requiredPlugin);
             }
         }
     }
@@ -118,10 +118,9 @@ public class DependencyResolver {
     }
 
     private void resolveRequiredPlugin(OSGIElement elt, ManifestEntry requiredPlugin) {
-        boolean elementIsFragment = (elt instanceof Plugin) && (((Plugin)elt).isFragment());
         Plugin highVersionPlugin = null;
 
-        Set<Plugin> plugins = searchInPluginSet(requiredPlugin, elementIsFragment);
+        Set<Plugin> plugins = searchInPluginSet(requiredPlugin, false);
         int setSize = plugins.size();
         if (setSize >= 1) {
             highVersionPlugin = getPluginWithHighestVersion(plugins);

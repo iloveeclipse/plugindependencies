@@ -21,6 +21,7 @@ testdata_OutputGeneration/eclipseRE/features/org.eclipse.zest_1.5.1.201308190730
 	Error: [org.eclipse.zest 1.5.1.201308190730] feature not found: org.eclipse.draw2d 3.9.1.201308190730
 	Error: [org.eclipse.zest 1.5.1.201308190730] plugin not found: org.eclipse.zest.core 1.5.0.201308190730
 	Error: [org.eclipse.zest 1.5.1.201308190730] plugin not found: org.eclipse.zest.layouts 1.1.0.201308190730
+	Error: [org.eclipse.zest 1.5.1.201308190730] plugin not found: org.eclipse.ui.views [3.2.0,4.0.0)
 
 Plugins:
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar

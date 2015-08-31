@@ -97,13 +97,17 @@ public class Feature extends OSGIElement {
     }
 
     public void addRequiredFeature(Feature requires) {
-        this.requiredFeatures.add(requires);
+        if(requires != null) {
+            this.requiredFeatures.add(requires);
+            requires.addRequiring(this);
+        }
     }
 
     public void addIncludedFeature(Feature included) {
         this.includedFeatures.add(included);
         included.addIncludingFeature(this);
     }
+
     public void addIncludedPlugin(Plugin included) {
         this.includedPlugins.add(included);
         included.addIncludingFeature(this);

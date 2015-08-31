@@ -9,16 +9,27 @@
          id="org.eclipse.right.right"
          version="3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8"/>
 
+   <requires>
+      <import feature="org.example.left" version="2.1.1.v20120113-1346" match="greaterOrEqual"/>
+      <import plugin="org.company.corePlugin" version="3.1.0" match="compatible"/>
+   </requires>
+
    <plugin
          id="org.company.corePlugin"
+         download-size="0"
+         install-size="0"
          version="3.2.0.v2014"/>
 
    <plugin
          id="org.company.test.framework"
+         download-size="0"
+         install-size="0"
          version="8.4.0.t2000"/>
 
    <plugin
          id="org.company.workcenter"
+         download-size="0"
+         install-size="0"
          version="6.3.1"/>
 
 </feature>

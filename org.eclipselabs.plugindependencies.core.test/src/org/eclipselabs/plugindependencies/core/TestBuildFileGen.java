@@ -182,6 +182,7 @@ public class TestBuildFileGen extends BaseTest {
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
                 "testdata_OutputGeneration/workspace", "-deploymentRoot",
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-platform", "linux", "gtk", "x86_64",
                 "-generateReqFile", "testdata_OutputGeneration/dependencies.txt" };
 
         assertEquals(0, SecurityMan.runMain(args));

@@ -23,7 +23,7 @@ required packages:
 		plugin: org.eclipse.core.runtime.compatibility.auth 3.2.200.v20110110
 
 included in feature:
-required by plugins:
+required by:
 	org.eclipse.ant.core 3.2.302.v20120110-1739
 	org.eclipse.core.expressions 3.4.300.v20110228
 	org.eclipse.core.resources 3.7.101.v20120125-1505
@@ -34,6 +34,7 @@ required by plugins:
 	com.company.itee.core 99.0.0
 	com.company.itee.maint.common 99.0.0
 	com.company.itee.svc.unoaccess 99.0.0
+	org.eclipse.zest 1.5.1.201308190730 (feature)
 exported packages:
 	org.eclipse.core.internal.preferences.legacy
 	org.eclipse.core.internal.runtime
@@ -44,13 +45,16 @@ feature: org.eclipse.cdt 8.0.2.201202111925
 included features:
 	org.eclipse.cdt.gdb 7.0.0.201202111925
 included plugins:
+required features:
+required plugins:
 included in features:
+required by features:
 
 fragment: org.eclipse.swt.gtk.linux.x86_64 3.7.2.v3740f
 required plugins:
 required packages:
 included in feature:
-required by plugins:
+required by:
 exported packages:
 	org.eclipse.swt.internal.accessibility.gtk
 	org.eclipse.swt.internal.cairo
@@ -68,7 +72,7 @@ required packages:
 	org.eclipse.swt.accessibility2 *dynamicImport*
 	org.mozilla.xpcom *dynamicImport*
 included in feature:
-required by plugins:
+required by:
 	org.eclipse.jface.databinding 1.5.0.I20100907-0800
 	org.eclipse.jface 3.7.0.v20110928-1505
 	org.eclipse.ui.workbench 3.7.1.v20120104-1859
@@ -96,6 +100,9 @@ fragments:
 feature: org.eclipse.cdt.gdb 7.0.0.201202111925
 included features:
 included plugins:
+required features:
+required plugins:
 included in features:
 	org.eclipse.cdt 8.0.2.201202111925
+required by features:
 

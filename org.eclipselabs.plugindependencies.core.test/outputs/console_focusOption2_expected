@@ -38,10 +38,11 @@ required packages:
 
 included in feature:
 	org.company.right 1.6.0
-required by plugins:
+required by:
 	org.company.corePlugin 3.2.0.v2014
 	org.company.workcenter 6.3.1
 	org.eclipse.adv 1.2.3
+	org.eclipse.right.right 3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8 (feature)
 exported packages:
 fragments:
 
@@ -52,8 +53,14 @@ included plugins:
 	plugin: org.company.corePlugin 3.2.0.v2014
 	plugin: org.company.test.framework 8.4.0.t2000
 	plugin: org.company.workcenter 6.3.1
+required features:
+	org.example.left 2.1.1.v20120113-1346
+required plugins:
+	plugin: org.company.corePlugin 3.2.0.v2014
 included in features:
 	org.eclipse.topFeature 1.7.0.201306111332
+required by features:
+	org.eclipse.right.right 3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8
 
 plugin: org.company.corePlugin 3.2.0.v2014
 required plugins:
@@ -71,8 +78,9 @@ required packages:
 
 included in feature:
 	org.company.right 1.6.0
-required by plugins:
+required by:
 	org.eclipse.adv 1.2.3
+	org.company.right 1.6.0 (feature)
 exported packages:
 fragments:
 	org.eclipse.adv 1.2.3
@@ -84,7 +92,7 @@ required plugins:
 required packages:
 included in feature:
 	org.company.right 1.6.0
-required by plugins:
+required by:
 	org.company.corePlugin 3.2.0.v2014
 	*optional* for org.eclipse.adv 1.2.3
 exported packages:
