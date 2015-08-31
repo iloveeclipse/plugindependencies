@@ -5,17 +5,28 @@
       version="1.0.0.qualifier"
       provider-name="Andrey Loskutov">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="https://github.com/iloveeclipse/plugindependencies">
+      Project provides both command line and Eclipse UI for static package, plugin and feature dependencies analysis (the dependencies are read from MANIFEST.MF and feature.xml files).
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://andrei.gmxhome.de/anyedit/copyright.html">
+      Copyright (c) 2015 by Andrey Loskutov &lt;Loskutov@gmx.de&gt;.
+All rights reserved.
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Copyright (c) 2015 Andrey Loskutov, licensed under the Eclipse Public License 1.0.
    </license>
+
+   <url>
+      <update label="Andrey Loskutov plugins site" url="http://andrei.gmxhome.de/eclipse/"/>
+      <discovery label="Andrey Loskutov plugins site" url="http://andrei.gmxhome.de/eclipse/"/>
+      <discovery label="Zip Editor" url="http://zipeditor.sourceforge.net/update/"/>
+      <discovery label="FindBugs" url="http://findbugs.cs.umd.edu/eclipse/"/>
+      <discovery label="Eclemma Java Code Coverage" url="http://update.eclemma.org/"/>
+      <discovery label="Subversive" url="http://download.eclipse.org/technology/subversive/3.0/update-site/"/>
+      <discovery label="EGit" url="http://download.eclipse.org/egit/updates/"/>
+   </url>
 
    <plugin
          id="org.eclipselabs.plugindependencies.core"
