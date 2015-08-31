@@ -1,6 +1,8 @@
 # plugindependencies
 Project provides both command line and Eclipse UI for static package, plugin and feature dependencies analysis (the dependencies are read from MANIFEST.MF and feature.xml files).
 
+Update site url: https://raw.githubusercontent.com/iloveeclipse/plugindependencies/master/update_site/
+
 The project is started as student work from Oliver Broesamle.
 
 The main goals for the command line:
