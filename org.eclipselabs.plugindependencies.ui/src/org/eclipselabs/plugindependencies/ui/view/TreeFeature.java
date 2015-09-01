@@ -114,10 +114,12 @@ public class TreeFeature extends TreeParent {
 
     @Override
     public boolean hasChildren() {
-        boolean hasResolvedPlugins = !feature.getRequiredPlugins().isEmpty();
+        boolean hasRequiredPlugins = !feature.getRequiredPlugins().isEmpty();
+        boolean hasRrequiredFeatures = !feature.getRequiredFeatures().isEmpty();
+        boolean hasIncludedPlugins = !feature.getIncludedPlugins().isEmpty();
         boolean hasIncludedFeatures = !feature.getIncludedFeatures().isEmpty();
-        boolean isIncludedInFeatures = !feature.getIncludedFeatures().isEmpty();
+        boolean isIncludedInFeatures = !feature.getIncludedInFeatures().isEmpty();
 
-        return hasResolvedPlugins || hasIncludedFeatures || isIncludedInFeatures;
+        return hasRequiredPlugins || hasRrequiredFeatures || hasIncludedPlugins || hasIncludedFeatures || isIncludedInFeatures;
     }
 }
