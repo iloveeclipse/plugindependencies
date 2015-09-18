@@ -61,24 +61,18 @@ public class Feature extends OSGIElement {
 
     public void addIncludedPluginEntries(NodeList requiredplugins) {
         for (int i = 0; i < requiredplugins.getLength(); i++) {
-            this.includedPluginEntries.add(new ManifestEntry((Element)requiredplugins.item(i)));
+            this.includedPluginEntries.add(new ManifestEntry((Element)requiredplugins.item(i), "id"));
         }
     }
 
     public void addIncludedFeatureEntries(NodeList requiredplugins) {
         for (int i = 0; i < requiredplugins.getLength(); i++) {
-            this.includedFeatureEntries.add(new ManifestEntry((Element)requiredplugins.item(i)));
+            this.includedFeatureEntries.add(new ManifestEntry((Element)requiredplugins.item(i), "id"));
         }
     }
 
     public List<ManifestEntry> getRequiredFeatureEntries() {
         return requiredFeatureEntries;
-    }
-
-    public void addRequiredFeatureEntries(NodeList requiredfeatures) {
-        for (int i = 0; i < requiredfeatures.getLength(); i++) {
-            this.requiredFeatureEntries.add(new ManifestEntry((Element)requiredfeatures.item(i)));
-        }
     }
 
     public Set<Feature> getIncludedFeatures() {

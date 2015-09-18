@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,7 @@ public class ManifestEntry extends NamedElement {
 
     /**
      * @param manifestEntries
-     *            non empoty array with at least one element. The first element is plugin
+     *            non empty array with at least one element. The first element is plugin
      *            or package id, other elements are not parsed plugin/package attributes
      */
     public ManifestEntry(List<String> manifestEntries) {
@@ -62,8 +61,8 @@ public class ManifestEntry extends NamedElement {
      *            Minimal xmlElement must contain an id and a version. xmlElement comes
      *            from feature.xml
      */
-    public ManifestEntry(Element xmlElement) {
-        super(fixName(xmlElement.getAttribute("id")), fixVersion(xmlElement.getAttribute("version")));
+    public ManifestEntry(Element xmlElement, String idAttribute) {
+        super(fixName(xmlElement.getAttribute(idAttribute)), fixVersion(xmlElement.getAttribute("version")));
         attributes = Collections.emptyList();
         platformSpecs = computeSystemFlags(xmlElement);
         optional = false;
