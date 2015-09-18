@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="com.legacyPlugin"
+   name="%RC0"
+   version="7.5.0.v200910221234"
+   provider-name="%RSC"
+   class="LegacyPluginClass">
+
+   <runtime>
+      <library name="legacyPlugin.jar">
+         <export name="*"/>
+      </library>
+      <library name="legacyPluginImport.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.compatible" version="1.2.3" match="compatible"/>
+      <import plugin="org.perfect" version="1.2.3" match="perfect"/>
+      <import plugin="org.equivalent" version="1.2.3" match="equivalent"/>
+      <import plugin="org.greaterOrEqual" version="1.2.3" match="greaterOrEqual"/>
+   </requires>
+
+
+   <extension-point id="featureStatus" name="%CFS"/>
+   <extension-point id="editorFeatures" name="%CEF"/>
+
+   <extension
+         point="org.eclipse.ui.startup">
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.ide.resourceFilters">
+      <filter
+            pattern="*.mkelem*"
+            selected="false"/>
+      <filter
+            pattern="*.keep*"
+            selected="false"/>
+      <filter
+            pattern="*.contrib*"
+            selected="false"/>
+      <filter
+            pattern="*.merge*"
+            selected="false"/>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            enabled="false"
+            pattern="*.mkelem*"/>
+      <filter
+            enabled="false"
+            pattern="*.keep*"/>
+      <filter
+            enabled="false"
+            pattern="*.contrib*"/>
+      <filter
+            enabled="false"
+            pattern="*.merge*"/>
+   </extension>
+</plugin>

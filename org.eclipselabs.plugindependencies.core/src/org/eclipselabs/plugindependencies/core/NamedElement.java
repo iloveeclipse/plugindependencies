@@ -25,9 +25,9 @@ public abstract class NamedElement {
     public static final String PREFIX_ERROR = Logging.PREFIX_ERROR;
     public static final String PREFIX_WARN =  Logging.PREFIX_WARN;
 
-    public static class NameComparator implements Comparator<OSGIElement>{
+    public static class NameComparator implements Comparator<NamedElement>{
         @Override
-        public int compare(OSGIElement o1, OSGIElement o2) {
+        public int compare(NamedElement o1, NamedElement o2) {
             if(o1.getClass() != o2.getClass()){
                 return o1.getClass().getName().compareTo(o2.getClass().getName());
             }

@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +133,7 @@ public class FeatureParser {
 //    <import plugin="ccc"  version="1"     match="greaterOrEqual"/>
 //    <import plugin="eee"  version="1"     match="equivalent"/>
 //    <import feature="ddd" version="1.2.3.qualifier" match="compatible"/>
-    private static String createVersion(Element e) {
+    public static String createVersion(Element e) {
         String v = e.getAttribute("version").trim();
         if(v.isEmpty()) {
             return NamedElement.EMPTY_VERSION;

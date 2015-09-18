@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -199,6 +200,7 @@ public class TestPluginParser  extends BaseTest {
         checkForDoubleExport.add(plugin1);
 
         plugins = new LinkedHashSet<>();
+        plugins.add(new Plugin("com.legacyPlugin", "7.5.0.v200910221234", false, false));
         plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0", true, false));
         plugins.addAll(checkForDoubleExport);
     }
@@ -249,12 +251,53 @@ public class TestPluginParser  extends BaseTest {
                 if (DependencyResolver
                         .isCompatibleVersion("1.3.100", plugin.getVersion())) {
                     forPathCheck = plugin;
+                    break;
                 }
             }
         }
         String path = System.getProperty("user.dir")
                 + "/testdata_Plugins/org.eclipse.equinox.app_1.3.100.v20110321.jar";
         assertEquals(path, forPathCheck.getPath());
+    }
+
+    @Test
+    public void testReadLegacyPlugin() throws IOException {
+        pluginSet = new LinkedHashSet<>();
+        packageSet = new LinkedHashSet<>();
+
+        PluginParser pluginParser = new PluginParser();
+        pluginParser.setParseEarlyStartup(true);
+        pluginParser.createPluginsAndAddToSet(new File(dirPath), new PlatformState(pluginSet, packageSet, null));
+        assertEquals(packages, packageSet);
+        assertEquals(plugins.toString(), pluginSet.toString());
+
+        Plugin legacyPlugin = new Plugin("", "");
+        for (Plugin plugin : pluginSet) {
+            if (plugin.getName().equals("com.legacyPlugin")) {
+                legacyPlugin = plugin;
+                break;
+            }
+        }
+        assertEquals("7.5.0.v200910221234", legacyPlugin.getVersion());
+        assertTrue(legacyPlugin.isEarlyStartup());
+        List<ManifestEntry> required = legacyPlugin.getRequiredPluginEntries();
+
+        List<ManifestEntry> expected = new ArrayList<>();
+        expected.add(new ManifestEntry("org.compatible", "[1.2.3,2.0.0)"));
+        expected.add(new ManifestEntry("org.perfect", "[1.2.3,1.2.3]" ));
+        expected.add(new ManifestEntry("org.equivalent", "[1.2.3,1.3.0)" ));
+        expected.add(new ManifestEntry("org.greaterOrEqual", "1.2.3" ));
+
+        Collections.sort(expected, new NamedElement.NameComparator());
+        Collections.sort(required, new NamedElement.NameComparator());
+
+        assertEquals(expected.size(), required.size());
+        assertEquals(expected.toString(), required.toString());
+
+
+
+        String path = System.getProperty("user.dir") + "/testdata_Plugins/legacyPlugin";
+        assertEquals(path, legacyPlugin.getPath());
     }
 
     @Test

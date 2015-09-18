@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +27,15 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 /**
  * @author obroesam
  *
@@ -70,14 +82,27 @@ public class PluginParser {
     }
 
     public int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {
-        Plugin plugin;
         Manifest manifest = getManifest(pluginOrDirectory);
+        Plugin plugin;
+        String pluginXml = null;
         if (manifest == null) {
-            return 0;
+            pluginXml = getPluginXml(pluginOrDirectory);
+            if(pluginXml == null){
+                return 0;
+            }
         }
         plugin = parseManifest(manifest);
         if (plugin == null) {
-            return 0;
+            if (manifest == null && pluginXml == null) {
+                return 0;
+            }
+            if(pluginXml == null){
+                pluginXml = getPluginXml(pluginOrDirectory);
+            }
+            plugin = parsePluginPromXml(pluginXml);
+            if (plugin == null) {
+                return 0;
+            }
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
         if(parseEarlyStartup){
@@ -88,6 +113,57 @@ public class PluginParser {
             return 0;
         }
         return -1;
+    }
+
+    private static Plugin parsePluginPromXml(String pluginXml) {
+        Document doc;
+        try {
+            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new ByteArrayInputStream(pluginXml.getBytes()));
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            Logging.getLogger().error("Failed to parse plugin.xml: " + pluginXml, e);
+            return null;
+        }
+
+        // <plugin>
+        NodeList plugins = doc.getElementsByTagName("plugin");
+        if(plugins == null || plugins.getLength() != 1){
+            return null;
+        }
+        Node pluginNode = plugins.item(0);
+        if(pluginNode == null){
+            return null;
+        }
+        NamedNodeMap attributes = pluginNode.getAttributes();
+        if(attributes == null){
+            return null;
+        }
+        Node idNode = attributes.getNamedItem("id");
+        if(idNode == null){
+            return null;
+        }
+        String id = idNode.getTextContent();
+        Node versionNode = attributes.getNamedItem("version");
+        String version;
+        if(versionNode == null){
+            version = "";
+        } else {
+            version = versionNode.getTextContent();
+        }
+        Plugin plugin = new Plugin(id, version, false, true);
+
+        NodeList imports = doc.getElementsByTagName("import");
+        for (int i = 0; i < imports.getLength(); i++) {
+            Element e = (Element)imports.item(i);
+            String plug = e.getAttribute("plugin").trim();
+            if(plug.isEmpty()){
+                continue;
+            }
+            String pv = FeatureParser.createVersion(e);
+            ManifestEntry imported = new ManifestEntry(fixName(plug), fixVersion(pv));
+            plugin.addRequiredPluginEntry(imported);
+        }
+        return plugin;
     }
 
     private static boolean parseEarlyStartup(File pluginOrDirectory) throws IOException {
