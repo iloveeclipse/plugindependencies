@@ -15,6 +15,7 @@ import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -71,13 +72,36 @@ public class FeatureParser {
 
     public static int createFeatureAndAddToSet(File featureFolder, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
-        String path = featureFolder.getCanonicalPath() + "/feature.xml";
+        String canonicalPath = featureFolder.getCanonicalPath();
+        String path = canonicalPath + "/feature.xml";
         File featureXMLFile = new File(path);
+        Feature feature = null;
         if (!featureXMLFile.exists()) {
+            // check if we have an archive here.
+            // this would be usually "broken", not extracted feature
+            if(!featureFolder.getName().endsWith(".jar") || !featureFolder.isFile()){
                 return 0;
             }
 
-        Feature feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
+            try (JarFile jarfile = new JarFile(featureFolder)) {
+                JarEntry entry = jarfile.getJarEntry("feature.xml");
+                if(entry == null){
+                    return 0;
+                }
+                try (InputStream inputStream = jarfile.getInputStream(entry)){
+                    feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(inputStream));
+                }
+            }
+            if(feature == null){
+                return 0;
+            }
+            // TODO add flag if we should warn in this case
+            feature.addWarningToLog("Feature is contained in a jar file!");
+        }
+
+        if(feature == null) {
+            feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
+        }
         if (feature == null) {
             return 0;
         }

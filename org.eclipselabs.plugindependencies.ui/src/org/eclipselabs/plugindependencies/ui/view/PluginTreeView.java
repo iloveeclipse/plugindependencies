@@ -449,6 +449,17 @@ public class PluginTreeView extends ViewPart {
         if (obj instanceof TreeFeature) {
             TreeFeature treeFeature = (TreeFeature) obj;
             String featureXMLPath = treeFeature.getNamedElement().getPath();
+            File dir = new Path(featureXMLPath).removeLastSegments(1).toFile();
+            if (!dir.isDirectory()) {
+                try (JarFile pluginJar = new JarFile(dir)) {
+                    File tmpDir = extractFileToTmpDir(pluginJar, "feature.xml");
+                    featureXMLPath = new File(tmpDir, "feature.xml").toString();
+                } catch (IOException e) {
+                    IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath, e);
+                    StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
+                    return;
+                }
+            }
             fileStore = EFS.getLocalFileSystem().getStore(new Path(featureXMLPath));
         } else if (obj instanceof TreePlugin) {
             TreePlugin treePlugin = (TreePlugin) obj;
