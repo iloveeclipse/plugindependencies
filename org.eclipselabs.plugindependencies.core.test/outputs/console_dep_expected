@@ -2,7 +2,7 @@ package: com.company.itee.maint.common.model
 		exported by:
 		plugin: com.company.itee.maint.common 99.0.0 testdata_OutputGeneration/workspace/com.company.itee.maint.common
 
-package: org.eclipse.osgi.event 1.0
+package: org.eclipse.osgi.event 1.0.0
 		exported by:
 		plugin: org.eclipse.osgi 3.7.2.v20120110-1415 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 
@@ -25,7 +25,7 @@ package: org.eclipse.swt.widgets
 imported by:
 	plugin: com.company.itee.core 99.0.0 testdata_OutputGeneration/workspace/com.company.itee.core
 
-package: javax.xml.parsers 1.3
+package: javax.xml.parsers 1.3.0
 		exported by:
 		plugin: javax.xml 1.3.4.v201005080400 testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 
@@ -36,7 +36,7 @@ imported by:
 	plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
 	plugin: org.eclipse.ui.workbench 3.7.1.v20120104-1859 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 
-package: org.osgi.framework 1.6
+package: org.osgi.framework 1.6.0
 		exported by:
 		plugin: org.eclipse.osgi 3.7.2.v20120110-1415 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
 

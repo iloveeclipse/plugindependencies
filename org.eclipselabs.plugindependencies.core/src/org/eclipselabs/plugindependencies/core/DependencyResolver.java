@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.NamedElement.ZERO_VERSION;
+import static org.eclipselabs.plugindependencies.core.NamedElement.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -494,7 +494,15 @@ public class DependencyResolver {
             givenVersion = ZERO_VERSION;
         } else {
             if (!VERSION.matcher(givenVersion).matches()) {
-                return false;
+                // version range?
+                if(!RANGE.matcher(givenVersion).matches()){
+                    return false;
+                }
+                if (rangeOrLowerLimit.isEmpty() || !RANGE.matcher(rangeOrLowerLimit).matches()) {
+                    return isVersionInRange(ZERO_VERSION, givenVersion);
+                }
+                // TODO compare two compatible ranges
+                return rangeOrLowerLimit.equals(givenVersion);
             }
         }
         boolean isRange = false;

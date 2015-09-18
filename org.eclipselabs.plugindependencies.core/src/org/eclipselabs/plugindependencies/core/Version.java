@@ -24,6 +24,8 @@ public class Version implements Comparable<Version> {
     private final int micro;
     private final String qualifier;
 
+    public static final Version ZERO = new Version(0,0,0, "");
+
     public Version(String version) {
         int m = 0;
         String q = "";
@@ -35,7 +37,7 @@ public class Version implements Comparable<Version> {
                 if (st.hasMoreTokens()) {
                     m = Integer.parseInt(st.nextToken());
                     if (st.hasMoreTokens()) {
-                        q = st.nextToken("");
+                        q = st.nextToken();
                     }
                 }
             } else {

@@ -20,7 +20,10 @@ public abstract class NamedElement {
     public static final String ZERO_VERSION = "0.0.0";
 
     protected final String name;
-    protected final String version;
+    private final String versionStr;
+    private final Version version;
+    private boolean versionRange;
+
     protected final List<String> log;
     public static final String PREFIX_ERROR = Logging.PREFIX_ERROR;
     public static final String PREFIX_WARN =  Logging.PREFIX_WARN;
@@ -39,7 +42,28 @@ public abstract class NamedElement {
         super();
         Objects.requireNonNull(name);
         this.name = name.trim();
-        this.version = version == null || version.trim().isEmpty()? EMPTY_VERSION : version.trim();
+        if (version == null) {
+            this.versionStr = EMPTY_VERSION;
+            this.version = Version.ZERO;
+            versionRange = false;
+        } else {
+            version = version.trim();
+            if (version.isEmpty()) {
+                this.versionStr = EMPTY_VERSION;
+                this.version = Version.ZERO;
+                versionRange = false;
+            } else {
+                if(Character.isDigit(version.charAt(0))){
+                    this.version = new Version(version);
+                    this.versionStr = this.version.toString();
+                    versionRange = false;
+                } else {
+                    this.versionStr = version;
+                    this.version = Version.ZERO;
+                    versionRange = true;
+                }
+            }
+        }
         this.log = new ArrayList<>();
     }
 
@@ -54,7 +78,9 @@ public abstract class NamedElement {
     public int hashCode() {
         final int prime = 31;
         int result = prime + name.hashCode();
+        result = prime * result + versionStr.hashCode();
         result = prime * result + version.hashCode();
+        result = prime * result + (versionRange? 1 : 2);
         return result;
     }
 
@@ -70,17 +96,20 @@ public abstract class NamedElement {
         if (!name.equals(other.name)) {
             return false;
         }
-        if (!version.equals(other.version)) {
+        if(versionRange != other.versionRange){
             return false;
         }
-        return true;
+        if(versionRange){
+            return versionStr.equals(other.versionStr);
+        }
+        return version.equals(other.version);
     }
 
     /**
      * @return never null. In case no version were specified, returns {@link #EMPTY_VERSION}
      */
     public final String getVersion() {
-        return version;
+        return versionStr;
     }
 
     protected void addToLog(String note) {
@@ -124,12 +153,36 @@ public abstract class NamedElement {
         return log;
     }
 
+    /**
+     * @param vers check the version if the given version is not empty
+     */
     public boolean matches(String id, String vers) {
-        return name.equals(id) && (version.equals(vers) || vers.isEmpty());
+        if(!name.equals(id)){
+            return false;
+        }
+        if(vers.isEmpty()){
+            return true;
+        }
+        if(versionRange){
+            return DependencyResolver.isCompatibleVersion(versionStr, vers);
+        }
+        if(Character.isDigit(vers.charAt(0))) {
+            return version.equals(new Version(vers));
+        }
+        return versionStr.equals(vers);
     }
 
     public boolean exactMatch(NamedElement elt) {
-        return name.equals(elt.name) && version.equals(elt.version);
+        if(!name.equals(elt.name)){
+            return false;
+        }
+        if(versionRange != elt.versionRange){
+            return false;
+        }
+        if(versionRange){
+            return versionStr.equals(elt.versionStr);
+        }
+        return version.equals(elt.version);
     }
 
     public boolean hasWarnings(){
@@ -151,14 +204,14 @@ public abstract class NamedElement {
     }
 
     public boolean hasDefaultVersion(){
-        return version == EMPTY_VERSION || ZERO_VERSION.equals(version);
+        return versionStr == EMPTY_VERSION || ZERO_VERSION.equals(versionStr);
     }
 
     public String getNameAndVersion(){
-        if(version == EMPTY_VERSION) {
+        if(versionStr == EMPTY_VERSION) {
             return name;
         }
-        return name + " " + version;
+        return name + " " + versionStr;
     }
 
     @Override
@@ -167,7 +220,7 @@ public abstract class NamedElement {
         builder.append("[name=");
         builder.append(name);
         builder.append(", version=");
-        builder.append(version);
+        builder.append(versionStr);
         builder.append("]");
         return builder.toString();
     }

@@ -31,7 +31,7 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.runtime_3.7.0.v2011
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
 	Warning: [org.eclipse.equinox.common 3.6.0.v20110523] this plugin is one of 2 plugins contributing package 'org.eclipse.core.internal.runtime'
 	Warning: [org.eclipse.equinox.common 3.6.0.v20110523] this plugin is one of 3 plugins contributing package 'org.eclipse.core.runtime 3.4.0'
-	Warning: [org.eclipse.equinox.common 3.6.0.v20110523] this plugin uses package 'org.osgi.service.log 1.3' contributed by multiple plugins
+	Warning: [org.eclipse.equinox.common 3.6.0.v20110523] this plugin uses package 'org.osgi.service.log 1.3.0' contributed by multiple plugins
 
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar
 	Warning: [org.eclipse.equinox.registry 3.5.101.R37x_v20110810-1611] this plugin is one of 3 plugins contributing package 'org.eclipse.core.runtime 3.4.0'
@@ -40,11 +40,11 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v201
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet  *dynamicImport*
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.servlet.http  *dynamicImport*
 	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] package not found: javax.microedition.io  *dynamicImport*
-	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] this plugin is one of 2 plugins contributing package 'org.osgi.service.log 1.3'
-	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] this plugin uses package 'org.osgi.service.log 1.3' contributed by multiple plugins
+	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] this plugin is one of 2 plugins contributing package 'org.osgi.service.log 1.3.0'
+	Warning: [org.eclipse.osgi.services 3.3.0.v20110513] this plugin uses package 'org.osgi.service.log 1.3.0' contributed by multiple plugins
 
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar
-	Warning: [org.eclipse.osgi 3.7.2.v20120110-1415] this plugin is one of 2 plugins contributing package 'org.osgi.service.log 1.3'
+	Warning: [org.eclipse.osgi 3.7.2.v20120110-1415] this plugin is one of 2 plugins contributing package 'org.osgi.service.log 1.3.0'
 
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
 	Warning: [org.eclipse.swt 3.7.2.v3740f] package not found: org.eclipse.swt.accessibility2  *dynamicImport*
@@ -63,8 +63,8 @@ org.eclipse.core.internal.runtime
 org.eclipse.core.runtime 3.4.0
 	Warning: [org.eclipse.core.runtime 3.4.0] package contributed by multiple, not related plugins
 
-org.osgi.service.log 1.3
-	Warning: [org.osgi.service.log 1.3] package contributed by multiple, not related plugins
+org.osgi.service.log 1.3.0
+	Warning: [org.osgi.service.log 1.3.0] package contributed by multiple, not related plugins
 
 org.eclipse.ui.internal
 	Warning: [org.eclipse.ui.internal] package contributed by multiple, not related plugins

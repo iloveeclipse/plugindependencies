@@ -2,16 +2,16 @@ Platform state:
 Features:
 Plugins:
 testdata_equalPlugins/plugins/org.eclipse.equinox.app.jar
-	Warning: [org.eclipse.equinox.app 1.3.100.v20110321] this plugin is one of 2 plugins contributing package 'org.eclipse.equinox.app 1.1'
+	Warning: [org.eclipse.equinox.app 1.3.100.v20110321] this plugin is one of 2 plugins contributing package 'org.eclipse.equinox.app 1.1.0'
 	Error: [org.eclipse.equinox.app 1.3.100.v20110321] 2 plugins with equal symbolic name and version, located at:
 	testdata_equalPlugins/plugins/org.eclipse.equinox.app.jar
 	testdata_equalPlugins/plugins/org.eclipse.equinox.app_1.3.100.v20110321.jar
 
 testdata_equalPlugins/plugins/testPlugin
-	Warning: [com.company.itee.core 99.0.0] this plugin is one of 2 plugins contributing package 'org.eclipse.equinox.app 1.1'
+	Warning: [com.company.itee.core 99.0.0] this plugin is one of 2 plugins contributing package 'org.eclipse.equinox.app 1.1.0'
 
 Packages:
-org.eclipse.equinox.app 1.1
-	Warning: [org.eclipse.equinox.app 1.1] package contributed by multiple, not related plugins
+org.eclipse.equinox.app 1.1.0
+	Warning: [org.eclipse.equinox.app 1.1.0] package contributed by multiple, not related plugins
 
 

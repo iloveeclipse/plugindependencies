@@ -24,6 +24,7 @@ import org.eclipselabs.plugindependencies.core.TestFeatureParser;
 import org.eclipselabs.plugindependencies.core.TestPlugin;
 import org.eclipselabs.plugindependencies.core.TestPluginParser;
 import org.eclipselabs.plugindependencies.core.TestStringUtil;
+import org.eclipselabs.plugindependencies.core.TestVersions;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -33,6 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    TestVersions.class,
     TestBuildFileGen.class,
     TestBuildFileGen2.class,
     TestCLI.class,

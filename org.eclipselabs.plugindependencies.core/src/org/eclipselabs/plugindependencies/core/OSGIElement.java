@@ -115,10 +115,10 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
     }
 
     public String getInformationLine() {
-        if(version.isEmpty()){
+        if(getVersion().isEmpty()){
             return name + " " + elementPath;
         }
-        return name + " " + version + " " + elementPath;
+        return name + " " + getVersion() + " " + elementPath;
     }
 
     public void logBrokenEntry(ManifestEntry entry, Set<? extends OSGIElement> elements, String type) {
