@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui.view;
 
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -144,7 +146,7 @@ public class ViewContentProvider implements ITreeContentProvider {
     void createRoots(Object newInput) {
         invisibleRoot = new TreeParent("Parent", null);
         // Plugins
-        TreeParent plugins = new TreeParent("Plugins", invisibleRoot);
+        TreeParent plugins = new TreeParent(PLUGINS, invisibleRoot);
         boolean errorsOnly = view.isShowErrorsOnly();
         for (Plugin plugin : state.getPlugins()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
@@ -152,14 +154,14 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
         }
         // Packages
-        TreeParent packages = new TreeParent("Packages", invisibleRoot);
+        TreeParent packages = new TreeParent(PACKAGES, invisibleRoot);
         for (Package pack : state.getPackages()) {
             if(! errorsOnly || (pack.hasErrors() || pack.hasWarnings())) {
                 packages.addChild(new TreePackage(pack, packages));
             }
         }
         // Features
-        TreeParent features = new TreeParent("Features", invisibleRoot);
+        TreeParent features = new TreeParent(FEATURES, invisibleRoot);
         for (Feature feature : state.getFeatures()) {
             if(! errorsOnly || (feature.hasErrors() || feature.hasWarnings())) {
                 features.addChild(new TreeFeature(feature, features));
@@ -172,7 +174,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         invisibleRoot.addChild(packages);
         invisibleRoot.addChild(features);
         // EarlyStartups
-        TreeParent early = new TreeParent("EarlyStartup", invisibleRoot);
+        TreeParent early = new TreeParent(EARLY_STARTUP, invisibleRoot);
         for (Plugin plugin : state.getPlugins()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
                 if(plugin.isEarlyStartup()) {

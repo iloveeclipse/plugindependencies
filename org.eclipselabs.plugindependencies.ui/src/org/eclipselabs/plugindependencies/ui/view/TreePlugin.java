@@ -12,6 +12,8 @@
 package org.eclipselabs.plugindependencies.ui.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipselabs.plugindependencies.core.Feature;
@@ -24,13 +26,29 @@ import org.eclipselabs.plugindependencies.core.Plugin;
  *
  */
 public class TreePlugin extends TreeParent {
-
-    static final String REQUIRES = "Requires";
-    static final String IMPORTS = "Imports";
     static final String ALL_DEPS = "All dependencies";
+    static final String EARLY_STARTUP = "EarlyStartup";
     static final String EXPORTS = "Exports";
+    static final String FEATURES = "Features";
+    static final String IMPORTS = "Imports";
     static final String INCLUDED_IN = "Included in";
+    static final String PACKAGES = "Packages";
+    static final String PLUGINS = "Plugins";
     static final String REQUIRED_BY = "Required by";
+    static final String REQUIRES = "Requires";
+
+    static final List<String> NAMES = Collections.unmodifiableList(Arrays.asList(
+            ALL_DEPS,
+            EARLY_STARTUP,
+            EXPORTS,
+            FEATURES,
+            IMPORTS,
+            INCLUDED_IN,
+            PACKAGES,
+            PLUGINS,
+            REQUIRED_BY,
+            REQUIRES
+            ));
 
     private final Plugin plugin;
 

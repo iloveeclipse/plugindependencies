@@ -10,6 +10,7 @@
  *    Andrey Loskutov <loskutov@gmx.de> - review, cleanup and bugfixes
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui.view;
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.*;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -33,16 +34,13 @@ public class Filter extends PatternFilter {
         if (labelText == null) {
             return false;
         }
-        if (labelText.equals("Plugins") || labelText.equals("Packages")
-                || labelText.equals("Features")) {
+        if (NAMES.contains(labelText)) {
             return true;
         }
 
-        boolean isPlugin = leaf.getParent().getName().equals("Plugins");
-        boolean isPackage = leaf.getParent().getName().equals("Packages");
-        boolean isFeature = leaf.getParent().getName().equals("Features");
+        String parentName = leaf.getParent().getName();
 
-        if (isPlugin || isPackage || isFeature) {
+        if (NAMES.contains(parentName)) {
             return wordMatches(labelText);
         }
         return true;
