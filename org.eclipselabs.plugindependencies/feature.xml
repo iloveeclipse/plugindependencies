@@ -20,7 +20,6 @@ All rights reserved.
 
    <url>
       <update label="Andrey Loskutov plugins site" url="http://andrei.gmxhome.de/eclipse/"/>
-      <discovery label="Andrey Loskutov plugins site" url="http://andrei.gmxhome.de/eclipse/"/>
       <discovery label="Zip Editor" url="http://zipeditor.sourceforge.net/update/"/>
       <discovery label="FindBugs" url="http://findbugs.cs.umd.edu/eclipse/"/>
       <discovery label="Eclemma Java Code Coverage" url="http://update.eclemma.org/"/>
