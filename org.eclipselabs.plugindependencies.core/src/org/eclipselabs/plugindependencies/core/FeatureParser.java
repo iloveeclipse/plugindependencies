@@ -15,6 +15,8 @@ import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,7 +30,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class FeatureParser {
-    static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    public static final DocumentBuilderFactory DB_FACTORY = DocumentBuilderFactory.newInstance();
 
     /**
      * Parses all Features located in featureDirectoryPath and adds them to the features
@@ -72,10 +74,10 @@ public class FeatureParser {
         String path = featureFolder.getCanonicalPath() + "/feature.xml";
         File featureXMLFile = new File(path);
         if (!featureXMLFile.exists()) {
-            return 0;
-        }
+                return 0;
+            }
 
-        Feature feature = parseFeature(dbFactory.newDocumentBuilder().parse(featureXMLFile));
+        Feature feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
         if (feature == null) {
             return 0;
         }

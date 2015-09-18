@@ -27,7 +27,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -118,7 +117,7 @@ public class PluginParser {
     private static Plugin parsePluginPromXml(String pluginXml) {
         Document doc;
         try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            doc = FeatureParser.DB_FACTORY.newDocumentBuilder()
                     .parse(new ByteArrayInputStream(pluginXml.getBytes()));
         } catch (SAXException | IOException | ParserConfigurationException e) {
             Logging.getLogger().error("Failed to parse plugin.xml: " + pluginXml, e);
