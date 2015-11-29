@@ -27,6 +27,11 @@ All rights reserved.
       <discovery label="EGit" url="http://download.eclipse.org/egit/updates/"/>
    </url>
 
+   <requires>
+      <import plugin="org.eclipse.ui.ide" version="3.8.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.pde" version="3.8.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="org.eclipselabs.plugindependencies.core"
          download-size="0"
