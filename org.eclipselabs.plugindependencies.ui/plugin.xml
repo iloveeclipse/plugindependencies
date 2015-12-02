@@ -52,5 +52,23 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
-</extension>
+	</extension>
+	
+    <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.eclipselabs.plugindependencies.ui.console.PluginDependenciesConsole$PluginDependenciesConsoleFactory"
+            icon="icons/tree_mode.gif"
+            label="Plug-in Dependencies"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipselabs.plugindependencies.ui.console.PluginDependenciesConsole$PluginDependenciesConsolePageParticipant"
+            id="PluginDependencies.consolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipselabs.plugindependencies.ui.console.PluginDependenciesConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 </plugin>

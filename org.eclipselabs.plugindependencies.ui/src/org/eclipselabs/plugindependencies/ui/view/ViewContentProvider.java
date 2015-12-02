@@ -365,6 +365,10 @@ public class ViewContentProvider implements ITreeContentProvider {
         monitor.internalWorked(1);
     }
 
+    public PlatformState getState() {
+        return state;
+    }
+
     static class ResolveRule implements ISchedulingRule {
         @Override
         public boolean contains(ISchedulingRule rule) {
@@ -375,6 +379,5 @@ public class ViewContentProvider implements ITreeContentProvider {
         public boolean isConflicting(ISchedulingRule rule) {
             return rule == this;
         }
-
     }
 }

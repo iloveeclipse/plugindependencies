@@ -74,7 +74,7 @@ public class Package extends NamedElement {
         StringBuilder out = new StringBuilder();
         out.append("\t\texported by:\n");
         if (exportedBy.size() == 0) {
-            out.append("\t\tJRE System Library");
+            out.append("\t\tJRE System Library\n");
             return out.toString();
         }
         for (Plugin plugin : exportedBy) {

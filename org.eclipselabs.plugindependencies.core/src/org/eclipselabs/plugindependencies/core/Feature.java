@@ -133,4 +133,41 @@ public class Feature extends OSGIElement {
         return obj instanceof Feature;
     }
 
+    public StringBuilder dump() {
+        StringBuilder out = new StringBuilder();
+        out.append("feature: " + getName() + " " + getVersion()
+        + "\n");
+        out.append("included features:\n");
+        for (Feature included : getIncludedFeatures()) {
+            out.append("\t" + included.getName() + " " + included.getVersion() + "\n");
+        }
+        out.append("included plugins:\n");
+        for (Plugin included : getIncludedPlugins()) {
+            out.append("\t");
+            out.append(included.isFragment() ? "fragment: " : "plugin: ");
+            out.append(included.getName() + " " + included.getVersion() + "\n");
+        }
+        out.append("required features:\n");
+        for (Feature required : getRequiredFeatures()) {
+            out.append("\t" + required.getName() + " " + required.getVersion() + "\n");
+        }
+        out.append("required plugins:\n");
+        for (Plugin required : getRequiredPlugins()) {
+            out.append("\t");
+            out.append(required.isFragment() ? "fragment: " : "plugin: ");
+            out.append(required.getName() + " " + required.getVersion() + "\n");
+        }
+        out.append("included in features:\n");
+        for (Feature includedIn : getIncludedInFeatures()) {
+            out.append("\t" + includedIn.getName() + " " + includedIn.getVersion()
+            + "\n");
+        }
+        out.append("required by features:\n");
+        for (OSGIElement requiredBy : getRequiredBy()) {
+            out.append("\t" + requiredBy.getName() + " " + requiredBy.getVersion()
+            + "\n");
+        }
+        return out;
+    }
+
 }

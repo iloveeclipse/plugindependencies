@@ -70,6 +70,8 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
@@ -80,6 +82,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipselabs.plugindependencies.core.OSGIElement;
 import org.eclipselabs.plugindependencies.ui.Activator;
+import org.eclipselabs.plugindependencies.ui.console.PluginDependenciesConsole;
 
 public class PluginTreeView extends ViewPart {
 
@@ -110,6 +113,8 @@ public class PluginTreeView extends ViewPart {
     private Action copyToClipboardAction;
 
     private Action openPluginXmlAction;
+
+    private Action showConsole;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -211,6 +216,7 @@ public class PluginTreeView extends ViewPart {
             }
         });
         dropDownMenu.add(showErrors);
+        dropDownMenu.add(showConsole);
         dropDownMenu.add(loadTarget);
         dropDownMenu.add(reloadTargets);
     }
@@ -238,6 +244,7 @@ public class PluginTreeView extends ViewPart {
         manager.add(collapseAll);
         manager.add(showProperties);
         manager.add(showErrors);
+        manager.add(showConsole);
         manager.add(loadTarget);
         manager.add(new Separator());
         if (drillDownAdapter != null) {
@@ -276,7 +283,6 @@ public class PluginTreeView extends ViewPart {
                 boolean toggle = !isShowErrorsOnly();
                 showErrors(toggle);
             }
-
         };
         showErrors.setText("Show Errors Only");
         showErrors.setToolTipText("Show Errors Only");
@@ -301,6 +307,16 @@ public class PluginTreeView extends ViewPart {
         };
         reloadTargets.setText("Reload Targets");
         reloadTargets.setImageDescriptor(Activator.getImageDescriptor("icons/refresh.gif"));
+
+        showConsole = new Action() {
+            @Override
+            public void run() {
+                PluginDependenciesConsole console = PluginDependenciesConsole.showConsole();
+                console.showState(getContentProvider().getState());
+            }
+        };
+        showConsole.setText("Show Console Output");
+        showConsole.setImageDescriptor(ConsolePlugin.getImageDescriptor(IConsoleConstants.IMG_VIEW_CONSOLE));
 
         doubleClickAction = new Action() {
             @Override

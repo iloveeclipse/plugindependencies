@@ -18,8 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,20 +35,7 @@ import org.xml.sax.SAXException;
  */
 public class CommandLineInterpreter {
 
-    private static final class NameAndVersionComparator implements Comparator<OSGIElement> {
-        @Override
-        public int compare(OSGIElement o1, OSGIElement o2) {
-            int diff = o1.getName().compareTo(o2.getName());
-            if (diff != 0) {
-                return diff;
-            }
-            Version v1 = new Version(o1.getVersion());
-            Version v2 = new Version(o2.getVersion());
-            return v1.compareTo(v2);
-        }
-    }
-
-    private final PlatformState state;
+    final PlatformState state;
     private String fullLog;
     private final PluginParser pp;
 
@@ -125,7 +110,7 @@ public class CommandLineInterpreter {
             }
         } finally {
             if(getFullLog() != null){
-                String logs = evaluatePlatformLogs();
+                String logs = state.dumpLogs().toString();
                 if(getFullLog().isEmpty()) {
                     Logging.writeStandardOut(logs);
                 } else {
@@ -138,21 +123,6 @@ public class CommandLineInterpreter {
         }
         return 0;
     }
-
-    private String evaluatePlatformLogs() {
-        state.validate();
-        StringBuilder out = new StringBuilder();
-
-        out.append("Platform state:\n");
-        out.append("Features:\n");
-        out.append(printLogs(state.getFeatures(), true));
-        out.append("Plugins:\n");
-        out.append(printLogs(state.getPlugins(), true));
-        out.append("Packages:\n");
-        out.append(printPackageLogs(state.getPackages(), true));
-        return out.toString();
-    }
-
 
     void printProvidingPackage(String packageName) {
         ManifestEntry searchedPackage = new ManifestEntry(packageName, NamedElement.EMPTY_VERSION);
@@ -290,169 +260,18 @@ public class CommandLineInterpreter {
         Set<Feature> foundFeatures = searchFeature(state.getFeatures(name), searchedElement);
 
         for (Plugin plugin : foundPlugins) {
-            StringBuilder out = new StringBuilder();
-            out.append(plugin.isFragment() ? "fragment: " : "plugin: ");
-            out.append(plugin.getName() + " " + plugin.getVersion() + "\n");
-            out.append("required plugins:\n");
-            for (ManifestEntry requiredPlugin : plugin.getRequiredPluginEntries()) {
-                String sep = requiredPlugin.getVersion().isEmpty()? "" : " ";
-                out.append("\t" + requiredPlugin.getName() + sep + requiredPlugin.getVersion());
-                if (requiredPlugin.isOptional()) {
-                    out.append(" *optional*");
-                }
-                out.append("\n");
-                for (Plugin resolvedPlugin : plugin.getRequiredPlugins()) {
-                    if (requiredPlugin.isMatching(resolvedPlugin)) {
-                        out.append("\t-> " + resolvedPlugin.getName() + " "
-                                + resolvedPlugin.getVersion() + "\n");
-                    }
-                }
-            }
-            out.append("required packages:\n");
-            for (ManifestEntry requiredPackage : plugin.getImportedPackageEntries()) {
-                String sep = requiredPackage.getVersion().isEmpty()? "" : " ";
-                out.append("\t" + requiredPackage.getName() + sep + requiredPackage.getVersion());
-                if (requiredPackage.isDynamicImport()) {
-                    out.append(" *dynamicImport*");
-                }
-                if (requiredPackage.isOptional()) {
-                    out.append(" *optional*");
-                }
-                out.append("\n");
-                for (Package resolvedPackage : plugin.getImportedPackages()) {
-                    if (requiredPackage.isMatching(resolvedPackage)) {
-                        String sep2 = resolvedPackage.getVersion().isEmpty()? "" : " ";
-                        out.append("\t->package: " + resolvedPackage.getName() + sep2
-                                + resolvedPackage.getVersion() + "\n");
-                        out.append("\t\texported by:\n");
-                        Set<Plugin> exportedBy = resolvedPackage.getExportedBy();
-                        if (exportedBy.size() == 0) {
-                            out.append("\t\tJRE System Library");
-
-                        } else {
-                            for (Plugin plug : exportedBy) {
-                                out.append("\t\t");
-                                out.append(plug.isFragment() ? "fragment: " : "plugin: ");
-                                out.append(plug.getName() + " " + plug.getVersion()
-                                + "\n\n");
-                            }
-                        }
-                    }
-                }
-            }
-            out.append("included in feature:\n");
-            for (Feature feature : plugin.getIncludedInFeatures()) {
-                out.append("\t" + feature.getName() + " " + feature.getVersion() + "\n");
-            }
-            out.append("required by:\n");
-            for (OSGIElement neededBy : plugin.getRequiredBy()) {
-                out.append("\t");
-                if (neededBy.isOptional(plugin)) {
-                    out.append("*optional* for ");
-                }
-                out.append(neededBy.getName() + " " + neededBy.getVersion()
-                        + ((neededBy instanceof Feature)? " (feature)" : "") + "\n");
-            }
-            out.append("exported packages:\n");
-            for (Package exportedPackage : plugin.getExportedPackages()) {
-                String sep = exportedPackage.getVersion().isEmpty()? "" : " ";
-                out.append("\t" + exportedPackage.getName() + sep
-                        + exportedPackage.getVersion());
-                if (exportedPackage.getReexportedBy().contains(plugin)) {
-                    out.append(" *reexport*");
-                }
-                out.append("\n");
-            }
-            if (plugin.isFragment()) {
-                out.append("fragment host:\n");
-                Plugin fragmentHost = plugin.getHost();
-                if(fragmentHost == null){
-                    out.append("<missing>\n");
-                } else {
-                    out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
-                    + "\n");
-                }
-            } else {
-                out.append("fragments:\n");
-                for (Plugin fragment : plugin.getFragments()) {
-                    out.append("\t" + fragment.getName() + " " + fragment.getVersion()
-                    + "\n");
-                }
-            }
+            StringBuilder out = plugin.dump();
             Logging.writeStandardOut(out.toString());
         }
         for (Feature feature : foundFeatures) {
-            StringBuilder out = new StringBuilder();
-            out.append("feature: " + feature.getName() + " " + feature.getVersion()
-            + "\n");
-            out.append("included features:\n");
-            for (Feature included : feature.getIncludedFeatures()) {
-                out.append("\t" + included.getName() + " " + included.getVersion() + "\n");
-            }
-            out.append("included plugins:\n");
-            for (Plugin included : feature.getIncludedPlugins()) {
-                out.append("\t");
-                out.append(included.isFragment() ? "fragment: " : "plugin: ");
-                out.append(included.getName() + " " + included.getVersion() + "\n");
-            }
-            out.append("required features:\n");
-            for (Feature required : feature.getRequiredFeatures()) {
-                out.append("\t" + required.getName() + " " + required.getVersion() + "\n");
-            }
-            out.append("required plugins:\n");
-            for (Plugin required : feature.getRequiredPlugins()) {
-                out.append("\t");
-                out.append(required.isFragment() ? "fragment: " : "plugin: ");
-                out.append(required.getName() + " " + required.getVersion() + "\n");
-            }
-            out.append("included in features:\n");
-            for (Feature includedIn : feature.getIncludedInFeatures()) {
-                out.append("\t" + includedIn.getName() + " " + includedIn.getVersion()
-                + "\n");
-            }
-            out.append("required by features:\n");
-            for (OSGIElement requiredBy : feature.getRequiredBy()) {
-                out.append("\t" + requiredBy.getName() + " " + requiredBy.getVersion()
-                + "\n");
-            }
+            StringBuilder out = feature.dump();
             Logging.writeStandardOut(out.toString());
         }
 
     }
 
     void printAllPluginsAndFeatures() {
-        StringBuilder out = new StringBuilder();
-        List<Plugin> plugins = new ArrayList<>();
-        List<Feature> features = new ArrayList<>();
-        List<Plugin> fragments = new ArrayList<>();
-
-        for (Plugin plugin : state.getPlugins()) {
-            if (plugin.isFragment()) {
-                fragments.add(plugin);
-            } else {
-                plugins.add(plugin);
-            }
-        }
-        features.addAll(state.getFeatures());
-
-        Comparator<OSGIElement> comp = new NameAndVersionComparator();
-
-        Collections.sort(plugins, comp);
-        Collections.sort(features, comp);
-        Collections.sort(fragments, comp);
-
-        out.append("features:\n");
-        for (Feature feature : features) {
-            out.append("\t" + feature.getInformationLine() + "\n");
-        }
-        out.append("plugins:\n");
-        for (Plugin plugin : plugins) {
-            out.append("\t" + plugin.getInformationLine() + "\n");
-        }
-        out.append("fragments:\n");
-        for (Plugin fragment : fragments) {
-            out.append("\t" + fragment.getInformationLine() + "\n");
-        }
+        StringBuilder out = state.dumpAllPluginsAndFeatures();
         Logging.writeStandardOut(out.toString());
     }
 
@@ -486,7 +305,7 @@ public class CommandLineInterpreter {
         return returnSet;
     }
 
-    private static String printLogs(Set<? extends OSGIElement> elements, boolean showWarnings) {
+    static String printLogs(Set<? extends OSGIElement> elements, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
 
         for (OSGIElement element : elements) {
@@ -500,7 +319,7 @@ public class CommandLineInterpreter {
         return ret.toString();
     }
 
-    private static String printPackageLogs(Set<Package> elements, boolean showWarnings) {
+    static String printPackageLogs(Set<Package> elements, boolean showWarnings) {
         StringBuilder ret = new StringBuilder();
 
         for (Package pack : elements) {

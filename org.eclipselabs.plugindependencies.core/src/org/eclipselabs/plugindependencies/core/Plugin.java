@@ -437,4 +437,97 @@ public class Plugin extends OSGIElement {
     public boolean isEarlyStartup() {
         return earlyStartup;
     }
+
+    public StringBuilder dump() {
+        StringBuilder out = new StringBuilder();
+        out.append(isFragment() ? "fragment: " : "plugin: ");
+        out.append(getName() + " " + getVersion() + "\n");
+        out.append("required plugins:\n");
+        for (ManifestEntry requiredPlugin : getRequiredPluginEntries()) {
+            String sep = requiredPlugin.getVersion().isEmpty()? "" : " ";
+            out.append("\t" + requiredPlugin.getName() + sep + requiredPlugin.getVersion());
+            if (requiredPlugin.isOptional()) {
+                out.append(" *optional*");
+            }
+            out.append("\n");
+            for (Plugin resolvedPlugin : getRequiredPlugins()) {
+                if (requiredPlugin.isMatching(resolvedPlugin)) {
+                    out.append("\t-> " + resolvedPlugin.getName() + " "
+                            + resolvedPlugin.getVersion() + "\n");
+                }
+            }
+        }
+        out.append("required packages:\n");
+        for (ManifestEntry requiredPackage : getImportedPackageEntries()) {
+            String sep = requiredPackage.getVersion().isEmpty()? "" : " ";
+            out.append("\t" + requiredPackage.getName() + sep + requiredPackage.getVersion());
+            if (requiredPackage.isDynamicImport()) {
+                out.append(" *dynamicImport*");
+            }
+            if (requiredPackage.isOptional()) {
+                out.append(" *optional*");
+            }
+            out.append("\n");
+            for (Package resolvedPackage : getImportedPackages()) {
+                if (requiredPackage.isMatching(resolvedPackage)) {
+                    String sep2 = resolvedPackage.getVersion().isEmpty()? "" : " ";
+                    out.append("\t->package: " + resolvedPackage.getName() + sep2
+                            + resolvedPackage.getVersion() + "\n");
+                    out.append("\t\texported by:\n");
+                    Set<Plugin> exportedBy = resolvedPackage.getExportedBy();
+                    if (exportedBy.size() == 0) {
+                        out.append("\t\tJRE System Library\n");
+
+                    } else {
+                        for (Plugin plug : exportedBy) {
+                            out.append("\t\t");
+                            out.append(plug.isFragment() ? "fragment: " : "plugin: ");
+                            out.append(plug.getName() + " " + plug.getVersion()
+                            + "\n\n");
+                        }
+                    }
+                }
+            }
+        }
+        out.append("included in feature:\n");
+        for (Feature feature : getIncludedInFeatures()) {
+            out.append("\t" + feature.getName() + " " + feature.getVersion() + "\n");
+        }
+        out.append("required by:\n");
+        for (OSGIElement neededBy : getRequiredBy()) {
+            out.append("\t");
+            if (neededBy.isOptional(this)) {
+                out.append("*optional* for ");
+            }
+            out.append(neededBy.getName() + " " + neededBy.getVersion()
+                    + ((neededBy instanceof Feature)? " (feature)" : "") + "\n");
+        }
+        out.append("exported packages:\n");
+        for (Package exportedPackage : getExportedPackages()) {
+            String sep = exportedPackage.getVersion().isEmpty()? "" : " ";
+            out.append("\t" + exportedPackage.getName() + sep
+                    + exportedPackage.getVersion());
+            if (exportedPackage.getReexportedBy().contains(this)) {
+                out.append(" *reexport*");
+            }
+            out.append("\n");
+        }
+        if (isFragment()) {
+            out.append("fragment host:\n");
+            Plugin fragmentHost = getHost();
+            if(fragmentHost == null){
+                out.append("<missing>\n");
+            } else {
+                out.append(fragmentHost.getName() + " " + fragmentHost.getVersion()
+                + "\n");
+            }
+        } else {
+            out.append("fragments:\n");
+            for (Plugin fragment : getFragments()) {
+                out.append("\t" + fragment.getName() + " " + fragment.getVersion()
+                + "\n");
+            }
+        }
+        return out;
+    }
 }

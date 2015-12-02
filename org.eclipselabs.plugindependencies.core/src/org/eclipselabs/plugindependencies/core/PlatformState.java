@@ -11,8 +11,10 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +51,8 @@ public class PlatformState {
     private final Set<ManifestEntry> hiddenElements;
 
     private PlatformSpecs platformSpecs;
+
+    private boolean validated;
 
     /**
      *
@@ -292,6 +296,10 @@ public class PlatformState {
     }
 
    public void validate() {
+       if(validated){
+           return;
+       }
+       validated = true;
        // validate same package contributed by different plugins in same dependency chain
        for (Package pack : packages) {
            if(pack.getExportedBy().size() > 1){
@@ -496,6 +504,119 @@ public class PlatformState {
         this.platformSpecs = platformSpecs;
     }
 
+    public StringBuilder dumpAllPluginsAndFeatures() {
+        StringBuilder out = new StringBuilder();
+        List<Plugin> plugins1 = new ArrayList<>();
+        List<Feature> features1 = new ArrayList<>();
+        List<Plugin> fragments = new ArrayList<>();
+
+        for (Plugin plugin : getPlugins()) {
+            if (plugin.isFragment()) {
+                fragments.add(plugin);
+            } else {
+                plugins1.add(plugin);
+            }
+        }
+        features1.addAll(getFeatures());
+
+        Comparator<OSGIElement> comp = new NameAndVersionComparator();
+
+        Collections.sort(plugins1, comp);
+        Collections.sort(features1, comp);
+        Collections.sort(fragments, comp);
+
+        out.append("features:\n");
+        for (Feature feature : features1) {
+            out.append("\t" + feature.getInformationLine() + "\n");
+        }
+        out.append("plugins:\n");
+        for (Plugin plugin : plugins1) {
+            out.append("\t" + plugin.getInformationLine() + "\n");
+        }
+        out.append("fragments:\n");
+        for (Plugin fragment : fragments) {
+            out.append("\t" + fragment.getInformationLine() + "\n");
+        }
+        return out;
+    }
+
+
+    public void dumpAllElements(PrintWriter pw) {
+        List<Plugin> plugins1 = new ArrayList<>();
+        List<Feature> features1 = new ArrayList<>();
+        List<Plugin> fragments = new ArrayList<>();
+
+        for (Plugin plugin : getPlugins()) {
+            if (plugin.isFragment()) {
+                fragments.add(plugin);
+            } else {
+                plugins1.add(plugin);
+            }
+        }
+        features1.addAll(getFeatures());
+
+        Comparator<OSGIElement> comp = new NameAndVersionComparator();
+
+        Collections.sort(plugins1, comp);
+        Collections.sort(features1, comp);
+        Collections.sort(fragments, comp);
+
+        List<Package> packs = new ArrayList<>(getPackages());
+        Comparator<NamedElement> comp1 = new NamedElement.NameComparator();
+
+        Collections.sort(packs, comp1);
+
+        pw.println("features:");
+        for (Feature feature : features1) {
+            pw.println("\t" + feature.getInformationLine());
+        }
+        pw.println("plugins:");
+        for (Plugin plugin : plugins1) {
+            pw.println("\t" + plugin.getInformationLine());
+        }
+        pw.println("fragments:");
+        for (Plugin fragment : fragments) {
+            pw.println("\t" + fragment.getInformationLine());
+        }
+
+        pw.println("packages:");
+        for (Package pack : packs) {
+            pw.print("\t" + pack.getInformationLine());
+        }
+
+        pw.println("-----------------------------------------------");
+        pw.println("---            all dependencies             ---");
+        pw.println("-----------------------------------------------");
+
+        pw.println("features:");
+        for (Feature feature : features1) {
+            pw.println(feature.dump());
+        }
+        pw.println("plugins:");
+        for (Plugin plugin : plugins1) {
+            pw.println(plugin.dump());
+        }
+        pw.println("fragments:");
+        for (Plugin fragment : fragments) {
+            pw.println(fragment.dump());
+        }
+
+    }
+
+    public StringBuilder dumpLogs() {
+        validate();
+        StringBuilder out = new StringBuilder();
+
+        out.append("Platform state:\n");
+        out.append("Features:\n");
+        out.append(CommandLineInterpreter.printLogs(getFeatures(), true));
+        out.append("Plugins:\n");
+        out.append(CommandLineInterpreter.printLogs(getPlugins(), true));
+        out.append("Packages:\n");
+        out.append(CommandLineInterpreter.printPackageLogs(getPackages(), true));
+        return out;
+    }
+
     public static class PlatformSpecs {
         public final String os;
         public final String ws;
@@ -550,5 +671,18 @@ public class PlatformState {
         }
 
 
+    }
+
+    public static final class NameAndVersionComparator implements Comparator<OSGIElement> {
+        @Override
+        public int compare(OSGIElement o1, OSGIElement o2) {
+            int diff = o1.getName().compareTo(o2.getName());
+            if (diff != 0) {
+                return diff;
+            }
+            Version v1 = new Version(o1.getVersion());
+            Version v2 = new Version(o2.getVersion());
+            return v1.compareTo(v2);
+        }
     }
 }
