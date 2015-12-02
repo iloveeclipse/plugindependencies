@@ -2,7 +2,7 @@
 <feature
       id="org.eclipselabs.plugindependencies"
       label="Plugin Dependencies Explorer"
-      version="1.0.0.qualifier"
+      version="1.0.5.qualifier"
       provider-name="Andrey Loskutov">
 
    <description url="https://github.com/iloveeclipse/plugindependencies">
