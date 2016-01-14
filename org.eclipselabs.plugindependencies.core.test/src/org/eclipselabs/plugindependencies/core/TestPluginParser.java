@@ -240,8 +240,8 @@ public class TestPluginParser  extends BaseTest {
     public void testReadManifests() throws IOException {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
-
-        new PluginParser().createPluginsAndAddToSet(new File(dirPath), new PlatformState(pluginSet, packageSet, null));
+        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        new PluginParser(state).createPluginsAndAddToSet(new File(dirPath));
         assertEquals(packages, packageSet);
         assertEquals(plugins.toString(), pluginSet.toString());
 
@@ -275,9 +275,10 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PluginParser pluginParser = new PluginParser();
+        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        PluginParser pluginParser = new PluginParser(state);
         pluginParser.setParseEarlyStartup(true);
-        pluginParser.createPluginsAndAddToSet(new File(dirPath), new PlatformState(pluginSet, packageSet, null));
+        pluginParser.createPluginsAndAddToSet(new File(dirPath));
         assertEquals(packages, packageSet);
         assertEquals(plugins.toString(), pluginSet.toString());
 
@@ -395,7 +396,8 @@ public class TestPluginParser  extends BaseTest {
         packageSet = new LinkedHashSet<>();
 
         try {
-            new PluginParser().createPluginsAndAddToSet(null, new PlatformState(pluginSet, packageSet, null));
+            PlatformState state = new PlatformState(pluginSet, packageSet, null);
+            new PluginParser(state).createPluginsAndAddToSet(null);
             fail();
         } catch (NullPointerException e) {
             // expected
@@ -407,7 +409,8 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        new PluginParser().createPluginsAndAddToSet(new File("/folder/does/not/exist"), new PlatformState(pluginSet, packageSet, null));
+        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        new PluginParser(state).createPluginsAndAddToSet(new File("/folder/does/not/exist"));
         assertTrue(pluginSet.isEmpty());
     }
 

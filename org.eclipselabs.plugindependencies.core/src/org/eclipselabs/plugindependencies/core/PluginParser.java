@@ -43,9 +43,11 @@ import org.xml.sax.SAXException;
 public class PluginParser {
 
     private boolean parseEarlyStartup;
+    private final PlatformState state;
 
-    public PluginParser() {
+    public PluginParser(PlatformState state) {
         super();
+        this.state = state;
     }
 
     /**
@@ -58,7 +60,7 @@ public class PluginParser {
      * @throws IOException
      *             Reading in file system throws IOException
      */
-    public int createPluginsAndAddToSet(File rootDir, PlatformState state) throws IOException {
+    public int createPluginsAndAddToSet(File rootDir) throws IOException {
 
         if (!rootDir.exists()) {
             Logging.getLogger().error("given directory does not exist: " + rootDir);
@@ -74,14 +76,14 @@ public class PluginParser {
 
         int result = 0;
         for (File pluginOrDirectory : dirArray) {
-            if (createPluginAndAddToSet(pluginOrDirectory, state) != 0) {
+            if (createPluginAndAddToSet(pluginOrDirectory) != 0) {
                 result = -1;
             }
         }
         return result;
     }
 
-    public int createPluginAndAddToSet(File pluginOrDirectory, PlatformState state) throws IOException {
+    public int createPluginAndAddToSet(File pluginOrDirectory) throws IOException {
         Manifest manifest = getManifest(pluginOrDirectory);
         Plugin plugin;
         String pluginXml = null;

@@ -42,7 +42,7 @@ public class CommandLineInterpreter {
     public CommandLineInterpreter() {
         super();
         state = new PlatformState();
-        pp = new PluginParser();
+        pp = new PluginParser(state);
     }
 
     public PlatformState getState() {
@@ -354,7 +354,7 @@ public class CommandLineInterpreter {
         int result = 0;
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
-            if (pp.createPluginsAndAddToSet(pluginsDir, state) == -1) {
+            if (pp.createPluginsAndAddToSet(pluginsDir) == -1) {
                 result = -1;
             }
             hasPlugins = true;
@@ -382,7 +382,7 @@ public class CommandLineInterpreter {
 
     public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
         int result = 0;
-        if (pp.createPluginsAndAddToSet(directory, state) == -1) {
+        if (pp.createPluginsAndAddToSet(directory) == -1) {
             result = -1;
         }
         if (FeatureParser.createFeaturesAndAddToSet(directory, state) == -1) {
@@ -397,7 +397,7 @@ public class CommandLineInterpreter {
     }
 
     public int readInPlugin(File directory) throws IOException {
-        return pp.createPluginAndAddToSet(directory, state);
+        return pp.createPluginAndAddToSet(directory);
     }
 
     public String getFullLog() {
