@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.StringUtil.*;
-import static org.junit.Assert.*;
+import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +80,8 @@ public class TestPluginParser  extends BaseTest {
     static Set<Plugin> checkForDoubleExport;
 
     static Set<Package> packages;
+
+    private static String bundleVersionForDummy;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -203,6 +209,9 @@ public class TestPluginParser  extends BaseTest {
         plugins.add(new Plugin("com.legacyPlugin", "7.5.0.v200910221234", false, false));
         plugins.add(new Plugin("org.eclipse.ant.optional.junit", "3.3.0", true, false));
         plugins.addAll(checkForDoubleExport);
+
+        bundleVersionForDummy = PlatformState.getBundleVersionForDummy();
+        PlatformState.setBundleVersionForDummy("99.0.0");
     }
 
     @AfterClass
@@ -216,6 +225,7 @@ public class TestPluginParser  extends BaseTest {
         orgEclipseEquinoxApp = null;
 
         plugin6 = null;
+        PlatformState.setBundleVersionForDummy(bundleVersionForDummy);
     }
 
     @Override
