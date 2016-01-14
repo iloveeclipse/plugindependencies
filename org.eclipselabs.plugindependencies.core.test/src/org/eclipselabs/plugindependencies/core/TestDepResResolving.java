@@ -439,7 +439,7 @@ public class TestDepResResolving  extends BaseTest {
 
         Package pack = new Package("com.package.test", "4.11.0");
 
-        exportedBy = "\t\texported by:\n\t\tJRE System Library";
+        exportedBy = "\t\texported by:\n\t\tJRE System Library\n";
         assertEquals(exportedBy, pack.printExportedBy(0));
 
         assertEquals("", pack.printImportedBy(0));
