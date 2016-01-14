@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -149,7 +150,7 @@ public class PluginParser {
         } else {
             version = versionNode.getTextContent();
         }
-        Plugin plugin = new Plugin(id, version, false, true);
+        Plugin plugin = new Plugin(null, id, version, false, true);
 
         NodeList imports = doc.getElementsByTagName("import");
         for (int i = 0; i < imports.getLength(); i++) {
@@ -204,7 +205,7 @@ public class PluginParser {
         }
         String fragmentHost = readAttribute(mf, "Fragment-Host");
         boolean fragment = fragmentHost != null;
-        Plugin extractedPlugin = new Plugin(StringUtil.firstEntry(symbolicName, ';'), version, fragment, symbolicName.contains("singleton:=true"));
+        Plugin extractedPlugin = new Plugin(mf, StringUtil.firstEntry(symbolicName, ';'), version, fragment, symbolicName.contains("singleton:=true"));
 
         extractedPlugin.setRequiredPlugins(readAttribute(mf, "Require-Bundle"));
 
@@ -237,7 +238,7 @@ public class PluginParser {
         return completeImport;
     }
 
-    private static String readAttribute(Manifest mf, String name) {
+    public static String readAttribute(Manifest mf, String name) {
         return mf.getMainAttributes().getValue(name);
     }
 

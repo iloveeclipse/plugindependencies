@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.Manifest;
 
 /**
  * @author obroesam
@@ -59,13 +60,20 @@ public class Plugin extends OSGIElement {
 
     private boolean earlyStartup;
 
+    private final Manifest manifest;
+
 
     public Plugin(String symbName, String vers) {
-        this(symbName, vers, false, false);
+        this(null, symbName, vers, false, false);
     }
 
     public Plugin(String symbName, String vers, boolean fragment, boolean singleton) {
+        this(null, symbName, vers, fragment, singleton);
+    }
+
+    public Plugin(Manifest manifest, String symbName, String vers, boolean fragment, boolean singleton) {
         super(symbName, fixVersion(vers));
+        this.manifest = manifest;
         isSingleton = singleton;
         this.importedPackageEntries = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
@@ -529,5 +537,12 @@ public class Plugin extends OSGIElement {
             }
         }
         return out;
+    }
+
+    /**
+     * @return can return null (not all plugins have manifests!)
+     */
+    public Manifest getManifest() {
+        return manifest;
     }
 }
