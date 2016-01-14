@@ -313,8 +313,9 @@ public class TestPluginParser  extends BaseTest {
 
     @Test
     public void testParseManifestOfFolder() throws IOException {
+        PlatformState state = new PlatformState();
         Manifest mf = PluginParser.getManifest(testPlugin);
-        Plugin plugin = PluginParser.parseManifest(mf);
+        Plugin plugin = PluginParser.parseManifest(mf, state);
         assertEquals("com.company.itee.core", plugin.getName());
         assertEquals("99.0.0", plugin.getVersion());
         assertEquals(compareReqPluginsOfTestPlugin, plugin.getRequiredPluginEntries());
@@ -336,8 +337,9 @@ public class TestPluginParser  extends BaseTest {
 
     @Test
     public void testParseManifestOfJar() throws IOException {
+        PlatformState state = new PlatformState();
         Manifest mf = PluginParser.getManifest(orgEclipseAntOptionalJunit);
-        Plugin plugin = PluginParser.parseManifest(mf);
+        Plugin plugin = PluginParser.parseManifest(mf, state);
         assertEquals("org.eclipse.ant.optional.junit", plugin.getName());
         assertEquals("3.3.0", plugin.getVersion());
         assertEquals(compareReqPluginsOforgEclipseAnt, plugin.getRequiredPluginEntries());
@@ -349,8 +351,9 @@ public class TestPluginParser  extends BaseTest {
 
     @Test
     public void testParseManifestOfJar2() throws IOException {
+        PlatformState state = new PlatformState();
         Manifest mf = PluginParser.getManifest(orgEclipseEquinoxApp);
-        Plugin plugin = PluginParser.parseManifest(mf);
+        Plugin plugin = PluginParser.parseManifest(mf, state);
         assertEquals("org.eclipse.equinox.app", plugin.getName());
         assertEquals("1.3.100.v20110321", plugin.getVersion());
         assertEquals(compareReqPluginsOfOrgEclipseEqu, plugin.getRequiredPluginEntries());
@@ -368,16 +371,18 @@ public class TestPluginParser  extends BaseTest {
 
     @Test
     public void testParseManifest2() throws IOException {
+        PlatformState state = new PlatformState();
         assertNull(PluginParser.getManifest(noPlugin));
-        assertNull(PluginParser.parseManifest(PluginParser.getManifest(noPlugin)));
-        assertNull(PluginParser.parseManifest(null));
-        assertNull(PluginParser.parseManifest(new Manifest()));
+        assertNull(PluginParser.parseManifest(PluginParser.getManifest(noPlugin), state));
+        assertNull(PluginParser.parseManifest(null, state));
+        assertNull(PluginParser.parseManifest(new Manifest(), state));
     }
 
     @Test
     public void testParseManifest3() throws IOException {
+        PlatformState state = new PlatformState();
         Manifest mf = PluginParser.getManifest(plugin6);
-        Plugin plugin = PluginParser.parseManifest(mf);
+        Plugin plugin = PluginParser.parseManifest(mf, state);
         assertEquals("org.company.workcenter", plugin.getName());
         assertEquals("6.3.1", plugin.getVersion());
         Set<Package> exported = new LinkedHashSet<>();

@@ -145,10 +145,10 @@ public class Plugin extends OSGIElement {
         return exportedPackages;
     }
 
-    public void setExportedPackages(String expPackagesString) {
+    public void setExportedPackages(String expPackagesString, PlatformState state) {
         List<ManifestEntry> entries = StringUtil.splitInManifestEntries(expPackagesString);
         for (ManifestEntry entry : entries) {
-            Package pack = new Package(entry.getName(), entry.getVersion());
+            Package pack = state.createPackage(entry);
             pack.addExportPlugin(this);
             exportedPackages.add(pack);
         }

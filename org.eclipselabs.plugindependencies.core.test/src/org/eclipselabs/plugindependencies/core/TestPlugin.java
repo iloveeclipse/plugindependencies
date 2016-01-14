@@ -104,7 +104,8 @@ public class TestPlugin extends BaseTest {
 
     @Test
     public void testSetExportedPackages() {
-        plugin.setExportedPackages(exportedPackages);
+        PlatformState state = new PlatformState();
+        plugin.setExportedPackages(exportedPackages, state);
 
         Set<Package> expPack = new LinkedHashSet<>();
         expPack.add(new Package("org.eclipse.core.internal.adapter", ""));
@@ -134,7 +135,8 @@ public class TestPlugin extends BaseTest {
 
     @Test
     public void testImportedPackages() {
-        plugin.setExportedPackages(exportedPackages);
+        PlatformState state = new PlatformState();
+        plugin.setExportedPackages(exportedPackages, state);
         plugin.setImportedPackageEntries(importedPackages);
         for (ManifestEntry entry : plugin.getImportedPackageEntries()) {
             Package pack = new Package(entry.getName(), entry.getVersion());

@@ -62,8 +62,9 @@ public class TestPluginParser2  extends BaseTest {
 
     @Test
     public void testReadPackages() throws IOException {
+        PlatformState state = new PlatformState();
         Manifest xtextMf = getManifest(xtext);
-        Plugin xtextPl = parseManifest(xtextMf);
+        Plugin xtextPl = parseManifest(xtextMf, state);
         assertSame(xtextMf, xtextPl.getManifest());
         String value = xtextMf.getMainAttributes().getValue("Export-Package");
         String export = readAttribute(xtextMf, "Export-Package");
@@ -75,7 +76,7 @@ public class TestPluginParser2  extends BaseTest {
         assertEquals(packages.size(), exportedPackages.size());
 
         Manifest xtextGenMf = getManifest(xtextGenerator);
-        Plugin xtextGenPl = parseManifest(xtextGenMf);
+        Plugin xtextGenPl = parseManifest(xtextGenMf, state);
         assertSame(xtextGenMf, xtextGenPl.getManifest());
         value = xtextGenMf.getMainAttributes().getValue("Export-Package");
         export = readAttribute(xtextGenMf, "Export-Package");

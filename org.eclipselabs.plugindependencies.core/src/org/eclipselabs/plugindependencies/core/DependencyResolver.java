@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.NamedElement.*;
+import static org.eclipselabs.plugindependencies.core.NamedElement.ZERO_VERSION;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -281,7 +281,7 @@ public class DependencyResolver {
                 while (jarEntries.hasMoreElements()) {
                     JarEntry entry = jarEntries.nextElement();
                     if (entry.getName().startsWith(packagePath)) {
-                        Package p = new Package(packageName, NamedElement.EMPTY_VERSION);
+                        Package p = state.createPackage(packageName, NamedElement.EMPTY_VERSION);
                         Set<Package> result = new LinkedHashSet<>();
                         result.add(p);
                         return result;

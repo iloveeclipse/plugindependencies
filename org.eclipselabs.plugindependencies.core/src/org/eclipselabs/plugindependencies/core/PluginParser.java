@@ -93,7 +93,7 @@ public class PluginParser {
                 return 0;
             }
         }
-        plugin = parseManifest(manifest);
+        plugin = parseManifest(manifest, state);
         if (plugin == null) {
             if (manifest == null && pluginXml == null) {
                 return 0;
@@ -196,7 +196,7 @@ public class PluginParser {
      *            Manifest is parsed to extract the Plugin data out of it.
      * @return Parsed Plugin
      */
-    public static Plugin parseManifest(Manifest mf) {
+    public static Plugin parseManifest(Manifest mf, PlatformState ps) {
         if (mf == null) {
             return null;
         }
@@ -213,7 +213,7 @@ public class PluginParser {
 
         extractedPlugin.setImportedPackageEntries(readCompleteImport(mf));
 
-        extractedPlugin.setExportedPackages(readAttribute(mf, "Export-Package"));
+        extractedPlugin.setExportedPackages(readAttribute(mf, "Export-Package"), ps);
 
         extractedPlugin.setBundleClassPath(readAttribute(mf, "Bundle-ClassPath"));
 

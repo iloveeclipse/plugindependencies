@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -50,6 +52,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
         packageSet.add(new Package("com.example.result", "99.0.0"));
         packageSet.add(new Package("com.company.itee.core", "3.8.2"));
         packageSet.add(new Package("com.company.tables", "9.2.0"));
+        packageSet.add(new Package("javax.crypto", ""));
         packageSet.add(package1);
         packageSet.add(package2);
         pluginSet = new LinkedHashSet<Plugin>();

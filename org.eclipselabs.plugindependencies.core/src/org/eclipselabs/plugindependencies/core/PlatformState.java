@@ -193,7 +193,9 @@ public class PlatformState {
     }
 
     public Package addPackage(Package newOne){
-        packages.add(newOne);
+        if(!packages.contains(newOne)){
+            packages.add(newOne);
+        }
 
         List<Package> list = nameToPackages.get(newOne.getName());
         if(list == null){
@@ -275,6 +277,16 @@ public class PlatformState {
             return null;
         }
         return list.get(0);
+    }
+
+    public Package createPackage(ManifestEntry entry){
+        return createPackage(entry.getName(), entry.getVersion());
+    }
+
+    public Package createPackage(String name, String version) {
+        Package pack = new Package(name, version);
+        pack = addPackage(pack);
+        return pack;
     }
 
     public Plugin getPlugin(String name){

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,21 +26,21 @@ public class TestDependencyResolver extends BaseTest {
 
     @Test
     public void testImportAmbiguousPackages() {
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
         Plugin p1 = new Plugin("p1", "1.0.0", false, false);
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
-
-        p1.setExportedPackages("hello");
-        p2.setExportedPackages("hello");
-
-        p3.setImportedPackageEntries("hello");
-
-        Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
         plugins.add(p2);
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+
+        p1.setExportedPackages("hello", ps);
+        p2.setExportedPackages("hello", ps);
+
+        p3.setImportedPackageEntries("hello");
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Warning: [hello] package contributed by multiple, not related plugins]", ps.getPackage("hello").getLog().toString());
@@ -55,8 +55,6 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=\"0.5.0\"");
-        p2.setExportedPackages("hello;version=\"0.5.0\"");
 
         p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
@@ -66,6 +64,8 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
 
@@ -81,8 +81,6 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=\"0.5.0\"");
-        p2.setExportedPackages("hello");
 
         p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
@@ -92,6 +90,8 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello", ps);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[]", p1.getLog().toString());
@@ -110,8 +110,6 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=\"0.5.0\"");
-        p2.setExportedPackages("hello;version=\"0.5.0\"");
         p2.setRequiredPlugins("p1;version=\"1.0.0\"");
 
         p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
@@ -122,6 +120,8 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[]", p1.getLog().toString());
@@ -141,8 +141,6 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p1", "2.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=\"0.5.0\"");
-        p2.setExportedPackages("hello;version=\"0.5.0\"");
 
         p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
 
@@ -152,6 +150,8 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[]", p1.getLog().toString());
@@ -171,8 +171,6 @@ public class TestDependencyResolver extends BaseTest {
         Plugin p2 = new Plugin("p2", "2.0.0", false, false);
         Plugin p3 = new Plugin("p3", "1.0.0", false, false);
 
-        p1.setExportedPackages("hello;version=\"0.5.0\"");
-        p2.setExportedPackages("hello;version=\"0.5.0\"");
 
         p1.setFragmentHost("p2");
 
@@ -184,6 +182,8 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p3);
 
         PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[]", p1.getLog().toString());
