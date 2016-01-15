@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.util.Collections;
 import java.util.List;
@@ -111,7 +112,7 @@ public class ManifestEntry extends NamedElement {
         return new PlatformSpecs(os, ws, arch);
     }
 
-    private boolean attributesContain(String text) {
+    public boolean attributesContain(String text) {
         for (String attr : attributes) {
             if (attr.contains(text)) {
                 return true;
@@ -142,7 +143,14 @@ public class ManifestEntry extends NamedElement {
     }
 
     public boolean isReexport() {
-        return attributesContain("visibility:=\"reexport\"");
+        boolean match = attributesContain("visibility:=\"reexport\"")
+                || attributesContain("visibility:=reexport");
+        return match;
+    }
+
+    public boolean isSplit() {
+        boolean match = attributesContain("=\"split\"") || attributesContain("=split");
+        return match;
     }
 
     public boolean isMatchingPlatform(PlatformSpecs p) {

@@ -25,6 +25,7 @@ import java.util.Set;
 public abstract class OSGIElement extends NamedElement /* TODO implements Comparable */ {
 
     private Set<Plugin> requiredPlugins;
+    private Set<Plugin> requiredReexportedPlugins;
 
     private Set<Feature> includedInFeatures;
 
@@ -39,6 +40,7 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
     public OSGIElement(String name, String version) {
         super(name, version);
         this.requiredPlugins = new LinkedHashSet<>();
+        this.requiredReexportedPlugins = new LinkedHashSet<>();
         this.includedInFeatures = new LinkedHashSet<>();
         this.requiredPluginEntries = new ArrayList<>();
         this.duplicates = new ArrayList<>();
@@ -63,6 +65,7 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
 
     public void parsingDone(){
         requiredPlugins = requiredPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredPlugins);
+        requiredReexportedPlugins = requiredReexportedPlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredReexportedPlugins);
         includedInFeatures = includedInFeatures.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(includedInFeatures);
         duplicates = duplicates.isEmpty()? Collections.EMPTY_LIST : Collections.unmodifiableList(duplicates);
         requiredBy = requiredBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredBy);
@@ -73,10 +76,17 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
         return requiredPlugins;
     }
 
-    public void addRequiredPlugin(Plugin plugin) {
+    public Set<Plugin> getRequiredReexportedPlugins() {
+        return requiredReexportedPlugins;
+    }
+
+    public void addRequiredPlugin(Plugin plugin, boolean reexport) {
         if (plugin != null) {
             requiredPlugins.add(plugin);
             plugin.addRequiring(this);
+            if(reexport){
+                requiredReexportedPlugins.add(plugin);
+            }
         }
     }
 

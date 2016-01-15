@@ -1,0 +1,535 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-SymbolicName: org.eclipse.xtext.util
+Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.10.2",com.goog
+ le.guava;bundle-version="[10.0.1,19.0.0)";visibility:=reexport,com.go
+ ogle.inject;bundle-version="3.0.0";visibility:=reexport,javax.inject;
+ bundle-version="1.0.0";resolution:=optional;visibility:=reexport;x-in
+ stallation:=greedy
+Export-Package: org.eclipse.xtext.util; uses:="org.eclipse.emf.ecore, 
+  com.google.common.base,  com.google.inject,  org.eclipse.emf.common.
+ notify,  org.eclipse.emf.ecore.resource,  org.apache.log4j,  org.ecli
+ pse.xtext.util.concurrent,  org.eclipse.emf.ecore.util",org.eclipse.x
+ text.util.concurrent;uses:="org.eclipse.xtext.util",org.eclipse.xtext
+ .util.formallang;x-internal:=true,org.eclipse.xtext.util.internal;x-i
+ nternal:=true
+Bundle-Version: 2.8.4.v201508050135
+Ant-Version: Apache Ant 1.8.4
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_45-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+Import-Package: org.apache.log4j;version="1.2.15"
+
+Name: org/eclipse/xtext/util/ExceptionAcceptor$1.class
+SHA1-Digest: rILu094ZS3LfeVsbyYG0A6/U2lM=
+
+Name: org/eclipse/xtext/util/formallang/StringPda$StringPdaFactory.cla
+ ss
+SHA1-Digest: K31KHAHdW9qXEg5+ANNqvgNBvQA=
+
+Name: org/eclipse/xtext/util/ITextRegionWithLineInformation.class
+SHA1-Digest: +0oY+J3/hv4LVhAf6zdYUW8Xk8E=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$2.class
+SHA1-Digest: 3CQJ63C8XII1rFVtX0avDbOa3yE=
+
+Name: org/eclipse/xtext/util/GraphvizDotBuilder.class
+SHA1-Digest: +EiN+G3XAORlNu0YZC83ujTdY5Q=
+
+Name: org/eclipse/xtext/util/EmfStructureComparator.class
+SHA1-Digest: DphKoPcHbHnAGBP5FhjnAiI1faI=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$ElementAlias.c
+ lass
+SHA1-Digest: /amPCbdXTQ7u7TYz3j3PDybEu6I=
+
+Name: org/eclipse/xtext/util/LineFilterOutputStream.class
+SHA1-Digest: QwVmDLCdfIp0wr8S2Lat3QIQXhs=
+
+Name: org/eclipse/xtext/util/StopWatch.class
+SHA1-Digest: AZrb0eM6//2D+H/XqFnFcfguupw=
+
+Name: org/eclipse/xtext/util/SimpleAttributeResolver.class
+SHA1-Digest: GrWwGS+dCw5RCMuecQpJYokHVQo=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$TraceItem.class
+SHA1-Digest: JYlLMLN1EHzGXJ/4nycWZ8vBl2A=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$BacktrackHandler.class
+SHA1-Digest: ewkGUljlRvnkFtHZNCQYjwQmMm8=
+
+Name: org/eclipse/xtext/util/formallang/NfaGraphFormatter$Node.class
+SHA1-Digest: vzjLMmov0H5pX1/vRPMs9ssk6Mc=
+
+Name: org/eclipse/xtext/util/OnChangeEvictingCache$CacheAdapter.class
+SHA1-Digest: 2XTir1yz82ayaIjr1w63C6GWSWM=
+
+Name: org/eclipse/xtext/util/Files.class
+SHA1-Digest: 9UQFk6izMPMjYzDpWrnuMPAG50g=
+
+Name: org/eclipse/xtext/util/formallang/CfgFactory.class
+SHA1-Digest: wYBeUGNIuSa8vdvx1vDU+yqwsrU=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil.class
+SHA1-Digest: 7K4ceNg2fG94Wr+Sixv16vDr/Lc=
+
+Name: org/eclipse/xtext/util/concurrent/IReadAccess$Priority.class
+SHA1-Digest: Px+fF6R8zZSSmIMeitrRBY0Azsk=
+
+Name: org/eclipse/xtext/util/internal/FormattingMigrator$Mapping.class
+SHA1-Digest: xCd2NVtIXZ2APtK99xSHT6w5P5M=
+
+Name: org/eclipse/xtext/util/OnChangeEvictingCache$Listener.class
+SHA1-Digest: R1m04/+NTJdwFAp7nOD8PXTBsuk=
+
+Name: org/eclipse/xtext/util/SimpleAttributeResolver$2.class
+SHA1-Digest: S3BauvFrXBVFeEpChOSAB3pzhBU=
+
+Name: org/eclipse/xtext/util/Triple.class
+SHA1-Digest: AfYgUAG67/867tuhEANGAnLa6iE=
+
+Name: org/eclipse/xtext/util/internal/Stopwatches$NumbersForTask.class
+SHA1-Digest: 40iu5rGXyPdi8cZ91Xxyk/yTQhA=
+
+Name: org/eclipse/xtext/util/formallang/ProductionFormatter.class
+SHA1-Digest: ZdYZccACaT0CUEot8kWySO8Ik5Y=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$IsPop.class
+SHA1-Digest: t6NF9KMD45b8Rr2OqdUX2qFoVS0=
+
+Name: org/eclipse/xtext/util/Files$1.class
+SHA1-Digest: UQEqcBPDIV+Uedg5v4Tj8IMy528=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$Identity.class
+SHA1-Digest: oo7zvGmkqLhHyGoa5RlmeIm9vig=
+
+Name: org/eclipse/xtext/util/LazyStringInputStream.class
+SHA1-Digest: 9YdqdkzpA/1gzRMlSqmp3WC+maY=
+
+Name: org/eclipse/xtext/util/formallang/StringNfa.class
+SHA1-Digest: 2KRR9SfU0xHuv1Tf5eEdBIsMjvM=
+
+Name: org/eclipse/xtext/util/ITextRegion.class
+SHA1-Digest: gNlzL8VNSH+ZhjTz/hd5KUepF9Q=
+
+Name: org/eclipse/xtext/util/formallang/FollowerFunctionImpl$Unordered
+ Strategy.class
+SHA1-Digest: CxA4zn5gD610FnPYrk/liFvPlGA=
+
+Name: org/eclipse/xtext/util/formallang/PdaFactory.class
+SHA1-Digest: xE3fkthjuooFBus1/5SjS9QwyAk=
+
+Name: org/eclipse/xtext/util/formallang/Cfg.class
+SHA1-Digest: QGAkluUnOKMVIwZ0YY1yKBiJhKk=
+
+Name: org/eclipse/xtext/util/formallang/PdaToDot.class
+SHA1-Digest: nPK7advhU1oyGbTtamIg4oqpwc8=
+
+Name: org/eclipse/xtext/util/Wrapper.class
+SHA1-Digest: bbSXDPJiwrFOLFE/7gXU2Bd8vf4=
+
+Name: org/eclipse/xtext/util/GraphvizDotBuilder$Edge.class
+SHA1-Digest: wRsHy9WzJmOow6tQ6WsAcdFzgeU=
+
+Name: org/eclipse/xtext/util/SimpleAttributeResolver$DiscardingAdapter
+ .class
+SHA1-Digest: 1KPssjZWVblyv+YkM9marb3EDEg=
+
+Name: org/eclipse/xtext/util/StringInputStream.class
+SHA1-Digest: /adtf63gEPaIWVvJSkqgpYYEzZ8=
+
+Name: org/eclipse/xtext/util/formallang/ProductionUtil$1.class
+SHA1-Digest: Cv/HEXqwmL/zjMzYexlbDQA2jRY=
+
+Name: org/eclipse/xtext/util/OnChangeEvictingCache.class
+SHA1-Digest: AHelCW45TwcFeKNsiOhtcuA9Dns=
+
+Name: org/eclipse/xtext/util/formallang/StringProduction.class
+SHA1-Digest: mbkcsZQeZ8Ih9eCjnLG2SkS+Heg=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$AlternativeAli
+ as.class
+SHA1-Digest: t0Ul8J/kwLHNKCOEEoHTDQEhFO4=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher.class
+SHA1-Digest: aO6Z4gYebYcKyOVWftx1l5IcT98=
+
+Name: org/eclipse/xtext/util/internal/FormattingMigrator$Region.class
+SHA1-Digest: AnhRGDiJ57pmwtrm1NxHjRjFMxI=
+
+Name: org/eclipse/xtext/util/Exceptions.class
+SHA1-Digest: TxTyn53UU42mzM9Rry1w6G4ouJs=
+
+Name: org/eclipse/xtext/util/ExceptionAcceptor$2.class
+SHA1-Digest: FzQDE8pH4oMfMo0XDVifrFViwY4=
+
+Name: org/eclipse/xtext/util/concurrent/IReadAccess.class
+SHA1-Digest: f6gdnLEvosIzw7dskdkaED034BY=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$NFAFactory.class
+SHA1-Digest: XC+NRcp8NXoYHxD0LtqoYLNQ3UA=
+
+Name: org/eclipse/xtext/util/ReflectionUtil.class
+SHA1-Digest: 6zDW5GvAOSHdvF/VR1ahsyoA0C8=
+
+Name: org/eclipse/xtext/util/formallang/StringProduction$ElementType.c
+ lass
+SHA1-Digest: 9sSGUL6m4I9v17KmH9SI2vfDNpY=
+
+Name: org/eclipse/xtext/util/formallang/ProductionStringFactory.class
+SHA1-Digest: 38spCWDzRxyf8x5mDj2WTsGhWcs=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$NullErrorHandler.cl
+ ass
+SHA1-Digest: 0Lbpw4PyGEdr1oO++v7lwMtk340=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$StateAliasNfa.
+ class
+SHA1-Digest: GkJagXKEqHZYd9b8Z5FVJ30aFAU=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$MappedComparator.class
+SHA1-Digest: T6AY+ymvOODdsUZFjGq6/KWNU1g=
+
+Name: org/eclipse/xtext/util/IAcceptor.class
+SHA1-Digest: yVFu/dVEI1LHZvHym5uO8TSHjiM=
+
+Name: org/eclipse/xtext/util/EcoreGenericsUtil$TypeBindingAcceptor.cla
+ ss
+SHA1-Digest: QsJNlEX+CKjtZ6DFXy1spVNh7Nc=
+
+Name: org/eclipse/xtext/util/formallang/StringNfa$StringNfaState.class
+SHA1-Digest: 412GoNmPvs2y1tE99BV0DcJk8zM=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$WarningErrorHandler
+ .class
+SHA1-Digest: Nm7Wc3LKctf8LGM1z0/3Ccb1ToM=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$CyclicStackTraverser.c
+ lass
+SHA1-Digest: /dUGKssiWcntu4wmSsAb6lK0h4I=
+
+Name: org/eclipse/xtext/util/formallang/StringProduction$ProdElement.c
+ lass
+SHA1-Digest: Rm/mY6WhiqHsq/c7cvjo9GSLNjs=
+
+Name: org/eclipse/xtext/util/concurrent/IUnitOfWork.class
+SHA1-Digest: p2WYrZ4GwINSEUr7TeH2ivUW6H0=
+
+Name: org/eclipse/xtext/util/SimpleAttributeResolver$3.class
+SHA1-Digest: i9gJF6wNgOYdWp1wAl/6VeuSBU8=
+
+Name: org/eclipse/xtext/util/CancelIndicator$1.class
+SHA1-Digest: NvH3KaGYHKxmI2C/tn9+o+0Fh5Q=
+
+Name: org/eclipse/xtext/util/formallang/FollowerFunctionImpl$Direction
+ .class
+SHA1-Digest: aN3iBQ3IIZKPDIYQcnIQw5wAkZ4=
+
+Name: org/eclipse/xtext/util/Files$2.class
+SHA1-Digest: o0Tv2i0pTEEmRlKT6D1uLDocdM0=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$1.class
+SHA1-Digest: 3zllVTkjhHzpaJXqxVugE7qhWTo=
+
+Name: org/eclipse/xtext/util/IResourceScopeCache$NullImpl.class
+SHA1-Digest: kTQKE7f2VUe3omc0WhACB72YWTE=
+
+Name: org/eclipse/xtext/util/internal/Stopwatches.class
+SHA1-Digest: UAAZzLFGdlng4AXBUoDmriCRNSo=
+
+Name: org/eclipse/xtext/util/formallang/StringPda.class
+SHA1-Digest: grqFvDOAXlrXl2ZA51GXbM6ooXc=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$MethodNameFilter.cl
+ ass
+SHA1-Digest: e5A2Jbs0bonEQ5WSlqTuusqcgTc=
+
+Name: org/eclipse/xtext/util/GraphvizDotBuilder$Digraph.class
+SHA1-Digest: LyF1305u3vkd0f2/vqgFGmVPa1E=
+
+Name: org/eclipse/xtext/util/RuntimeIOException.class
+SHA1-Digest: RNHJNeySQTgE1CzN28Bx0MdY/E4=
+
+Name: about.html
+SHA1-Digest: m//+sZd+LYcO5OY/bjEiZVm0dk0=
+
+Name: org/eclipse/xtext/util/GraphvizDotBuilder$Props.class
+SHA1-Digest: jkSmMKU1Pir4IwA3eNsOq1lUhuY=
+
+Name: org/eclipse/xtext/util/internal/Stopwatches$StopwatchForTask.cla
+ ss
+SHA1-Digest: VkxIwF6WJj5l0k2QaAZQ419/cCM=
+
+Name: org/eclipse/xtext/util/ExceptionAcceptor$3.class
+SHA1-Digest: UXHBbxFggjK0ygXZLhlFhnQK1hI=
+
+Name: org/eclipse/xtext/util/formallang/PdaListFormatter$ObjToStrFunct
+ ion.class
+SHA1-Digest: ptoA+9wA2CHKiLMPf2xFwaCCMm0=
+
+Name: org/eclipse/xtext/util/formallang/Production.class
+SHA1-Digest: /d1nddyPxydx1/tON1JHCEFu740=
+
+Name: org/eclipse/xtext/util/Modules2.class
+SHA1-Digest: Nig1XsB9vNBHGEBzoohjR9RigYM=
+
+Name: org/eclipse/xtext/util/AbstractLinkedStack.class
+SHA1-Digest: jWd1VssUigfRXFqrtgcOGaSlDYE=
+
+Name: org/eclipse/xtext/util/concurrent/AbstractReadWriteAcces$1.class
+SHA1-Digest: 1D4krxFIFLvSKLYpWhDz7SRFzOI=
+
+Name: org/eclipse/xtext/util/formallang/Traverser.class
+SHA1-Digest: Joot1J6oNsnoW1fjAYKmC36VqKI=
+
+Name: org/eclipse/xtext/util/LinkedStack.class
+SHA1-Digest: 69oIHwHyWBcAb5SiriFPHi1X/EU=
+
+Name: org/eclipse/xtext/util/formallang/StringNfa$StringNfaFactory.cla
+ ss
+SHA1-Digest: 1utIUCrhRBdoaELGd3YW4bxblOY=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$StatesToDot.cl
+ ass
+SHA1-Digest: i2e8ZteLjFn6s5YZmBqlGV5GR5M=
+
+Name: org/eclipse/xtext/util/internal/FormattingMigrator.class
+SHA1-Digest: 2/gOYfQj6pPJ/k+9LFPgmQzC9Bk=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$StackItem.class
+SHA1-Digest: CBNAUOY1WK6MDgYTcdsT4bnUIfI=
+
+Name: org/eclipse/xtext/util/internal/Stopwatches$StoppedTask.class
+SHA1-Digest: FNV5OcLBd/BuM3NYbc5yaNBusis=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$StateAlias.cla
+ ss
+SHA1-Digest: jQKlq3wP2WAnISOiJz6Lohx1hDI=
+
+Name: org/eclipse/xtext/util/concurrent/CancelableUnitOfWork.class
+SHA1-Digest: PU2VDD4FJW3maOuG860g7d4Cbwg=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$MethodDesc.class
+SHA1-Digest: KvqGPxu+h/gu2OvTWsThIz4RqMU=
+
+Name: org/eclipse/xtext/util/Pair.class
+SHA1-Digest: 17Vhm0rTr4TeYx8XflJcH8XRm3M=
+
+Name: org/eclipse/xtext/util/formallang/ProductionFactory.class
+SHA1-Digest: 8mH3/F762Eqmz/a8Lwkf8Z504cM=
+
+Name: org/eclipse/xtext/util/CollectionBasedAcceptor.class
+SHA1-Digest: Mzsm+1hOp2EYG/zIIHvTgZvy1/w=
+
+Name: org/eclipse/xtext/util/formallang/StringCfg.class
+SHA1-Digest: X5dQaCGz8lwDavl79a5rj1Yy0AY=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$AliasGrammarPr
+ ovider.class
+SHA1-Digest: AeDm/IHfwKIRYh2N9FBk0pUwrvY=
+
+Name: org/eclipse/xtext/util/EcoreGenericsUtil.class
+SHA1-Digest: 6aTQh2hxA49+/+jnRif3rzN2VyA=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$Predicates.class
+SHA1-Digest: ExPlL1rArB0eTp1mXeivHYUZzJ8=
+
+Name: org/eclipse/xtext/util/IResourceScopeCache.class
+SHA1-Digest: cwKYznA68Ra+xeSoCaPO7mRPIR8=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$2.class
+SHA1-Digest: DiF1LAOdZkCzJYrD1Xaauj3HMDE=
+
+Name: org/eclipse/xtext/util/DiffUtil.class
+SHA1-Digest: 1V5K/iNmI0oPXGUDDtja6iBgbAo=
+
+Name: org/eclipse/xtext/util/ReplaceRegion.class
+SHA1-Digest: xgnS4KZG/Ig8QN2VlmBIfe1dVIQ=
+
+Name: org/eclipse/xtext/util/formallang/FollowerFunction.class
+SHA1-Digest: 4d+WbRXArdwDPTSGrTPXlU+fG5w=
+
+Name: org/eclipse/xtext/util/formallang/NfaGraphFormatter$Canvas.class
+SHA1-Digest: 2tgjeBeV5HuLxT329lZ2bLFqryI=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/xtext/util/Tuples.class
+SHA1-Digest: URE2UNmg/038bPCmc7drwWAMFkQ=
+
+Name: org/eclipse/xtext/util/formallang/ProductionUtil.class
+SHA1-Digest: lHdHxNC4u0uxQXjlDszYhj38nRo=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$GetToken.class
+SHA1-Digest: CtGJYfhjjt3rciz8QdVTOIi5D3o=
+
+Name: org/eclipse/xtext/util/formallang/StringProduction$Token.class
+SHA1-Digest: 5VHOsXte4ohBRt5xl2lpLP3qvJc=
+
+Name: org/eclipse/xtext/util/formallang/PdaListFormatter.class
+SHA1-Digest: 4sRmpOy+fuRtdBPwQkIqbHaLfas=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$HashStack.class
+SHA1-Digest: bNH/wEN8xz4kJOGY8K6qz1mQFCE=
+
+Name: org/eclipse/xtext/util/formallang/NfaGraphFormatter.class
+SHA1-Digest: gIhLPF1eJSubDnMVuFUn6xN7ed0=
+
+Name: org/eclipse/xtext/util/formallang/DirectedGraph.class
+SHA1-Digest: WBLmBj313n19XIw5s8Cc2IWo8nk=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$3$1.class
+SHA1-Digest: GbrIKbWUkhLxIWEQ8iiotgDhZ4Y=
+
+Name: org/eclipse/xtext/util/formallang/Nfa.class
+SHA1-Digest: b5VEZ2P/u/OAb6GfCqC5fmkouwU=
+
+Name: org/eclipse/xtext/util/formallang/CfgUtil$IsCall.class
+SHA1-Digest: HZj8T/pOgiuHgJq5LwYHRwF8asc=
+
+Name: org/eclipse/xtext/util/EmfFormatter$1.class
+SHA1-Digest: NmvRAljXM9Xu66ks8McQyngLJfA=
+
+Name: org/eclipse/xtext/util/ExceptionAcceptor.class
+SHA1-Digest: wgJ7+49yOJwYne3KnqWaDeqJiTs=
+
+Name: org/eclipse/xtext/util/OnChangeEvictingCache$IgnoreValuesMemento
+ .class
+SHA1-Digest: 8py0x0esqzH5KjHGnPL9ul3Jie4=
+
+Name: org/eclipse/xtext/util/GraphvizDotBuilder$Node.class
+SHA1-Digest: xpEFgZBaJ0n57djijrkYbMht5L4=
+
+Name: org/eclipse/xtext/util/concurrent/IUnitOfWork$Void.class
+SHA1-Digest: RbgM9znnI4Hy3brayy8pxvhFkxM=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$BacktrackingItem.class
+SHA1-Digest: wkCjB5qCTP+d0r4GB+ACWBFKgBg=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$DefaultErrorHandler
+ .class
+SHA1-Digest: G1qhWLAcZazfRq9keJjFSmtM1pI=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$NFAImpl.class
+SHA1-Digest: JE8jVjkjqUY1WcVGBOCBJvveQAI=
+
+Name: org/eclipse/xtext/util/concurrent/AbstractReadWriteAcces.class
+SHA1-Digest: m0wM5ApR0bEL6Ys6sRZamHthtNI=
+
+Name: org/eclipse/xtext/util/AbstractLinkedStack$Element.class
+SHA1-Digest: iHkmGf8jfX4dkHxT8rrqwe8ShEI=
+
+Name: org/eclipse/xtext/util/Notifications.class
+SHA1-Digest: PjRKFv6avbaRy5hWdQ/LfmAZsH0=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$TraversalItem.class
+SHA1-Digest: 487QUt9FM1ydT+SHg9ddoBKenlI=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$1.class
+SHA1-Digest: oRk/sTxHOOBMhdaTM5EiYbOHqHY=
+
+Name: org/eclipse/xtext/util/formallang/StringPda$StringPDAState.class
+SHA1-Digest: ZRrsihJojJ/gFeydqostXQRkvtw=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$AbstractElemen
+ tAlias.class
+SHA1-Digest: 82O47c1+NqhagUpCh736jfJu/Vw=
+
+Name: org/eclipse/xtext/util/SimpleCache.class
+SHA1-Digest: CuJqkG2NzL82DpO/kD163kAoEWA=
+
+Name: org/eclipse/xtext/util/TextRegionWithLineInformation.class
+SHA1-Digest: YMBANZL8uwC7E9i7nUA8GHrfiz8=
+
+Name: org/eclipse/xtext/util/AbstractLinkedStack$ElementIterator.class
+SHA1-Digest: Cx4yI1CWe1lgTtMEgiWdPwXUo0c=
+
+Name: plugin.properties
+SHA1-Digest: nDy4zXUIa8GkgXnmLaUth7MRqPI=
+
+Name: org/eclipse/xtext/util/formallang/CfgUtil.class
+SHA1-Digest: PNOwpoNwSOQpZy0xDGAgUQtK4Dw=
+
+Name: org/eclipse/xtext/util/ITextRegionWithLineInformation$1.class
+SHA1-Digest: sDBLCyhpM0JRvAiynPTTUpNm3es=
+
+Name: org/eclipse/xtext/util/CancelIndicator.class
+SHA1-Digest: rTS9crxCcfPCV/ks+YTtPlOVNTs=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil.class
+SHA1-Digest: VP4SiikDrFxD+5hwi1l2pz/XKUY=
+
+Name: org/eclipse/xtext/util/formallang/PdaUtil$CyclicStackItem.class
+SHA1-Digest: QVGZuYBNJoDahzKRw3xyAfLjezA=
+
+Name: org/eclipse/xtext/util/formallang/ProductionFormatter$ObjToStrFu
+ nction.class
+SHA1-Digest: J/4ZMtx/cLIv+Asw9XwarYeLUB8=
+
+Name: org/eclipse/xtext/util/SimpleAttributeResolver$1.class
+SHA1-Digest: kB+fZN4tvFIfZsJk5wuso77STpE=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$NoSuchMethodExcepti
+ on.class
+SHA1-Digest: IwdEab+ku7QiEYa5vY4yLuiUbkU=
+
+Name: org/eclipse/xtext/util/Strings.class
+SHA1-Digest: Ucv+fAk4yq0VwFsiKiEpUgrFh8w=
+
+Name: org/eclipse/xtext/util/TailWriter.class
+SHA1-Digest: R0SRHRQaJYgq+WSC9OZ27/ptvcQ=
+
+Name: org/eclipse/xtext/util/formallang/NfaUtil$3.class
+SHA1-Digest: l4BdyKj9VKynN5lypBxWvT6Xmnk=
+
+Name: org/eclipse/xtext/util/formallang/FollowerFunctionImpl.class
+SHA1-Digest: ktCCTlWRzBnBjG62laixpgUNJfA=
+
+Name: org/eclipse/xtext/util/PolymorphicDispatcher$ErrorHandler.class
+SHA1-Digest: vuCKHi0+LjvEPBzwqeJtwKDwzGk=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction$GroupAlias.cla
+ ss
+SHA1-Digest: ufwdMxozuEf0vJYLZ5VOqUwyV3M=
+
+Name: org/eclipse/xtext/util/MergeableManifest$OrderAwareAttributes.cl
+ ass
+SHA1-Digest: o5jJY9H9zSbVCvKPM4FE4nQvadU=
+
+Name: org/eclipse/xtext/util/formallang/NfaToProduction.class
+SHA1-Digest: GXIVThqu1H5NLEHK6Ssa3EjIwp4=
+
+Name: org/eclipse/xtext/util/EmfFormatter.class
+SHA1-Digest: mdYGe1e2eJGZnZbEDnzflmdhFHs=
+
+Name: org/eclipse/xtext/util/concurrent/IWriteAccess.class
+SHA1-Digest: D95gepXFOm2TtOKMDIUKNt4Hgok=
+
+Name: org/eclipse/xtext/util/formallang/NfaFactory.class
+SHA1-Digest: BDE9e7l9r+UPQTTiH6e6SejkQTA=
+
+Name: org/eclipse/xtext/util/internal/Stopwatches$1.class
+SHA1-Digest: +A/oZ6VEhuyE/RhK90YyTtHIBoo=
+
+Name: org/eclipse/xtext/util/formallang/NfaToDot.class
+SHA1-Digest: NjIPWtSfs5QXtAiZjA8bVygkJkQ=
+
+Name: org/eclipse/xtext/util/Arrays.class
+SHA1-Digest: bsZ+3dobmAZ5X5yxAahmuRzlP3I=
+
+Name: org/eclipse/xtext/util/formallang/Pda.class
+SHA1-Digest: /GghwGKtMhFQZkQh592ugjXMai8=
+
+Name: org/eclipse/xtext/util/internal/FormattingMigrator$FormattedStri
+ ng.class
+SHA1-Digest: O+0qsbpypTLfUxDXNtQ+vG3XjT8=
+
+Name: org/eclipse/xtext/util/MergeableManifest.class
+SHA1-Digest: JRuapw4l2P8H7Kp9NNhFHS3v9XA=
+
+Name: org/eclipse/xtext/util/TextRegion.class
+SHA1-Digest: wYoIRDvqYy2PDmEZil4jGiZl90s=
+

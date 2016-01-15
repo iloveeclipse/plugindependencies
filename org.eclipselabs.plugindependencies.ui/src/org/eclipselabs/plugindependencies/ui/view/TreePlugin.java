@@ -29,6 +29,7 @@ public class TreePlugin extends TreeParent {
     static final String ALL_DEPS = "All dependencies";
     static final String EARLY_STARTUP = "EarlyStartup";
     static final String EXPORTS = "Exports";
+    static final String REEXPORTS = "Reexports";
     static final String FEATURES = "Features";
     static final String IMPORTS = "Imports";
     static final String INCLUDED_IN = "Included in";
@@ -41,6 +42,7 @@ public class TreePlugin extends TreeParent {
             ALL_DEPS,
             EARLY_STARTUP,
             EXPORTS,
+            REEXPORTS,
             FEATURES,
             IMPORTS,
             INCLUDED_IN,
@@ -115,6 +117,15 @@ public class TreePlugin extends TreeParent {
             }
             if (expPackages.hasChildren()) {
                 this.addChild(expPackages);
+            }
+
+            // Re-exported plugins
+            TreeParent reexpPlugins = new TreeParent(REEXPORTS, this);
+            for (Plugin plug : plugin.getRequiredReexportedPlugins()) {
+                reexpPlugins.addChild(new TreePlugin(plug, expPackages));
+            }
+            if (reexpPlugins.hasChildren()) {
+                this.addChild(reexpPlugins);
             }
 
             // Included in Features

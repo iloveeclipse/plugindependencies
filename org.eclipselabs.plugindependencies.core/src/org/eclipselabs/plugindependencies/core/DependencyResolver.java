@@ -131,9 +131,10 @@ public class DependencyResolver {
         }
 
         if (highVersionPlugin != null) {
-            elt.addRequiredPlugin(highVersionPlugin);
+            boolean reexport = requiredPlugin.isReexport();
+            elt.addRequiredPlugin(highVersionPlugin, reexport);
 
-            if (elt instanceof Plugin && requiredPlugin.isReexport()) {
+            if (elt instanceof Plugin && reexport) {
                 Set<Package> reexportPackages = highVersionPlugin.getExportedPackages();
                 ((Plugin) elt).addReexportedPackages(reexportPackages);
                 for (Package reexported : reexportPackages) {

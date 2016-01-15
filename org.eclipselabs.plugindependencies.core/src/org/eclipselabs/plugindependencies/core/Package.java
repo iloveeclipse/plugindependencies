@@ -27,9 +27,12 @@ public class Package extends NamedElement {
 
     private Set<Plugin> reexportedBy;
 
+    private Set<Plugin> split;
+
     public Package(String name, String version) {
         super(name, version);
         this.exportedBy = new LinkedHashSet<>();
+        this.split = new LinkedHashSet<>();
         this.importedBy = new LinkedHashSet<>();
         this.reexportedBy = new LinkedHashSet<>();
     }
@@ -41,6 +44,17 @@ public class Package extends NamedElement {
 
     public Set<Plugin> getExportedBy() {
         return exportedBy;
+    }
+
+    /**
+     * @return Returns plugins contributing to the "split" package.
+     */
+    public Set<Plugin> getSplit() {
+        return split;
+    }
+
+    public void addSplitPlugin(Plugin plugin) {
+        this.split.add(plugin);
     }
 
     public void addExportPlugin(Plugin plugin) {
@@ -124,6 +138,7 @@ public class Package extends NamedElement {
         importedBy = importedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedBy);
         reexportedBy = reexportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reexportedBy);
         exportedBy = exportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedBy);
+        split = split.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(split);
     }
 
 }

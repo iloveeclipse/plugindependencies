@@ -40,6 +40,8 @@ public class Plugin extends OSGIElement {
 
     private Set<Package> exportedPackages;
 
+    private Set<Package> reExportedPackages;
+
     private Set<Package> importedPackages;
 
     private Set<Plugin> fragments;
@@ -77,6 +79,7 @@ public class Plugin extends OSGIElement {
         isSingleton = singleton;
         this.importedPackageEntries = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
+        this.reExportedPackages = new LinkedHashSet<>();
         this.importedPackages = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
         this.isFragment = fragment;
@@ -145,17 +148,25 @@ public class Plugin extends OSGIElement {
         return exportedPackages;
     }
 
+    public Set<Package> getReExportedPackages() {
+        return reExportedPackages;
+    }
+
     public void setExportedPackages(String expPackagesString, PlatformState state) {
         List<ManifestEntry> entries = StringUtil.splitInManifestEntries(expPackagesString);
         for (ManifestEntry entry : entries) {
             Package pack = state.createPackage(entry);
             pack.addExportPlugin(this);
+            if(entry.isSplit()){
+                pack.addSplitPlugin(this);
+            }
             exportedPackages.add(pack);
         }
     }
 
     public void addReexportedPackages(Set<Package> reexportedPackages) {
         this.exportedPackages.addAll(reexportedPackages);
+        this.reExportedPackages.addAll(reexportedPackages);
     }
 
     public List<String> getBundleClassPath() {
@@ -384,11 +395,12 @@ public class Plugin extends OSGIElement {
         super.parsingDone();
         fragments = fragments.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(fragments);
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
+        reExportedPackages = reExportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reExportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
 
         if(!exportedPackages.isEmpty()){
             for (Package ip : importedPackages) {
-                if(exportedPackages.contains(ip)){
+                if(exportedPackages.contains(ip) && !reExportedPackages.contains(ip)){
                     for (ManifestEntry rp : importedPackageEntries) {
 //                        if(rp.isMatching(ip)) {
                             if (rp.exactMatch(ip)) {

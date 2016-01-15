@@ -41,12 +41,15 @@ public class TestPluginParser2  extends BaseTest {
 
     private static File xtextGenerator;
 
+    private static File xtextUtil;
+
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         dirPath = "testdata";
         xtext = new File(dirPath + "/org.eclipse.xtext");
         xtextGenerator = new File(dirPath + "/org.eclipse.xtext.generator");
+        xtextUtil = new File(dirPath + "/org.eclipse.xtext.util");
     }
 
     @AfterClass
@@ -86,7 +89,25 @@ public class TestPluginParser2  extends BaseTest {
         assertEquals(packagesGen.size(), packGenStr.size());
         Set<Package> exportedGenPackages = xtextGenPl.getExportedPackages();
         assertEquals(packagesGen.size(), exportedGenPackages.size());
+    }
 
+    @Test
+    public void testReadReexported() throws IOException {
+        PlatformState state = new PlatformState();
+        Manifest xtextMf = getManifest(xtext);
+        Plugin xtextPl = parseManifest(xtextMf, state);
+        Manifest xtextUtilMf = getManifest(xtextUtil);
+        Plugin xtextUtilPl = parseManifest(xtextUtilMf, state);
+        state.addPlugin(xtextPl);
+        state.addPlugin(xtextUtilPl);
+
+        state.resolveDependencies();
+
+//        String value = xtextMf.getMainAttributes().getValue("Export-Package");
+//        String export = readAttribute(xtextMf, "Export-Package");
+//        export = readAttribute(xtextMf, "Require-Bundle");
+        Set<Plugin> reex = xtextPl.getRequiredReexportedPlugins();
+        assertEquals("Reex: " + reex, 1, reex.size());
     }
 
 

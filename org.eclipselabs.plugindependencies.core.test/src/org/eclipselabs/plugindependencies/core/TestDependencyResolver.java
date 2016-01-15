@@ -124,6 +124,35 @@ public class TestDependencyResolver extends BaseTest {
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
+        assertEquals("[Warning: [p1 1.0.0] this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p1.getLog().toString());
+        assertEquals("[Warning: [p2 1.0.0] this plugin is one of 2 plugins contributing package 'hello 0.5.0']", p2.getLog().toString());
+        assertEquals("[Warning: [p3 1.0.0] this plugin uses package 'hello 0.5.0' contributed by multiple plugins]", p3.getLog().toString());
+        assertEquals(1,  ps.getPackages("hello").size());
+        Set<Package> packages = ps.getPackages("hello");
+        for (Package p : packages) {
+            assertEquals("[Warning: [hello 0.5.0] package contributed by multiple, not related plugins]", p.getLog().toString());
+        }
+    }
+
+    public void testImportNonAmbiguousPackages22() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p2.setRequiredPlugins("p1;version=\"1.0.0\";visibility:=\"reexport\"");
+
+        p3.setImportedPackageEntries("hello;version=\"[0.5.0,1.0.0]\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
+        ps.computeAllDependenciesRecursive();
+
         assertEquals("[]", p1.getLog().toString());
         assertEquals("[]", p1.getLog().toString());
         assertEquals("[]", p2.getLog().toString());

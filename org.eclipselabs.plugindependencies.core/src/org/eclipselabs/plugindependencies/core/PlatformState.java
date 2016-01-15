@@ -15,14 +15,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
@@ -319,8 +317,32 @@ public class PlatformState {
 
                Iterator<Plugin> iterator = exportedBy.iterator();
                Set<Plugin> toRemove = new HashSet<>();
-               while (iterator.hasNext()) {
+               While: while (iterator.hasNext()) {
                    Plugin p1 = iterator.next();
+                   // TODO the question here: is the plugin who "exports" the package
+                   // which is already exported by exporting one of the required bundles,
+                   // does this because of mistake or on purpose? In last case - why?
+                   // see org.apache.lucene.core 2.9.1.v201101211721 and org.apache.lucene 2.9.1.v201101211721
+                   // they have 2 packages which they export both but they do not declare them as "split"
+                   // org.apache.lucene.analysis.tokenattributes and org.apache.lucene.messages
+                   // All other packages from lucene are merked as "split".
+
+//                   if(p1.getReExportedPackages().contains(pack)){
+//                       iterator.remove();
+//                       continue;
+//                   }
+                   if(pack.getSplit().contains(p1)){
+                       iterator.remove();
+                       continue;
+                   }
+
+//                   Set<Plugin> reexPlugins = p1.getRequiredReexportedPlugins();
+//                   for (Plugin p : reexPlugins) {
+//                       if(p.getExportedPackages().contains(pack)){
+//                           iterator.remove();
+//                           continue While;
+//                       }
+//                   }
                    for (Plugin p2 : exportedBy) {
                        // ignore packages from same plugin with different version
                        // ignore packages from fragments and hosts
@@ -331,25 +353,6 @@ public class PlatformState {
                    }
                }
                exportedBy.removeAll(toRemove);
-
-               // exclude all plugins which might have dependencies to each other
-               Map<Plugin, Plugin> required = new HashMap<>();
-               for (Plugin plugin : exportedBy) {
-                   Set<Plugin> resolvedPlugins = plugin.getRecursiveResolvedPlugins();
-                   for (Plugin p : resolvedPlugins) {
-                       // only exclude if there is no cycle
-                       if(!p.containsRecursiveResolved(plugin)){
-                           required.put(p, plugin);
-                       }
-                   }
-               }
-               for (Entry<Plugin, Plugin> entry : required.entrySet()) {
-                   Plugin p1 = entry.getKey();
-                   if(exportedBy.contains(p1)){
-                       exportedBy.remove(p1);
-                       exportedBy.remove(entry.getValue());
-                   }
-               }
 
                if(exportedBy.size() > 1){
                    pack.addWarningToLog("package contributed by multiple, not related plugins");
