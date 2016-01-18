@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.core;
 import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,7 +144,7 @@ public class TestPlugin extends BaseTest {
             plugin.addImportedPackage(pack);
         }
         plugin.parsingDone();
-        assertEquals("Warning: [myPlugin 2.3.4] plugin imports and exports same package: [name=org.eclipse.core.internal.adapter, version=]", plugin.getLog().get(0));
+        assertTrue(plugin.getLog().isEmpty());
     }
 
     @Test

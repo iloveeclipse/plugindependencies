@@ -315,34 +315,30 @@ public class PlatformState {
            if(pack.getExportedBy().size() > 1){
                Set<Plugin> exportedBy = new HashSet<>(pack.getExportedBy());
 
-               Iterator<Plugin> iterator = exportedBy.iterator();
+               Iterator<Plugin> exportedByIter = exportedBy.iterator();
                Set<Plugin> toRemove = new HashSet<>();
-               While: while (iterator.hasNext()) {
-                   Plugin p1 = iterator.next();
-                   // TODO the question here: is the plugin who "exports" the package
-                   // which is already exported by exporting one of the required bundles,
-                   // does this because of mistake or on purpose? In last case - why?
-                   // see org.apache.lucene.core 2.9.1.v201101211721 and org.apache.lucene 2.9.1.v201101211721
-                   // they have 2 packages which they export both but they do not declare them as "split"
-                   // org.apache.lucene.analysis.tokenattributes and org.apache.lucene.messages
-                   // All other packages from lucene are merked as "split".
-
-//                   if(p1.getReExportedPackages().contains(pack)){
-//                       iterator.remove();
-//                       continue;
-//                   }
+               while (exportedByIter.hasNext()) {
+                   Plugin p1 = exportedByIter.next();
                    if(pack.getSplit().contains(p1)){
-                       iterator.remove();
+                       exportedByIter.remove();
+                       continue;
+                   }
+                   // plugins which import and export same package are most likely
+                   // just forwarding that dependency to clients
+                   if(p1.getImportedPackages().contains(pack)){
+                       exportedByIter.remove();
                        continue;
                    }
 
-//                   Set<Plugin> reexPlugins = p1.getRequiredReexportedPlugins();
-//                   for (Plugin p : reexPlugins) {
-//                       if(p.getExportedPackages().contains(pack)){
-//                           iterator.remove();
-//                           continue While;
-//                       }
-//                   }
+                   // plugins which exports a package already reexported by re-exporting required bundle is most likely
+                   // just forwarding that dependency to clients
+                   // TODO this must be improved: re-export can happen multiple times, but we do not provide
+                   // this information recursively yet.
+                   if (p1.getReExportedPackages().contains(pack)) {
+                       exportedByIter.remove();
+                       continue;
+                   }
+
                    for (Plugin p2 : exportedBy) {
                        // ignore packages from same plugin with different version
                        // ignore packages from fragments and hosts

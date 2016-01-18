@@ -398,17 +398,12 @@ public class Plugin extends OSGIElement {
         reExportedPackages = reExportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reExportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
 
-        if(!exportedPackages.isEmpty()){
-            for (Package ip : importedPackages) {
-                if(exportedPackages.contains(ip) && !reExportedPackages.contains(ip)){
-                    for (ManifestEntry rp : importedPackageEntries) {
-//                        if(rp.isMatching(ip)) {
-                            if (rp.exactMatch(ip)) {
-                                // the resolved packages might have different version as required (still matching however)
-                                addWarningToLog("plugin imports and exports same package: " + ip);
-                                break;
-                            }
-//                        }
+        for (Package rp : reExportedPackages) {
+            if(!exportedPackages.contains(rp)){
+                for (Package ep : exportedPackages) {
+                    if (ep.exactMatch(rp)) {
+                        addWarningToLog("plugin exports already exported package: " + ep);
+                        break;
                     }
                 }
             }
