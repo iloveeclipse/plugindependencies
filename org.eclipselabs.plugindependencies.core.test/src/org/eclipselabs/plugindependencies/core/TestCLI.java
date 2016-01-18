@@ -98,24 +98,25 @@ public class TestCLI extends BaseTest {
                 "-dependOnPackage", "org.osgi.framework" };
 
         File expectedOutput = new File("outputs/console_dep_expected");
-        File outputFile = new File(tempDir.getCanonicalPath() + "/console_dep");
+        File outputFile = new File(tempDir.getCanonicalPath(), "console_dep");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setLogger(new Logging.SimpleLogger(out));
+        try(PrintStream out = new PrintStream(outputFile)){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     @Test
@@ -308,24 +309,25 @@ public class TestCLI extends BaseTest {
                 "org.company.corePlugin", "org.company.workcenter"};
 
         File expectedOutput = new File("outputs/console_focusOption2_expected");
-        File outputFile = new File(tempDir.getCanonicalPath() + "/console_focusOption2");
+        File outputFile = new File(tempDir.getCanonicalPath(), "console_focusOption2");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
-        PrintStream out = new PrintStream(outputFile);
-        Logging.setLogger(new Logging.SimpleLogger(out));
+        try(PrintStream out = new PrintStream(outputFile)){
+            Logging.setLogger(new Logging.SimpleLogger(out));
 
-        assertEquals(0, SecurityMan.runMain(args));
+            assertEquals(0, SecurityMan.runMain(args));
 
-        List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
-                StandardCharsets.UTF_8);
-        expectedOutputList = addNewlineToAllStrings(expectedOutputList);
+            List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
+                    StandardCharsets.UTF_8);
+            expectedOutputList = addNewlineToAllStrings(expectedOutputList);
 
-        List<String> outputList = Files.readAllLines(outputFile.toPath(),
-                StandardCharsets.UTF_8);
-        outputList = addNewlineToAllStrings(outputList);
+            List<String> outputList = Files.readAllLines(outputFile.toPath(),
+                    StandardCharsets.UTF_8);
+            outputList = addNewlineToAllStrings(outputList);
 
-        assertEquals(expectedOutputList.toString(), outputList.toString());
+            assertEquals(expectedOutputList.toString(), outputList.toString());
+        }
     }
 
     public boolean removeDirectory(File dir) {
