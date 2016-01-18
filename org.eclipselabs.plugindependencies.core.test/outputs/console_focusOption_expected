@@ -37,8 +37,92 @@ required by:
 	org.eclipse.zest 1.5.1.201308190730 (feature)
 exported packages:
 	org.eclipse.core.internal.preferences.legacy
-	org.eclipse.core.internal.runtime
-	org.eclipse.core.runtime 3.4.0
+	org.eclipse.core.internal.runtime *reexport*
+	org.eclipse.core.runtime 3.4.0 *reexport*
+	org.eclipse.osgi.event 1.0.0 *reexport*
+	org.eclipse.osgi.framework.console 1.1.0 *reexport*
+	org.eclipse.osgi.framework.eventmgr 1.2.0 *reexport*
+	org.eclipse.osgi.framework.log 1.1.0 *reexport*
+	org.eclipse.osgi.launch 1.0.0 *reexport*
+	org.eclipse.osgi.service.datalocation 1.3.0 *reexport*
+	org.eclipse.osgi.service.debug 1.2.0 *reexport*
+	org.eclipse.osgi.service.environment 1.3.0 *reexport*
+	org.eclipse.osgi.service.localization 1.1.0 *reexport*
+	org.eclipse.osgi.service.pluginconversion 1.0.0 *reexport*
+	org.eclipse.osgi.service.resolver 1.5.0 *reexport*
+	org.eclipse.osgi.service.runnable 1.1.0 *reexport*
+	org.eclipse.osgi.service.security 1.0.0 *reexport*
+	org.eclipse.osgi.service.urlconversion 1.0.0 *reexport*
+	org.eclipse.osgi.signedcontent 1.0.0 *reexport*
+	org.eclipse.osgi.storagemanager 1.0.0 *reexport*
+	org.eclipse.osgi.util 1.1.0 *reexport*
+	org.eclipse.equinox.log 1.0.0 *reexport*
+	org.osgi.framework 1.6.0 *reexport*
+	org.osgi.framework.launch 1.0.0 *reexport*
+	org.osgi.framework.hooks.bundle 1.0.0 *reexport*
+	org.osgi.framework.hooks.resolver 1.0.0 *reexport*
+	org.osgi.framework.hooks.service 1.1.0 *reexport*
+	org.osgi.framework.hooks.weaving 1.0.0 *reexport*
+	org.osgi.framework.startlevel 1.0.0 *reexport*
+	org.osgi.framework.wiring 1.0.0 *reexport*
+	org.osgi.service.condpermadmin 1.1.1 *reexport*
+	org.osgi.service.framework 1.0.0 *reexport*
+	org.osgi.service.log 1.3.0 *reexport*
+	org.osgi.service.packageadmin 1.2.0 *reexport*
+	org.osgi.service.permissionadmin 1.2.0 *reexport*
+	org.osgi.service.startlevel 1.1.0 *reexport*
+	org.osgi.service.url 1.0.0 *reexport*
+	org.osgi.util.tracker 1.5.0 *reexport*
+	org.eclipse.core.runtime.adaptor *reexport*
+	org.eclipse.core.runtime.internal.adaptor *reexport*
+	org.eclipse.core.runtime.internal.stats *reexport*
+	org.eclipse.osgi.baseadaptor *reexport*
+	org.eclipse.osgi.baseadaptor.bundlefile *reexport*
+	org.eclipse.osgi.baseadaptor.hooks *reexport*
+	org.eclipse.osgi.baseadaptor.loader *reexport*
+	org.eclipse.osgi.framework.adaptor *reexport*
+	org.eclipse.osgi.framework.debug *reexport*
+	org.eclipse.osgi.framework.internal.core *reexport*
+	org.eclipse.osgi.framework.internal.protocol *reexport*
+	org.eclipse.osgi.framework.internal.protocol.bundleentry *reexport*
+	org.eclipse.osgi.framework.internal.protocol.bundleresource *reexport*
+	org.eclipse.osgi.framework.internal.protocol.reference *reexport*
+	org.eclipse.osgi.framework.internal.reliablefile *reexport*
+	org.eclipse.osgi.framework.util *reexport*
+	org.eclipse.osgi.internal.baseadaptor *reexport*
+	org.eclipse.osgi.internal.composite *reexport*
+	org.eclipse.osgi.internal.loader *reexport*
+	org.eclipse.osgi.internal.loader.buddy *reexport*
+	org.eclipse.osgi.internal.module *reexport*
+	org.eclipse.osgi.internal.profile *reexport*
+	org.eclipse.osgi.internal.resolver *reexport*
+	org.eclipse.osgi.internal.serviceregistry *reexport*
+	org.eclipse.osgi.internal.permadmin *reexport*
+	org.eclipse.osgi.internal.provisional.service.security 1.0.0 *reexport*
+	org.eclipse.osgi.internal.provisional.verifier *reexport*
+	org.eclipse.osgi.internal.service.security *reexport*
+	org.eclipse.osgi.internal.signedcontent *reexport*
+	org.eclipse.osgi.service.internal.composite *reexport*
+	org.eclipse.equinox.log.internal *reexport*
+	org.eclipse.core.internal.boot *reexport*
+	org.eclipse.equinox.events 1.0.0 *reexport*
+	org.eclipse.core.internal.jobs *reexport*
+	org.eclipse.core.runtime.jobs *reexport*
+	org.eclipse.core.internal.adapter *reexport*
+	org.eclipse.core.internal.registry *reexport*
+	org.eclipse.core.internal.registry.osgi *reexport*
+	org.eclipse.core.internal.registry.spi *reexport*
+	org.eclipse.core.runtime.dynamichelpers 3.4.0 *reexport*
+	org.eclipse.core.runtime.spi 3.4.0 *reexport*
+	org.eclipse.core.internal.preferences *reexport*
+	org.eclipse.core.internal.preferences.exchange *reexport*
+	org.eclipse.core.runtime.preferences 3.3.0 *reexport*
+	org.osgi.service.prefs 1.1.1 *reexport*
+	org.eclipse.core.internal.content *reexport*
+	org.eclipse.core.runtime.content *reexport*
+	org.eclipse.equinox.app 1.1.0 *reexport*
+	org.eclipse.equinox.internal.app *reexport*
+	org.osgi.service.application 1.1.0 *reexport*
 fragments:
 
 feature: org.eclipse.cdt 8.0.2.201202111925
