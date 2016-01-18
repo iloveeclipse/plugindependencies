@@ -332,8 +332,6 @@ public class PlatformState {
 
                    // plugins which exports a package already reexported by re-exporting required bundle is most likely
                    // just forwarding that dependency to clients
-                   // TODO this must be improved: re-export can happen multiple times, but we do not provide
-                   // this information recursively yet.
                    if (p1.getReExportedPackages().contains(pack)) {
                        exportedByIter.remove();
                        continue;

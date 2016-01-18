@@ -164,11 +164,6 @@ public class Plugin extends OSGIElement {
         }
     }
 
-    public void addReexportedPackages(Set<Package> reexportedPackages) {
-        this.exportedPackages.addAll(reexportedPackages);
-        this.reExportedPackages.addAll(reexportedPackages);
-    }
-
     public List<String> getBundleClassPath() {
         return bundleClassPath;
     }
@@ -394,8 +389,8 @@ public class Plugin extends OSGIElement {
     public void parsingDone() {
         super.parsingDone();
         fragments = fragments.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(fragments);
+        reExportedPackages = computeReexportedPackages();
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
-        reExportedPackages = reExportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reExportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
 
         for (Package rp : reExportedPackages) {
@@ -408,6 +403,49 @@ public class Plugin extends OSGIElement {
                 }
             }
         }
+    }
+
+    private Set<Package> computeReexportedPackages() {
+        Set<Plugin> reex = resolveRequiredReexportedRecursively(this);
+        for (Plugin plugin : reex) {
+            Set<Package> ex = plugin.getExportedPackages();
+            reExportedPackages.addAll(ex);
+        }
+        if (reExportedPackages.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+
+        for (Package pack : reExportedPackages) {
+            pack.addReExportPlugin(this);
+        }
+        exportedPackages.addAll(reExportedPackages);
+        return Collections.unmodifiableSet(reExportedPackages);
+    }
+
+    private static Set<Plugin> resolveRequiredReexportedRecursively(Plugin start) {
+        Set<Plugin> reexportedPlugins = start.getRequiredReexportedPlugins();
+        if(reexportedPlugins.isEmpty()){
+            return Collections.EMPTY_SET;
+        }
+        Set<Plugin> reex = new LinkedHashSet<>();
+        Set<Plugin> toTraverse = new LinkedHashSet<>(reexportedPlugins);
+        while(!toTraverse.isEmpty()) {
+            Plugin plugin = toTraverse.iterator().next();
+            if(reex.contains(plugin) || start.equals(plugin)){
+                toTraverse.remove(plugin);
+                continue;
+            }
+            reex.add(plugin);
+            toTraverse.remove(plugin);
+            Set<Plugin> rrp = plugin.getRequiredReexportedPlugins();
+            for (Plugin p2 : rrp) {
+                if(toTraverse.contains(p2) || reex.contains(p2) || start.equals(p2)){
+                    continue;
+                }
+                toTraverse.add(p2);
+            }
+        }
+        return reex;
     }
 
     public void setResolved(){
