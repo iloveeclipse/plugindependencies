@@ -21,24 +21,21 @@ public class ViewSorter extends ViewerComparator {
 
     @Override
     public int category(Object element) {
-        if(element instanceof TreePlugin){
-            TreePlugin elt = (TreePlugin) element;
-            if(elt.getName().equals("Features")){
-                return 0;
-            }
-            if(elt.getName().equals("Plugins")){
-                return 1;
-            }
-        } else
         if(element instanceof TreeParent){
             TreeParent elt = (TreeParent) element;
-            if(elt.getName().equals("Features")){
-                return 0;
+            if(elt.getName().equals(TreePlugin.PACKAGES)){
+                return 19;
             }
-            if(elt.getName().equals("Plugins")){
-                return 1;
+            if(elt.getName().equals(TreePlugin.EARLY_STARTUP)){
+                return 20;
             }
         }
-        return 2;
+        if(element instanceof TreePlugin){
+            return 19;
+        }
+        if(element instanceof TreePackage){
+            return 20;
+        }
+        return 10;
     }
 }
