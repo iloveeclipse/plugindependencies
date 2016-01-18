@@ -67,7 +67,7 @@ public class TestExceptions extends BaseTest {
                 + "/testdata_exceptions/plugins/org.objectweb.asm_5.0.1.v201404251740.jar\n");
         log.add("Error: [org.xpect 0.1.0.201408281304] package not found: org.apache.log4j ");
 
-        assertEquals(log.toString(), orgExpect.getLog().toString());
+        assertEquals(fix(log.toString()), fix(orgExpect.getLog().toString()));
     }
 
 }

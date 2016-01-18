@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,7 +222,7 @@ public class TestCLI extends BaseTest {
         String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins", "-fullLog" };
 
         File expectedOutput = new File("outputs/console_equalPlugins_expected");
-        File outputFile = new File(tempDir.getCanonicalPath() + "/console_equalPlugins");
+        File outputFile = new File(tempDir.getCanonicalPath(), "console_equalPlugins");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
@@ -248,7 +248,7 @@ public class TestCLI extends BaseTest {
         String args[] = new String[] { "-eclipsePaths", "testdata_equalPlugins2", "-fullLog" };
 
         File expectedOutput = new File("outputs/console_equalPlugins2_expected");
-        File outputFile = new File(tempDir.getCanonicalPath() + "/console_equalPlugins2");
+        File outputFile = new File(tempDir.getCanonicalPath(), "console_equalPlugins2");
         if (!outputFile.createNewFile()) {
             fail("Output-file can not be created in " + tempDir.getCanonicalPath());
         }
@@ -359,24 +359,11 @@ public class TestCLI extends BaseTest {
 //        if (pathStr.contains("$SOME_PATH$/")) {
 //            pathStr = pathStr.replace("$SOME_PATH$/", "");
 //        }
-
-        if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
-            int pathBegin = pathStr.indexOf('/');
-            if (pathBegin != -1) {
-                Path path = Paths.get(pathStr.substring(pathBegin));
-                Path relativePath;
-                relativePath = testFolderPath.toRealPath().relativize(path);
-                pathStr = pathStr.substring(0, pathBegin) + relativePath;
-            }
-            if (pathStr.contains("org.eclipselabs.plugindependencies.core.test")) {
-                pathBegin = pathStr.indexOf(":/") + ":".length();
-                if (pathBegin != -1) {
-                    Path path = Paths.get(pathStr.substring(pathBegin));
-                    Path relativePath = testFolderPath.toRealPath().relativize(path);
-                    pathStr = pathStr.substring(0, pathBegin) + relativePath;
-                }
-            }
+        String pluginId = "org.eclipselabs.plugindependencies.core.test";
+        if (pathStr.contains(pluginId)) {
+            pathStr = pathStr.replace(testFolderPath.toString() + File.separatorChar, "");
         }
+        pathStr = pathStr.replace('\\', '/');
         pathStr = pathStr + "\n";
         return pathStr;
     }

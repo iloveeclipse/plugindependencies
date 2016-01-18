@@ -26,4 +26,11 @@ public class BaseTest {
     public void tearDown() throws Exception {
         //
     }
+
+    protected static String fix(String s){
+        if(s == null){
+            return null;
+        }
+        return s.replace('\\', '/');
+    }
 }

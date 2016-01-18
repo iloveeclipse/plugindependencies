@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -265,8 +266,8 @@ public class TestPluginParser  extends BaseTest {
                 }
             }
         }
-        String path = System.getProperty("user.dir")
-                + "/testdata_Plugins/org.eclipse.equinox.app_1.3.100.v20110321.jar";
+        String path = Paths.get(System.getProperty("user.dir"),
+                "testdata_Plugins/org.eclipse.equinox.app_1.3.100.v20110321.jar").toString();
         assertEquals(path, forPathCheck.getPath());
     }
 
@@ -307,7 +308,7 @@ public class TestPluginParser  extends BaseTest {
 
 
 
-        String path = System.getProperty("user.dir") + "/testdata_Plugins/legacyPlugin";
+        String path = Paths.get(System.getProperty("user.dir"), "testdata_Plugins/legacyPlugin").toString();
         assertEquals(path, legacyPlugin.getPath());
     }
 

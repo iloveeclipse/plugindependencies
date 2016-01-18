@@ -27,11 +27,13 @@ import java.util.Set;
  *
  */
 public class OutputCreator {
+    private static final char SEP = File.separatorChar;
+
     private static File eclipseFolder = new File(".");
 
     private static String sourceFolder = "./";
 
-    static String targetFolder = "eclipse/plugins";
+    static String targetFolder = "eclipse" + SEP + "plugins";
 
     public static void setEclipseRoot(String eclipseRoot) throws IOException {
         eclipseFolder = new File(eclipseRoot).getCanonicalFile();
@@ -111,7 +113,7 @@ public class OutputCreator {
             return -1;
         }
         classPathList.append(classPaths);
-        return writeToFile(plugin.getPath() + "/.classpath.generated", classPathList);
+        return writeToFile(plugin.getPath() + SEP + ".classpath.generated", classPathList);
     }
 
     private static String getClassPaths(Plugin plugin, boolean pluginLocalPaths) throws IOException {
@@ -151,7 +153,7 @@ public class OutputCreator {
             if(isExternalPath(path)){
                 ret.append(path).append("\n");
             } else {
-                ret.append(plugin.getPath()).append("/").append(path).append("\n");
+                ret.append(plugin.getPath()).append(SEP).append(path).append("\n");
             }
         }
     }
@@ -167,9 +169,9 @@ public class OutputCreator {
 
         String pluginTargetFolder;
         if(Paths.get(targetFolder).toFile().exists()){
-            pluginTargetFolder = targetDir + "/" + plugin.getName() + "_" + versionForDummy;
+            pluginTargetFolder = targetDir + SEP + plugin.getName() + "_" + versionForDummy;
         } else {
-            pluginTargetFolder = eclipseFolder + "/" + targetDir + "/" + plugin.getName() + "_" + versionForDummy;
+            pluginTargetFolder = eclipseFolder.toString() + SEP + targetDir + SEP + plugin.getName() + "_" + versionForDummy;
         }
 
         if (bundleClassPathList.isEmpty()) {
@@ -182,7 +184,7 @@ public class OutputCreator {
                     if(path.equals(".")){
                         ret.append(pluginTargetFolder).append(".jar").append("\n");
                     } else {
-                        ret.append(pluginTargetFolder).append("/").append(path).append("\n");
+                        ret.append(pluginTargetFolder).append(SEP).append(path).append("\n");
                     }
                 }
             }

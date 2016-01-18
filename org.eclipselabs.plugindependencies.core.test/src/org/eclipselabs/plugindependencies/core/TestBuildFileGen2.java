@@ -96,8 +96,8 @@ public class TestBuildFileGen2 extends BaseTest {
 
         for (File plugin : pluginDirs) {
             String path = plugin.getCanonicalPath();
-            Path expected = Paths.get(path, "/classpathfile_expected");
-            File actual = new File(path + "/.classpath.generated");
+            Path expected = Paths.get(path, "classpathfile_expected");
+            File actual = new File(path, ".classpath.generated");
             List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
             expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 
@@ -121,8 +121,8 @@ public class TestBuildFileGen2 extends BaseTest {
 
         for (File plugin : pluginDirs) {
             String path = plugin.getCanonicalPath();
-            Path expected = Paths.get(path, "/classpathfile_expected");
-            File actual = new File(path + "/.classpath.generated");
+            Path expected = Paths.get(path, "classpathfile_expected");
+            File actual = new File(path, ".classpath.generated");
             List<String> expectedOutputList = Files.readAllLines(expected, StandardCharsets.UTF_8);
             expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
 

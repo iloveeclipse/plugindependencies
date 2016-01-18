@@ -379,7 +379,7 @@ public class TestDepResResolving  extends BaseTest {
                 + "\tfeature: org.eclipse.right.right 3.7.2.r37x_v20111213-7Q7xALDPb32vCjY6UACVPdFTz-icPtJkUadz0lMmk4z-8 "
                 + HOME
                 + "/testdata_dependencies/eclipse/features/featureRR/feature.xml\n";
-        assertEquals(output, forCompare.printRequiringThis());
+        assertEquals(fix(output), fix(forCompare.printRequiringThis()));
 
         assertEquals(new LinkedHashSet<>().toString(), forCompare.getExportedPackages().toString());
 
@@ -406,7 +406,7 @@ public class TestDepResResolving  extends BaseTest {
                 + "\t*optional* for fragment: org.eclipse.adv 1.2.3 "
                 + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.eclipse.adv\n";
-        assertEquals(output2, forCompare.printRequiringThis());
+        assertEquals(fix(output2), fix(forCompare.printRequiringThis()));
 
         compareSetPackage.clear();
         compareSetPackage.add(package12);
@@ -452,8 +452,8 @@ public class TestDepResResolving  extends BaseTest {
                 + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.eclipse.equinox.core\n";
         for (Package pack2 : plugin.getExportedPackages()) {
-            assertEquals(exportedBy, pack2.printExportedBy(0));
-            assertEquals(importedBy, pack2.printImportedBy(0));
+            assertEquals(fix(exportedBy), fix(pack2.printExportedBy(0)));
+            assertEquals(fix(importedBy), fix(pack2.printImportedBy(0)));
         }
 
         plugin = getPlugin("org.company.corePlugin", pluginSet);
@@ -462,7 +462,7 @@ public class TestDepResResolving  extends BaseTest {
                 + HOME
                 + "/testdata_dependencies/eclipse/plugins/org.company.corePlugin\n";
         for (Package pack3 : plugin.getImportedPackages()) {
-            assertEquals(importedBy, pack3.printImportedBy(0));
+            assertEquals(fix(importedBy), fix(pack3.printImportedBy(0)));
         }
     }
 

@@ -50,7 +50,18 @@ public class SecurityMan extends SecurityManager {
         // DO NOTHING
     }
 
+    protected static String unFix(String s){
+        if(s == null){
+            return null;
+        }
+        return s.replace('/', '\\');
+    }
+
     public static int runMain(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            args[i] = unFix(args[i]);
+        }
+
         /**
          * try catch is for System.exit, otherwise test will not end
          */

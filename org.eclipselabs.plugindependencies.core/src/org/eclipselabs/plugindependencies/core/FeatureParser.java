@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,9 +73,7 @@ public class FeatureParser {
 
     public static int createFeatureAndAddToSet(File featureFolder, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
-        String canonicalPath = featureFolder.getCanonicalPath();
-        String path = canonicalPath + "/feature.xml";
-        File featureXMLFile = new File(path);
+        File featureXMLFile = new File(featureFolder, "feature.xml").getCanonicalFile();
         Feature feature = null;
         if (!featureXMLFile.exists()) {
             // check if we have an archive here.
@@ -105,7 +104,7 @@ public class FeatureParser {
         if (feature == null) {
             return 0;
         }
-        feature.setPath(path);
+        feature.setPath(featureXMLFile.toString());
         Feature addedFeature = state.addFeature(feature);
         if (addedFeature == feature) {
             return 0;

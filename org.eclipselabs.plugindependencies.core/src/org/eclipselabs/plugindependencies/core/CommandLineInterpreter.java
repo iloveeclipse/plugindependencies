@@ -197,7 +197,7 @@ public class CommandLineInterpreter {
         Set<Plugin> resultSet = state.getPlugins(pluginName);
         if (!resultSet.isEmpty()) {
             Plugin plugin = resultSet.iterator().next();
-            int index = plugin.getPath().lastIndexOf('/');
+            int index = plugin.getPath().lastIndexOf(File.separatorChar);
             String sourceFolder = plugin.getPath().substring(0, index);
             OutputCreator.setSourceFolder(sourceFolder);
             try {

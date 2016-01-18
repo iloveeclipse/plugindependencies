@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -109,8 +110,8 @@ public class TestFeatureParser  extends BaseTest {
             }
         }
 
-        String path = System.getProperty("user.dir")
-                + "/testdata_Features/org.eclipse.cdt_8.0.2.201202111925/feature.xml";
+        String path = Paths.get(System.getProperty("user.dir"),
+                "testdata_Features/org.eclipse.cdt_8.0.2.201202111925/feature.xml").toString();
         assertEquals(path, orgEclipseCdtFeat.getPath());
     }
 
