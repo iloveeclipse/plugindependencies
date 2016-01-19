@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core.fixture;
 
+import java.io.File;
 import java.security.Permission;
 
 import org.eclipselabs.plugindependencies.core.MainClass;
@@ -51,8 +52,8 @@ public class SecurityMan extends SecurityManager {
     }
 
     protected static String unFix(String s){
-        if(s == null){
-            return null;
+        if(s == null || File.separatorChar == '/'){
+            return s;
         }
         return s.replace('/', '\\');
     }
