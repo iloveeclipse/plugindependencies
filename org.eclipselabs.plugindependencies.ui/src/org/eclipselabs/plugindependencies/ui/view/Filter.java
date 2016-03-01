@@ -10,8 +10,6 @@
  *    Andrey Loskutov <loskutov@gmx.de> - review, cleanup and bugfixes
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui.view;
-import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.*;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.dialogs.PatternFilter;
 
@@ -23,6 +21,10 @@ public class Filter extends PatternFilter {
 
     @Override
     public boolean isElementVisible(Viewer viewer, Object element) {
+        TreeParent p = ((TreeParent) element).getParent();
+        if(p == null){
+            return true;
+        }
         return isLeafMatch(viewer, element);
     }
 
@@ -30,19 +32,19 @@ public class Filter extends PatternFilter {
     protected boolean isLeafMatch(Viewer viewer, Object element) {
         TreeParent leaf = (TreeParent) element;
         String labelText = leaf.getName();
-
         if (labelText == null) {
             return false;
         }
-        if (NAMES.contains(labelText)) {
+        TreeParent parent = leaf.getParent();
+        if(parent == null || parent.getParent() == null){
+            // always show root elements
             return true;
         }
-
-        String parentName = leaf.getParent().getName();
-
-        if (NAMES.contains(parentName)) {
-            return wordMatches(labelText);
+        if(parent.getParent() != null && parent.getParent().getParent() != null){
+            // always show third level elements
+            return true;
         }
-        return true;
+        // check only second level elements, so that we can see their dependencies
+        return wordMatches(labelText);
     }
 }

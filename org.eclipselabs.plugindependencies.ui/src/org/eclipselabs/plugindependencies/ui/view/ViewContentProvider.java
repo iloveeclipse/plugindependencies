@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui.view;
 
-import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.*;
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.EARLY_STARTUP;
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.FEATURES;
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.PACKAGES;
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.PLUGINS;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +58,9 @@ import org.xml.sax.SAXException;
  *
  */
 public class ViewContentProvider implements ITreeContentProvider {
+
+    private static final Object[] EMPTY = new Object[0];
+
     private TreeParent invisibleRoot;
 
     private final PluginTreeView view;
@@ -132,7 +138,7 @@ public class ViewContentProvider implements ITreeContentProvider {
         if (parent instanceof TreeParent) {
             return ((TreeParent) parent).getChildren();
         }
-        return new Object[0];
+        return EMPTY;
     }
 
     @Override
