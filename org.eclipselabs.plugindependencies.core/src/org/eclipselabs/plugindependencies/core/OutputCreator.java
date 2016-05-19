@@ -136,6 +136,15 @@ public class OutputCreator {
                 } else {
                     appendLocalClasspath(plugin, ret);
                 }
+
+                // the "sourceFolder" does not match the one from current plugin?
+                if(ret.length() == 0 && !elementPath.endsWith(".jar")){
+                    String targetLocation = getTargetLocation(plugin);
+                    if (targetLocation == null) {
+                        return null;
+                    }
+                    ret.append(targetLocation);
+                }
                 plugin.setFullClassPaths(ret.toString());
             } else {
                 ret.append(fullClassPaths);
