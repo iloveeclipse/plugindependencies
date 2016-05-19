@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -171,6 +175,7 @@ enum Options {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
             try {
+                args = resolveAndSkipDuplicates(args);
                 for (String arg : args) {
                     int result = cli.readInEclipseFolder(arg);
                     if(result != 0){
@@ -321,6 +326,18 @@ enum Options {
     Options(String name, boolean command) {
         optionName = name;
         this.command = command;
+    }
+
+    static List<String> resolveAndSkipDuplicates(List<String> paths) {
+        Set<String> resolved = new LinkedHashSet<>();
+        for (String string : paths) {
+            try {
+                resolved.add(new File(string).getCanonicalPath());
+            } catch (IOException e) {
+                Logging.getLogger().error(e.getMessage(), e);
+            }
+        }
+        return new ArrayList<>(resolved);
     }
 
     boolean isCommand(){
