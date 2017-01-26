@@ -3,7 +3,8 @@
       id="org.eclipselabs.plugindependencies"
       label="Plugin Dependencies Explorer"
       version="1.0.5.qualifier"
-      provider-name="Andrey Loskutov">
+      provider-name="Andrey Loskutov"
+      plugin="org.eclipselabs.plugindependencies.ui">
 
    <description url="https://github.com/iloveeclipse/plugindependencies">
       Project provides both command line and Eclipse UI for static package, plugin and feature dependencies analysis (the dependencies are read from MANIFEST.MF and feature.xml files).
