@@ -23,6 +23,7 @@ import org.eclipselabs.plugindependencies.core.TestExceptions;
 import org.eclipselabs.plugindependencies.core.TestFeatureParser;
 import org.eclipselabs.plugindependencies.core.TestPlugin;
 import org.eclipselabs.plugindependencies.core.TestPluginParser;
+import org.eclipselabs.plugindependencies.core.TestPluginParser2;
 import org.eclipselabs.plugindependencies.core.TestStringUtil;
 import org.eclipselabs.plugindependencies.core.TestVersions;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import org.junit.runners.Suite.SuiteClasses;
     TestFeatureParser.class,
     TestPlugin.class,
     TestPluginParser.class,
+    TestPluginParser2.class,
     TestStringUtil.class,
     TestDependencyResolver.class
 })

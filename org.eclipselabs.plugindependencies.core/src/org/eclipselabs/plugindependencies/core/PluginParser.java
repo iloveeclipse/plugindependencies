@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
@@ -247,8 +248,12 @@ public class PluginParser {
     private static String readDynamicImport(Manifest mf, String name) {
         String dynamicImports = readAttribute(mf, name);
         if (dynamicImports != null) {
-            dynamicImports = dynamicImports.replaceAll(",", ";dynamicImport,");
-            dynamicImports += ";dynamicImport";
+            List<String> entries = StringUtil.splitListOfEntries(dynamicImports);
+            StringBuilder sb = new StringBuilder();
+            for (String entry : entries) {
+                sb.append(entry).append(";dynamicImport,");
+            }
+            dynamicImports = sb.toString();
         }
         return dynamicImports;
     }

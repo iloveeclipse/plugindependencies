@@ -1,0 +1,727 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.apache.felix.scr
+Archiver-Version: Plexus Archiver
+Bundle-Category: osgi
+Built-By: genie.orbit
+Bundle-ManifestVersion: 2
+Bundle-DocURL: http://felix.apache.org/site/apache-felix-service-compo
+ nent-runtime.html
+Bundle-Vendor: %bundleVendor
+Import-Package: org.apache.felix.service.command;resolution:=optional,
+ org.apache.felix.shell;resolution:=optional,org.osgi.dto;version="[1.
+ 0,2)",org.osgi.framework;version="[1.8,2)",org.osgi.framework.dto;ver
+ sion="[1.8,2)",org.osgi.framework.wiring;version="[1.2,2)",org.osgi.s
+ ervice.cm;version="[1.5,2)";resolution:=optional,org.osgi.service.com
+ ponent;version="[1.3,1.4)";resolution:=optional,org.osgi.service.comp
+ onent.runtime;version="[1.3,1.4)";resolution:=optional,org.osgi.servi
+ ce.component.runtime.dto;version="[1.3,1.4)";resolution:=optional,org
+ .osgi.service.log;version="[1.3,2)";resolution:=optional,org.osgi.ser
+ vice.metatype;version="[1.1,2)";resolution:=optional,org.osgi.service
+ .packageadmin;version="[1.2,2)";resolution:=optional,org.osgi.util.pr
+ omise;version="[1.0,2)";resolution:=optional,org.osgi.util.tracker;ve
+ rsion="[1.5,2)",org.apache.felix.scr.component;version="[1.1,1.2)",or
+ g.apache.felix.scr.info;version="[1.0,1.1)",org.osgi.util.function;ve
+ rsion="[1.0,2)";resolution:=optional
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.5))"
+DynamicImport-Package: org.osgi.service.cm;version="[1.2,2)", org.osgi
+ .service.metatype;version="[1.1,2)"
+Provide-Capability: osgi.extender;osgi.extender="osgi.component";uses:
+ ="org.osgi.service.component";version:Version="1.3",osgi.service;obje
+ ctClass:List<String>="org.osgi.service.component.runtime.ServiceCompo
+ nentRuntime";uses:="org.osgi.service.component.runtime"
+Export-Package: org.apache.felix.scr.component;version="1.1.0";uses:="
+ org.osgi.service.component",org.apache.felix.scr.info;version="1.0.0"
+Bundle-Name: %bundleName
+Bundle-Version: 2.0.6.v20161206-1638
+Bundle-Activator: org.apache.felix.scr.impl.Activator
+Created-By: Eclipse Bundle Recipe Maven Plug-in
+Build-Jdk: 1.8.0_102
+
+Name: org/apache/felix/scr/impl/inject/FieldMethods.class
+SHA-256-Digest: QY50KT3lv+kcpI9yhC3U9cac/babOqQyq9tEMrj/fwc=
+
+Name: org/apache/felix/scr/impl/parser/KXml2SAXParser$XmlElement.class
+SHA-256-Digest: RNiBMj+uerYU0B0CBGvVtajtOhBu8jVV1l6HERk+s9s=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$4.class
+SHA-256-Digest: kDvlOma4dgG7ucviJvsBOnyzI5w2B6LHgmFhpRt7c9A=
+
+Name: org/apache/felix/utils/extender/AbstractExtender.class
+SHA-256-Digest: 2XLq1DcUDORIvGqXgkeM7B4LHAeC/dRNqY6OA9CwHho=
+
+Name: org/osgi/service/component/runtime/dto/package-info.class
+SHA-256-Digest: jPUHBuLy0TFM1MkuAsy8LvgtXZB1UCbchGc+sfRGaT4=
+
+Name: org/osgi/util/function/packageinfo
+SHA-256-Digest: U8BJUQRCOi5wEJQN/Lkox+gkPvtlWqFIeC8lH0Fr0bY=
+
+Name: org/kxml2/io/KXmlParser.class
+SHA-256-Digest: 1h7DtebQbAi/qTI135zmeqISKgIXhic6JVYKbHfSCqE=
+
+Name: org/apache/felix/scr/impl/inject/ActivateMethod$1.class
+SHA-256-Digest: R7sYIPx+cWT6pSgfZ4fDlDlGRJlMRZkkbks2jwMsdRY=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$State.class
+SHA-256-Digest: D99n+XdfL5cW/CkMQ34gKUXOQLDInUqjLB+kehYET6k=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$Customizer.c
+ lass
+SHA-256-Digest: oT+HsI221GEjUrGEOk8RHoiZ9ep9VX7GRh4an8YoCJs=
+
+Name: org/apache/felix/scr/impl/helper/ComponentMethod.class
+SHA-256-Digest: RjUznmHeiaNwoL0WlEbPBauquJent9eMZSj12oPZOCU=
+
+Name: org/apache/felix/scr/impl/inject/Annotations$Handler.class
+SHA-256-Digest: bytCQXo+lcFZh+dLBVIQxv5Ed9rzZt168Wfa58YdU2w=
+
+Name: org/osgi/service/component/ComponentException.class
+SHA-256-Digest: R9m9lCx8dYuRdZJ+G6L7Hv9C8+6oG1DHXNHTGVqNAvs=
+
+Name: org/osgi/util/promise/Promises.class
+SHA-256-Digest: qt3nCza+46CD/kFrCwxJGyptpGEJ7zd6i1pM7Xk6Dtc=
+
+Name: org/apache/felix/scr/impl/helper/ConfigAdminTracker$1.class
+SHA-256-Digest: oH/o5m7rG2HwCDIsds6Ynjx93Dy3JibWmbYBQS5U+2U=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$MultipleStat
+ icReluctantCustomizer.class
+SHA-256-Digest: v8IkNLiwUYdNSO53jvT9jADUObOaMzTV3e/S/EyemZA=
+
+Name: org/apache/felix/scr/impl/parser/KXml2SAXParser.class
+SHA-256-Digest: QulxPq+ZTGIG4GYgDjbTy2KxYJb2shycMv+yP1M0gLo=
+
+Name: org/apache/felix/scr/impl/manager/ThreadDump.class
+SHA-256-Digest: a8kjDwgiGX0/qc7mxQ7NdRLqKinXTwF0YlZTPpwgMM4=
+
+Name: org/osgi/util/promise/Success.class
+SHA-256-Digest: vPbGTZtq9PWmqUoGFoVrSlvBl4lD7acmY+UDu+KNUBY=
+
+Name: org/osgi/util/promise/PromiseImpl$ResolveWith.class
+SHA-256-Digest: gi1sjmFhQ90gKwumbKP3kkWdWSiwJxqYDe/i7TR1yk8=
+
+Name: org/apache/felix/scr/impl/ScrShellCommand.class
+SHA-256-Digest: OvY2OQ4XWOUpgZws+G+OVc4g66Ohvjph/py/i4yjUDI=
+
+Name: org/apache/felix/scr/impl/ComponentActorThread.class
+SHA-256-Digest: 9TQxZHNm1ICHUawTAdxaFfDcm5hOKmqytQNvfG0CJp8=
+
+Name: META-INF/changelog.txt
+SHA-256-Digest: JML3cktFs3pNDm3jLVOnGHhXQdgJUBOgNGeX9uzvOhc=
+
+Name: org/apache/felix/scr/impl/config/ScrManagedServiceServiceFactory
+ .class
+SHA-256-Digest: PDjaFy2HkIbfnF0jpj+yhRunFV5bD8Ei0mY4alOSwb4=
+
+Name: org/apache/felix/scr/impl/inject/DuplexReferenceMethods.class
+SHA-256-Digest: WdpI0z6g5dbhOUiZU2uajFd+s0wUtdxRK/VVWW+XP/U=
+
+Name: org/osgi/service/component/runtime/ServiceComponentRuntime.class
+SHA-256-Digest: PalvYZMNL54hQy/MSKqQyZf70ymMm85iKvtMPKWD95U=
+
+Name: org/xmlpull/v1/XmlPullParserException.class
+SHA-256-Digest: iyXURfd4rLBOmt3cXnJUVqSq8L2FY6T70gNZ1Yp+uQs=
+
+Name: org/apache/felix/scr/impl/manager/RegionConfigurationSupport.cla
+ ss
+SHA-256-Digest: WB4GWt7P4lWxq/SKHANl/sQ3JK6CrL+KwZPM8Rd5oh0=
+
+Name: org/apache/felix/scr/impl/helper/ComponentMethods.class
+SHA-256-Digest: 4qJDd2NoVSd8i/Lk+zRHbRKV8HD6SEDQCFAHANNzXBU=
+
+Name: org/osgi/util/promise/PromiseImpl.class
+SHA-256-Digest: uxLYMKJlaXMi7tJw+9DejizfDBykZbI3gvwtzDMczow=
+
+Name: org/apache/felix/scr/impl/inject/BindMethods.class
+SHA-256-Digest: 2xbZGpy1z+OYgeAJ0eh72Ah3gv+RJybsVLTPQrELCVQ=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$3.class
+SHA-256-Digest: Pekflo/xg9yzZSEola/OU+QVE3EqFZC+UjShrlKJ7Dk=
+
+Name: org/osgi/service/component/ComponentContext.class
+SHA-256-Digest: JgzPITleuMsvw25WzhSfNnce3W2aug6c+izeCaDZ3Wc=
+
+Name: org/apache/felix/scr/impl/manager/ScrConfiguration.class
+SHA-256-Digest: ZP9lwO/fCU3TfEAPILCOPrrhiBb0V4ShKXqxDt/MqGk=
+
+Name: org/apache/felix/scr/impl/inject/DuplexReferenceMethods$DuplexRe
+ ferenceMethod.class
+SHA-256-Digest: xsyG+DELds1USu+NapvMH5u3WILAfbiiVkTccR0nbCQ=
+
+Name: org/osgi/service/component/runtime/dto/SatisfiedReferenceDTO.cla
+ ss
+SHA-256-Digest: unzZIGXglw8ce9BxKUnt0vY//cgoxIfe3J9UjwneqCg=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$FactoryCusto
+ mizer.class
+SHA-256-Digest: bNAjO8kmfiZcsk20aY706UP+SAgBFMQmx7UgO26Gydc=
+
+Name: org/osgi/util/promise/Deferred.class
+SHA-256-Digest: oVE78j+mJyCbbb7mhzMxDPh+To/96bQ9nsHAsNNO3xo=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$DefaultConfigurableC
+ omponentHolder.class
+SHA-256-Digest: LQZzL29JTkMy21U5cT9f7zDqYW8XMUooUi3z2fF4HhQ=
+
+Name: org/apache/felix/scr/impl/manager/SinglePrototypeRefPair.class
+SHA-256-Digest: HqLay4kc37kZbcqKSpG0aO3r4NeWCclfLTuNybDdmlQ=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$1.class
+SHA-256-Digest: zUM3mR1D6VYKrSjiVc4sTEa/Sa4n43s5A8wtKCAu0ZU=
+
+Name: org/apache/felix/scr/impl/inject/BindMethod$ParamType.class
+SHA-256-Digest: 3sHshDalFc0RE1sm/dQo2Lk9X9Mz9DdQvqppRBr2NGM=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$MapEntryImpl.class
+SHA-256-Digest: T4HA80o51m6UyKoqIh2nM7TriXvlbDdRGhMH5bP3Guw=
+
+Name: org/apache/felix/scr/impl/inject/ClassUtils.class
+SHA-256-Digest: OX2TzjjGswZMktSH8c/EnlibEjEDtMuyr9w6/nWpodI=
+
+Name: org/osgi/util/promise/PromiseImpl$Filter.class
+SHA-256-Digest: U3/OM3zXi6jFzWPvS+HfTf/J0HAJPlK+uDdlK8YhLEU=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$NotResolved.class
+SHA-256-Digest: rvT7elZ7gCNzaS8T5M5C9BpPQngJaxrsogLZqMtIG0s=
+
+Name: org/apache/felix/scr/impl/BundleComponentActivator$1.class
+SHA-256-Digest: MNc2RuziihsBvEk7h3IuG7C2/IdlSV9t9EI5MkQUhuM=
+
+Name: org/apache/felix/scr/impl/metadata/PropertyMetadata.class
+SHA-256-Digest: MO4Jqedj716nMjgVdeXM4YGSyn3YXUV21gXhI5DSChc=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$NotFound.class
+SHA-256-Digest: b+oEOhsl/DawqMg6EaSjZrcs3fb/dIVPuFrelWQEkNs=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$NoPermission
+ sCustomizer.class
+SHA-256-Digest: Db2/D1U+Sruyrj0cYIb0RMcknTxesMQHd7Q1FMTTvXA=
+
+Name: org/apache/felix/scr/impl/inject/BindMethod$1.class
+SHA-256-Digest: UuS5Rw/3Q8yZhNoz1mAeTql73BFB4G+YN8MdSBiny3o=
+
+Name: about_files/APACHE_LICENSE__VERSION_2.0.txt
+SHA-256-Digest: z8d0m5b2O9McPEK1xHG/dWgUBT6EfBDz6wA0F7xSPTA=
+
+Name: org/apache/felix/scr/info/ScrInfo.class
+SHA-256-Digest: 0GI7C7BSzpRbkuApoa1pgomb/GuJWjfmmOBAbdw2+Dw=
+
+Name: org/apache/felix/scr/impl/manager/ComponentContextImpl$1.class
+SHA-256-Digest: 96HRgg9K12jCCkFc+U89ZeW9aeHggsG/G1XzQmmwI/k=
+
+Name: org/apache/felix/scr/impl/manager/ServiceFactoryComponentManager
+ $1.class
+SHA-256-Digest: A31QQzHSKLOKusVQ59yUvPNnpNpEcYIXXKK/bq8fdic=
+
+Name: org/osgi/util/promise/PromiseImpl$Recover.class
+SHA-256-Digest: 1hkdww9QqjLSRso6pPWMslbeVw5F0yMPtQ/wv83VNBI=
+
+Name: org/apache/felix/scr/impl/manager/MultiplePrototypeRefPair.class
+SHA-256-Digest: hp1/MXdzMfFcedBxVfUU4rmLgJ2s/x1L1R1IEwBOL2c=
+
+Name: org/apache/felix/scr/impl/ScrCommand.class
+SHA-256-Digest: bvW/yuZ4SLol1q1rb4KQDLKb8Q9h2A4nz0sIWAoXSMQ=
+
+Name: org/apache/felix/scr/impl/inject/ComponentMethodsImpl.class
+SHA-256-Digest: 1VoEPVVKc1qPBmKyuG0n+8bHqAGJznvbBMfB7zU0DoY=
+
+Name: org/apache/felix/scr/impl/inject/BindMethod.class
+SHA-256-Digest: fTEEcbrp5Yju1jrRofgtmX+GlFTwpQQ30O2ick2/uzk=
+
+Name: org/osgi/service/component/ComponentFactory.class
+SHA-256-Digest: AxcREUXYi1/giMfNN4rNpr1uvwPp8nviiETBs+FLKec=
+
+Name: org/xmlpull/v1/XmlPullParserFactory.class
+SHA-256-Digest: DWWiTKXToIYDnTopqbpR0RMxjFdfz9w5peWHyiJ6JQk=
+
+Name: org/apache/felix/scr/impl/manager/ComponentManager.class
+SHA-256-Digest: bvvV5Bcab34/L6IcHRaSAoMsQIXb6/cHsge76ILutNs=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$NotApplicable.class
+SHA-256-Digest: pSr7c2KPfGUQ+OgJ4/zNmRNSrpIqApSaezFJQDlCTac=
+
+Name: org/apache/felix/scr/impl/config/ScrManagedServiceMetaTypeProvid
+ er$AttributeDefinitionImpl.class
+SHA-256-Digest: Sp4GOcPqO8K1Es2hpiYkjDQhFa/IbLi4iG9A9NqZ1c0=
+
+Name: org/apache/felix/scr/impl/manager/ReferenceManager.class
+SHA-256-Digest: QLJwVWV3qLcmyb7PGQxTWOvDeUvKy+qWCnwzA7ID6IQ=
+
+Name: org/apache/felix/scr/impl/manager/SingleComponentManager.class
+SHA-256-Digest: x/5l3EWlaS8hVl1J4Fujkf06+fpA0CycTzs+ecaeyQs=
+
+Name: META-INF/LICENSE
+SHA-256-Digest: yk46TX8R6SzFRlRLunN7GqL9Nxx0G6M4mnmoKz2nPVc=
+
+Name: org/apache/felix/scr/impl/helper/ComponentServiceObjectsHelper$C
+ omponentServiceObjectsImpl.class
+SHA-256-Digest: vaj68rX0of0nH+D+92wBYGmGPYHMhvvAShKl0D8hHp8=
+
+Name: org/apache/felix/scr/impl/metadata/ComponentMetadata.class
+SHA-256-Digest: dwDWZv7AxcWAtmUM4vcO9NIpqjkMTaRMZ/uRIyUgxQ0=
+
+Name: org/osgi/service/component/ComponentInstance.class
+SHA-256-Digest: L7n/uTMkWigTxr4KCXI4aeLjoolkPPek67jA2RdtraA=
+
+Name: org/apache/felix/scr/impl/manager/SingleComponentManager$SetImpl
+ ementationObject.class
+SHA-256-Digest: vHYYIttAf9IWfvg6/+9nHe5ubOVexqyywvIE8ih2BCc=
+
+Name: org/apache/felix/scr/impl/inject/SuitableMethodNotAccessibleExce
+ ption.class
+SHA-256-Digest: JN2QuoIxk0hngX9UlzHAdeue60NrsqLcyBR6KSdNXPo=
+
+Name: org/osgi/service/component/runtime/dto/UnsatisfiedReferenceDTO.c
+ lass
+SHA-256-Digest: aMMAzkj7gkNTBO9VIWK/wb7vJZgaQq4Lh/vRh7U8j98=
+
+Name: org/apache/felix/scr/impl/manager/RegistrationManager$RegState.c
+ lass
+SHA-256-Digest: GIrIxtF2fmCS8d2xwlBYyX601MMca1+UICDSNXlaiDo=
+
+Name: org/apache/felix/scr/impl/manager/SingleComponentManager$1.class
+SHA-256-Digest: kHwJ9cUzhie9tPdMNPFFzKyxev9ri1a4PRWkpSnl6yE=
+
+Name: org/osgi/util/promise/FailedPromisesException.class
+SHA-256-Digest: XeTNjGwHkmNcRDtDHLVL0gbUc0dBfj47feyM9NFXTDk=
+
+Name: org/osgi/util/promise/package-info.class
+SHA-256-Digest: 8xhKCTsi99m4abYQ6j5DFuOlfA/fGzF9acpOEvT0iKE=
+
+Name: org/osgi/util/promise/PromiseImpl$Logger.class
+SHA-256-Digest: aWX4QLxamQxxDT1WTlz6og8CM5iqh0BCUuzkW6OFMgU=
+
+Name: org/apache/felix/scr/impl/ScrCommand$Result.class
+SHA-256-Digest: gEC73FivR3+AuaGjvG8kZ2gk9S1NzjKFbNTxg7P17f8=
+
+Name: org/apache/felix/scr/impl/manager/ConfigurableComponentHolder.cl
+ ass
+SHA-256-Digest: ohC2LdUvNrdVjCEZ5V7ezQQaIj6LVTFzZwGIVtaYXhE=
+
+Name: META-INF/DEPENDENCIES
+SHA-256-Digest: 48sEBdCK0EAeYOLIZBI+jmg1Z34U0U5XEEcONULB7JY=
+
+Name: org/osgi/util/promise/Promise.class
+SHA-256-Digest: uI1K5g7AAS7cC3jQfUCb0/Vs4sEivsOSRn8IG6rhQes=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$SingleStatic
+ Customizer.class
+SHA-256-Digest: FAk6XwZdgaAiuhwB8zwgQ0Fngj7yNLt209r+qaillq8=
+
+Name: org/apache/felix/scr/impl/config/ScrManagedServiceMetaTypeProvid
+ er.class
+SHA-256-Digest: xG9e1IWvfDGf9oZWtNAOLChN5o2zjVFJrtuAWOH9Jfs=
+
+Name: org/osgi/util/promise/Promises$All.class
+SHA-256-Digest: d5PCw9jTSeCz0ekeqZ0qjSI0hpw2vwYSon50zzi3tog=
+
+Name: org/osgi/util/function/Predicate.class
+SHA-256-Digest: NXmFXb3RsfZAl2EiyrlHlPfMEmGj/yswY5XESxMj0m0=
+
+Name: org/apache/felix/scr/impl/manager/ServiceTracker$Tracked.class
+SHA-256-Digest: wj4CmZyMmtNsHL9+fQkhR4LwJlhvua8eBevP9xBrHsM=
+
+Name: org/apache/felix/scr/impl/parser/ParseException.class
+SHA-256-Digest: jr6taWs+PBaQaS9GeKxZMvOem/oLg22dVJWj/wQ6tIg=
+
+Name: org/osgi/service/component/packageinfo
+SHA-256-Digest: pFqkA0Evp1rF0zJ+NSsuant87bRmtwmoj6bJ9dRjIiE=
+
+Name: org/apache/felix/scr/impl/metadata/ServiceMetadata.class
+SHA-256-Digest: w043nEhA0rIIhbMi3SvwFPfWCj5g5w3i3kosWg9ywHg=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$SingleDynami
+ cCustomizer.class
+SHA-256-Digest: /JYHpYfwG+iGoMWw5sX19BJhrfy4aU5AZMYfQxHJyD8=
+
+Name: org/apache/felix/scr/impl/manager/ComponentFactoryImpl$ModifyCom
+ ponentInstance.class
+SHA-256-Digest: aSF2eD2b9sznlzU4kY0fbB1oyGflrnONoToqP1mbXw0=
+
+Name: org/apache/felix/scr/impl/manager/ServiceTracker$AbstractTracked
+ .class
+SHA-256-Digest: WmWP158rB8Ue9imWkBMH4FNHbvD8XprmLK8g0vtCeUU=
+
+Name: org/apache/felix/scr/impl/manager/ComponentHolder.class
+SHA-256-Digest: OzOmGCghIfHUHosX4rwOIn0Dx+bOZUXdf6420uHL9/Q=
+
+Name: org/apache/felix/scr/impl/manager/RefPair.class
+SHA-256-Digest: 8vJvv4iDY4Md5yOkVQdWYtKSaop5rpSyNcZqNZfFX5s=
+
+Name: org/apache/felix/scr/impl/manager/RegistrationManager$RegStateWr
+ apper.class
+SHA-256-Digest: fnEhzDEZJDGDfniYIZ1UPJmM2HR6E9c3pJn/qvtCfDU=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$NotFound.class
+SHA-256-Digest: GRLiSJtbJRCY4AZt7kW0IVy1g6IrWUl/WAQkmDWNrKM=
+
+Name: org/apache/felix/scr/impl/manager/ComponentContainer.class
+SHA-256-Digest: c2oFSUYCtx50wUMV22TYgSXYGUiy3Ry69/fCB9EFqq0=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod.class
+SHA-256-Digest: sMUFsBSZL3UepkTjPu42TbdKb/8SDgFYJTmUoPsxWJE=
+
+Name: org/apache/felix/scr/impl/inject/UnbindMethod.class
+SHA-256-Digest: Jpw0YhlQ9CLtZsTiQhrZEMfH93K2DRoAH/FEyFStqJU=
+
+Name: org/apache/felix/scr/impl/helper/ReferenceMethod.class
+SHA-256-Digest: aqEYeNchF2deqxxxUCALiNFAQBwH0LhgJIJUrZayweU=
+
+Name: org/osgi/service/component/runtime/dto/ComponentConfigurationDTO
+ .class
+SHA-256-Digest: 2fvPzWX3iRZaQt6/2pOaYA7XMRfEeSS1zerNk3HH13U=
+
+Name: org/apache/felix/scr/impl/ComponentRegistryKey.class
+SHA-256-Digest: m3oPjYAWZVRCK5dCeqbkHEgfiNz0e0+Y9wCECpl2CUA=
+
+Name: org/osgi/util/promise/PromiseImpl$RecoverWith.class
+SHA-256-Digest: oAfUghVyGWLF/iVMjAx2FGKvmLSX6l01UVXrw7T4gIg=
+
+Name: org/osgi/service/component/runtime/package-info.class
+SHA-256-Digest: iUbTi+Is88WVOfLRNMT5QWP663+QHudz5YcRUzw/dLc=
+
+Name: org/apache/felix/utils/extender/AbstractExtender$2.class
+SHA-256-Digest: tzABF36e0OJv5CLvJ2/4jdtSiBMHeqZEE8w/ROrDF8o=
+
+Name: org/apache/felix/scr/impl/manager/ExtendedServiceListener.class
+SHA-256-Digest: x2KyaPT6tLJmsefrQuJvMzOzyasmsn+8+nbZYGlgqSk=
+
+Name: org/apache/felix/scr/impl/config/ScrConfigurationImpl.class
+SHA-256-Digest: RdwJkQj/NXBwKPb8RkbinoGH4VFAgoKIljXWkcAhoxE=
+
+Name: org/apache/felix/scr/impl/helper/Coercions.class
+SHA-256-Digest: 7flY1fsd/8u4iT0qDrn/ge5+cTOtAu+VF3VbllPv8N4=
+
+Name: org/apache/felix/scr/impl/inject/Annotations.class
+SHA-256-Digest: 25nuV6xTzdWJ/hu2X70pyZRpZ3yCT8T88iM4g8z9RLY=
+
+Name: org/osgi/service/component/ComponentConstants.class
+SHA-256-Digest: 6JhsCGrbvJXDJwUi8WUNLUcme0fRMqpxiBWGwOk2JLE=
+
+Name: org/osgi/service/component/runtime/dto/packageinfo
+SHA-256-Digest: pFqkA0Evp1rF0zJ+NSsuant87bRmtwmoj6bJ9dRjIiE=
+
+Name: org/apache/felix/scr/impl/ComponentActorThread$1.class
+SHA-256-Digest: wZBNDtl4LBb9sRgUKFKAYQK5BqUMxqz/JyCydj+7BUE=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$1.class
+SHA-256-Digest: mkdKV00dBvbjNApc1vQIzQeuWaYTx3G4sv2pPWSp4hk=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$1.class
+SHA-256-Digest: M39uqa19updXIqQMuBqZMvfpv5oDey2SDlmZ9Pgdy1g=
+
+Name: org/osgi/service/component/ComponentServiceObjects.class
+SHA-256-Digest: c+cNjCBmuUI2HloxzgUqQVRJL6TPae3n/qdqZdFepCM=
+
+Name: org/apache/felix/scr/impl/metadata/DSVersion.class
+SHA-256-Digest: K/pyrbUD1lJOpixPYzQ8FhMY5GJ9YNA5pRaZVeqeZ6A=
+
+Name: org/apache/felix/scr/impl/manager/ComponentContextImpl$Component
+ InstanceImpl.class
+SHA-256-Digest: 5k0VHlG3uFrriKUST/yYk9zt5/3Vsu/Va6jnMvDOrXk=
+
+Name: org/apache/felix/scr/impl/ScrCommand$1.class
+SHA-256-Digest: NaZguzEVhvkcYDZOwA/uplfku+0EpR7b1DLkB4u1AWg=
+
+Name: org/apache/felix/scr/impl/inject/DuplexReferenceMethods$1.class
+SHA-256-Digest: +51FKC6EOdRGVIi/FS7XfviZtDYygluflaojLBKd1TI=
+
+Name: org/osgi/util/promise/PromiseImpl$Chain.class
+SHA-256-Digest: o6VsolTeB6R+Y3be6IeApIinf1xONWKRrnbkRLQDJ3M=
+
+Name: org/apache/felix/scr/impl/helper/ComponentServiceObjectsHelper.c
+ lass
+SHA-256-Digest: +MT1noife3XV6nUiOx2ItR9PLcpcxn1gjxPpV4lSeGI=
+
+Name: org/apache/felix/scr/component/ExtComponentContext.class
+SHA-256-Digest: Ahemt/9rdHFvC1YjgbmKf5Cce8KlJCshjz3H/KPlHPM=
+
+Name: org/osgi/util/promise/Failure.class
+SHA-256-Digest: KZ2YIzloLeSrbfiBf1s1+6iuhpOEcWwFJ5Fwbu5GEEM=
+
+Name: org/apache/felix/scr/impl/metadata/ReferenceMetadata.class
+SHA-256-Digest: cbW8HpAxeu965yMoDLd0j2Zd1NXHF2pHARn+k9w6oLI=
+
+Name: org/apache/felix/scr/impl/inject/UpdatedMethod.class
+SHA-256-Digest: +d6KeZ1hnxww1lNlVnWf1jPsfjlkQqxXMpHp68SJ24U=
+
+Name: OSGI-INF/l10n/bundle.properties
+SHA-256-Digest: NqiC0xzJkShWOoiqLoQQLCs84+QqSBpwfQ4eOPls8Gk=
+
+Name: org/apache/felix/scr/impl/inject/ActivateMethod.class
+SHA-256-Digest: 9WkTTJHfK0hqwzKbsFu97WbKmqRDAQA/6/AhMXI9vS0=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$AbstractCust
+ omizer.class
+SHA-256-Digest: OqBLRsIMYkSWxO6T2F0H7y31FQbaJD0iKWYVEK7y6HU=
+
+Name: org/apache/felix/scr/impl/manager/EdgeInfo.class
+SHA-256-Digest: b0oCx2VI6RD3VtOz39owKlBOWJYzOwTBKnP05q7rnvE=
+
+Name: org/apache/felix/utils/extender/Extension.class
+SHA-256-Digest: 6Nmv+rbEe7t2tXWdc3Vfys9Ejj3eEPyEoQ7VTT4FDnk=
+
+Name: org/apache/felix/scr/impl/ScrGogoCommand.class
+SHA-256-Digest: W6KZ5B1L8xz/Y+l0y76cmGKVuhRIZ+QkcOeQNzCI27o=
+
+Name: org/apache/felix/scr/impl/inject/DeactivateMethod.class
+SHA-256-Digest: M7PzNg3UhHn/Vh7x305PX3S13TYQG5qQCYRhf24v6rs=
+
+Name: org/apache/felix/scr/impl/inject/Annotations$Invalid.class
+SHA-256-Digest: 8EY1eK4Qlndfa/vfW2Rd5/rf5iaDAKpbyOWOpff7two=
+
+Name: org/apache/felix/scr/impl/manager/ServiceFactoryComponentManager
+ .class
+SHA-256-Digest: 8CEHqsGQsp2iHA9UTnaAP+X8OUMrnD7mY4H+H7GTOGo=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry.class
+SHA-256-Digest: tiRVGpNIdH0bpWB9Yfot8QHNi8xXzdHiq0QbRNuA6ks=
+
+Name: org/apache/felix/scr/impl/manager/RegistrationManager.class
+SHA-256-Digest: hwox0VGgwQMKw/XfIVeitNjfQENHMuyVEZjsv97Z9v8=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$ParamType.class
+SHA-256-Digest: 68s3Lhlb4hCZo4z8fPIuT1fZ2jGWRZiEYjSuuKFlmAg=
+
+Name: org/apache/felix/scr/impl/config/ScrManagedService.class
+SHA-256-Digest: qjEejzOYdThhrbI2ptcUyDjX26Ng/16WBgO6z9ub/vo=
+
+Name: org/apache/felix/scr/impl/manager/ServiceTrackerCustomizer.class
+SHA-256-Digest: ir4iPLqnTG6CmBhV3MEp4U/8QP7hN/IGAmWWN6W0KA0=
+
+Name: org/osgi/service/component/runtime/dto/ComponentDescriptionDTO.c
+ lass
+SHA-256-Digest: 7xQII/KVqNA4Z94wFj/DkhaJhjJlScW6KXU69UncOsw=
+
+Name: org/osgi/service/component/runtime/packageinfo
+SHA-256-Digest: pFqkA0Evp1rF0zJ+NSsuant87bRmtwmoj6bJ9dRjIiE=
+
+Name: org/apache/felix/scr/impl/helper/ReadOnlyDictionary.class
+SHA-256-Digest: QzghiPNDom/uoZ4rriB234cbZZYdMRQiM70b7WJ0+qE=
+
+Name: org/apache/felix/scr/impl/manager/PrototypeServiceFactoryCompone
+ ntManager.class
+SHA-256-Digest: NJQInBLrsoxmENea7Y4LTcC8GvorVL8hvLWcBTx1CNY=
+
+Name: org/osgi/util/promise/PromiseImpl$FlatMap.class
+SHA-256-Digest: dnsOFxYZ0pAp6NPwbYXTn1BSkM6LJdBYdl1aKryQKMI=
+
+Name: org/apache/felix/scr/impl/inject/BindParameters.class
+SHA-256-Digest: jui1+9lvDMw0iJaHlK67njtZSqYn6RX1RlXHcjzQjoQ=
+
+Name: org/apache/felix/scr/impl/Activator$ScrExtension.class
+SHA-256-Digest: 5BqOmT0uIC0CiCig3x4oAYCTXeNhUPopf9fj0aeQik4=
+
+Name: org/apache/felix/scr/impl/manager/ComponentFactoryImpl.class
+SHA-256-Digest: i1hm1HU3YaadXltptaqnAFlm1ecocw/u61GZU+pLJFk=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$MultipleDyna
+ micCustomizer.class
+SHA-256-Digest: dJyub1T9y6nPZ3F5lEi0c0SbOYVw+FS8AlyJIhZsfkM=
+
+Name: org/apache/felix/scr/impl/parser/KXml2SAXHandler.class
+SHA-256-Digest: i3Z9+ibAiiPSwdiJzYIEBFuBiBR5ACxveV7sqfZm7N8=
+
+Name: org/apache/felix/scr/impl/manager/ExtendedServiceEvent.class
+SHA-256-Digest: mYq9fSWQONAzf/UbXza4eY00hnE+RRn7HcracSL4b9Q=
+
+Name: org/osgi/util/promise/PromiseImpl$Map.class
+SHA-256-Digest: /dOx+UlsXudQL3Eg2HZH9j1+EWZpnOKoOsGkJQ5WRVQ=
+
+Name: org/osgi/util/promise/PromiseImpl$Then.class
+SHA-256-Digest: 5Wu4DzsHf0e9mFWBmtKCDQn0xG4Y4dqfmRu0i/693Pk=
+
+Name: org/apache/felix/scr/impl/manager/RegionConfigurationSupport$Con
+ figurationInfo.class
+SHA-256-Digest: bpSQCdVzYHbqUCqgkqHKgyY4JdBX54prtCT5lmqWjLI=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$1.class
+SHA-256-Digest: LdyQimP0S8uF5VvVgaKWt7QOsMMw6Qyr60k+2GWisjE=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$2.class
+SHA-256-Digest: qnZ10QAT+sdHgVD4R0Oj1jcBWDhE2bQ52JZOysSC6s4=
+
+Name: org/apache/felix/scr/impl/manager/ServiceTracker.class
+SHA-256-Digest: Vnmum6Bj/LTEBslhEzaGmuYWkrw3CwEUXiyXUBAoSm0=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$Resolved.class
+SHA-256-Digest: PXGEqqA5moFTkCm8Cn3/t+ss5ZkrAq2BuRotI8qS+00=
+
+Name: org/apache/felix/scr/impl/config/ScrManagedServiceMetaTypeProvid
+ er$1.class
+SHA-256-Digest: gtJH0UshpCT55YwYgwBAtGGYph7gVmDvG0z505yZKjM=
+
+Name: org/apache/felix/scr/impl/BundleComponentActivator$ListenerInfo.
+ class
+SHA-256-Digest: LMko2+B+3BMH2shnLKiGW4FXp+FMsjGeTT9qUDY9fMw=
+
+Name: META-INF/maven/org.eclipse.orbit.bundles/org.apache.felix.scr/po
+ m.xml
+SHA-256-Digest: nuWsxq3FW4P3teNfsNTtFZsXv/q63FZzV54xkjh1XLY=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$ReferenceMethodImp
+ l.class
+SHA-256-Digest: UfdMe7JnEoBk1CvRxNAER4psOF1LcBXrGOPbPxWgM9g=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$METHOD_TYPE.class
+SHA-256-Digest: jNMkurOftjZZd9bpcCoRWPCbBHwmKljeUUZVbVmM0YA=
+
+Name: org/osgi/service/component/package-info.class
+SHA-256-Digest: MdD4zGvLD5wCY8a7blGcXieaX4DOzfRphyPdW5NCS7g=
+
+Name: org/osgi/util/promise/packageinfo
+SHA-256-Digest: U8BJUQRCOi5wEJQN/Lkox+gkPvtlWqFIeC8lH0Fr0bY=
+
+Name: org/apache/felix/scr/component/ExtFactoryComponentInstance.class
+SHA-256-Digest: 6sDBBa+Vf6lqIBmzfnlwIk1hspcnbGM/bi8cT1XU4pQ=
+
+Name: org/apache/felix/scr/impl/helper/ReferenceMethods.class
+SHA-256-Digest: J5orvfuGOqaKXLIah4Y1RN+e0q3mauQQ0I/M1/dPFTo=
+
+Name: org/apache/felix/scr/impl/manager/AbstractComponentManager$State
+ .class
+SHA-256-Digest: 1tEhg2CYX8WT8Di1JgmJRd1tSWctyEaHZDY+BkjMTBU=
+
+Name: org/apache/felix/utils/extender/AbstractExtender$1.class
+SHA-256-Digest: DDIT79zUl4kSv7W9AePPKLI+8PCpbL2Aabe/gpiQZiU=
+
+Name: org/apache/felix/scr/impl/parser/KXml2SAXParser$Attributes.class
+SHA-256-Digest: hbsV6gk3LMSHFOUVKHamvobYCOJFCfKzsJnB1M7e/yQ=
+
+Name: org/apache/felix/scr/impl/Activator.class
+SHA-256-Digest: rflGfwoUxTFW2ehwAg2iP+tncix992Qud0jHpSiYa6M=
+
+Name: org/apache/felix/scr/impl/helper/Logger.class
+SHA-256-Digest: ALwt3lBgyeoRuRO2scq/v6GYPQgBq0yLgQ90dfJX3MY=
+
+Name: org/apache/felix/utils/extender/SimpleExtension.class
+SHA-256-Digest: uduZRu/BfbH9ktglD6ZytYAR9OC8V0XUGKErt6dQekc=
+
+Name: org/apache/felix/scr/impl/inject/ActivatorParameter.class
+SHA-256-Digest: 1bLPQlYIf7ZZnOL33OxSGnAh+VcneP5jGco2REYnHZ4=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$2.class
+SHA-256-Digest: jNCE5zqI4+4ukRTj/fu+pWFjz1on5/1P0ac2ekkwQGc=
+
+Name: org/osgi/util/function/package-info.class
+SHA-256-Digest: AscYQt5v2H+/0dVzjUGI8195kQPRfr6y7aYqlosRR3o=
+
+Name: org/apache/felix/scr/impl/metadata/ServiceMetadata$Scope.class
+SHA-256-Digest: Tw0XbCI6ZkJ63uBLDKZtxsgFONwuZY/Bdfz/DZ8rLIA=
+
+Name: org/apache/felix/scr/impl/xml/XmlHandler.class
+SHA-256-Digest: 2+mdUkGJzOETicJkoKZH6Nu06FtSwL3w8IDYRIO8T3U=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler$NotResolved.class
+SHA-256-Digest: LLOAMasyCaGHlSjaUNWN7fIMJrnPwqKaSN9BmSNmy4Q=
+
+Name: org/xmlpull/v1/XmlPullParser.class
+SHA-256-Digest: y40puZWciSnYk6TWUPkei9jUmi9sN4wYbdj7o5358oM=
+
+Name: org/apache/felix/scr/impl/manager/ComponentActivator.class
+SHA-256-Digest: 3FA71oiyBRUjwFZYaKHS6RIqUsayJ3KcL0D18i+M/PY=
+
+Name: org/apache/felix/scr/impl/helper/InitReferenceMethod.class
+SHA-256-Digest: fMHXledw61ZQeMnf4wDH490X2UTOrDFswO/L+jsrKhs=
+
+Name: org/apache/felix/scr/impl/BundleComponentActivator.class
+SHA-256-Digest: 9UVjhu2zBSmB6FoYwZahy71ysX6J/cdZAzTlAPtFLiw=
+
+Name: org/apache/felix/scr/impl/manager/AbstractComponentManager$1.cla
+ ss
+SHA-256-Digest: zflkNKfBTh8bJGB8BXsGnPz3YHxG1BTEgXQC7sPC9BU=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$State.class
+SHA-256-Digest: MvhOdMBP39dFCI5RO797UJNB4zhvxrRnAwyTM/zKmgU=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$Info.class
+SHA-256-Digest: dw3adBP85zrf/fwgjVduykLR1thVgrpGmZlNk/UETAY=
+
+Name: org/apache/felix/scr/impl/inject/FieldHandler.class
+SHA-256-Digest: WV08gPQEBInp+XYKzmfOfhVIG6/TfnR1e2AGDGT58nY=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager.class
+SHA-256-Digest: OdShKSe+C18ViK+l/5MhpMjoWEJnUgGhdAusuEVqhlw=
+
+Name: META-INF/maven/org.eclipse.orbit.bundles/org.apache.felix.scr/po
+ m.properties
+SHA-256-Digest: rN3+n/tv+tFhEwsXLHgIGt7rlAgaQEDPJ8PjXCg3M0g=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$Entry.class
+SHA-256-Digest: k7+8bQklMbOZEFC7gAnNkEz6OtjyoFw8Va6JReHR3kU=
+
+Name: org/apache/felix/scr/impl/ComponentRegistry$3.class
+SHA-256-Digest: 8DlvMY9cbeq6SSegrbXtasbF+cxlaC3l6B5OIxt624Y=
+
+Name: org/apache/felix/scr/impl/manager/ComponentContextImpl.class
+SHA-256-Digest: QJaLbnm/zMWCmwWGcTtZft/B0pc+H7X2ZeL4Si0n/5Y=
+
+Name: org/apache/felix/scr/impl/manager/AbstractComponentManager$3.cla
+ ss
+SHA-256-Digest: 7IAhTNv3VxMMXKxtimAfJ0Rz/QL+hT3B43drqyOPlrk=
+
+Name: org/apache/felix/scr/impl/ScrCommand$2.class
+SHA-256-Digest: PnVWA1xG5JwndeY1p+FVbdW6QAnqbGC94ZfX2bZGotQ=
+
+Name: org/osgi/util/function/Function.class
+SHA-256-Digest: ET4a86J8C+RNWaOydHqa3TvBBnmt48bp0tcIqVBMiqw=
+
+Name: org/apache/felix/scr/impl/helper/ConfigAdminTracker.class
+SHA-256-Digest: wOm2JSRFEuh+zJ6Knb0ZdggZ6kJCf/ci9+WYm5TEwXE=
+
+Name: org/apache/felix/scr/impl/manager/SingleRefPair.class
+SHA-256-Digest: tZ7ql1/2V5RL+1WQb8mEgenwPrygdT7FQIfwdlpeoTc=
+
+Name: org/apache/felix/scr/impl/runtime/ServiceComponentRuntimeImpl.cl
+ ass
+SHA-256-Digest: xttu6naiKLq3UUownApHJaULU4CPlJYFQkoquNrtA9o=
+
+Name: org/osgi/util/promise/PromiseImpl$FallbackTo.class
+SHA-256-Digest: mAHWCQf7spTj/2tELzbcDn9RjtuU6R+rj9jgEPJM1Bg=
+
+Name: META-INF/NOTICE
+SHA-256-Digest: soITNE/qqkKbiZ/f+eDHHdPFh6lA4T+KD0VY2tyn8r4=
+
+Name: about.html
+SHA-256-Digest: mzR1D9tvblYoxJbJc7VyI1bh8HF1tlQp3Vjg8/L7fAA=
+
+Name: org/apache/felix/scr/impl/manager/ExtendedServiceListenerContext
+ .class
+SHA-256-Digest: QW7NbKhfgxago15blwBN/3kgoHAe9jTWBaXc+7y4hmU=
+
+Name: org/apache/felix/scr/impl/manager/AbstractComponentManager.class
+SHA-256-Digest: H2L3/taGorI0Irtv92KnzIP00wwuf3xDUDhidW4YdDc=
+
+Name: org/apache/felix/scr/impl/helper/MethodResult.class
+SHA-256-Digest: YE4oD3ChJHJITRFFQTbCixwgyNp2satbKGwCfuuAKS0=
+
+Name: org/apache/felix/scr/impl/helper/SimpleLogger.class
+SHA-256-Digest: 9FjpsR8gL7Kaov1u7EnbKpZB4IlMDJkZaUsPqyqeC5g=
+
+Name: org/apache/felix/scr/impl/manager/AbstractComponentManager$2.cla
+ ss
+SHA-256-Digest: j4mFdMkYj0aczMVVbcqkZroBxb9WLBzBv96+3m+YN3A=
+
+Name: org/apache/felix/scr/impl/metadata/TargetedPID.class
+SHA-256-Digest: Q+uFBjUwvM/puBQ/6MWSSyiYAyhwuVKWCHphzngvSVE=
+
+Name: org/apache/felix/scr/impl/inject/ModifiedMethod.class
+SHA-256-Digest: IFXg9U2dkCl/r1Fh42LXTvIFuA0mQK6eV6Eqv6mcvaA=
+
+Name: org/apache/felix/scr/impl/manager/DependencyManager$MultipleStat
+ icGreedyCustomizer.class
+SHA-256-Digest: Oy1crBfbHNWq0KxriQGW6nhcuU7gCp3CN2s03C3Dtls=
+
+Name: org/apache/felix/scr/impl/inject/BaseMethod$Resolved.class
+SHA-256-Digest: mmRsiaht11FGgdfXbfaEgtScFyOl05oz0GHwfbg1ZeE=
+
+Name: org/osgi/service/component/runtime/dto/ReferenceDTO.class
+SHA-256-Digest: zeLF6VRMmgg9ehVjdBrM0A9BvefW0oS3s7XcfJ96/is=
+
+Name: org/apache/felix/scr/impl/manager/ConfigurableComponentHolder$PS
+ FLoader.class
+SHA-256-Digest: 3ItjDDqLbPhEKZQHpZEX93iRTL2WdG1tjdnVvzJpQuk=
+
+Name: org/apache/felix/scr/impl/metadata/ReferenceMetadata$ReferenceSc
+ ope.class
+SHA-256-Digest: Ldi9e00nhcvhBM4dgwtvBFIPkZrK/u3s4x0un/QsfRc=
+

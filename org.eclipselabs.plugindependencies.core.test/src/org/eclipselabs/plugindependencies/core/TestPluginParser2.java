@@ -43,6 +43,8 @@ public class TestPluginParser2  extends BaseTest {
 
     private static File xtextUtil;
 
+    private static File felixScr;
+
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -50,11 +52,12 @@ public class TestPluginParser2  extends BaseTest {
         xtext = new File(dirPath + "/org.eclipse.xtext");
         xtextGenerator = new File(dirPath + "/org.eclipse.xtext.generator");
         xtextUtil = new File(dirPath + "/org.eclipse.xtext.util");
+        felixScr = new File(dirPath + "/org.apache.felix.scr");
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-
+        //
     }
 
     @Override
@@ -108,6 +111,30 @@ public class TestPluginParser2  extends BaseTest {
 //        export = readAttribute(xtextMf, "Require-Bundle");
         Set<Plugin> reex = xtextPl.getRequiredReexportedPlugins();
         assertEquals("Reex: " + reex, 1, reex.size());
+    }
+
+    @Test
+    public void testReadDynamic() throws IOException {
+        PlatformState state = new PlatformState();
+        Manifest felixMf = getManifest(felixScr);
+        Plugin felixPl = parseManifest(felixMf, state);
+        state.addPlugin(felixPl);
+
+        state.resolveDependencies();
+        state.validate();
+
+        Set<Package> importedPackages = felixPl.getImportedPackages();
+        assertEquals("Reex: " + importedPackages, 2, importedPackages.size());
+
+        List<ManifestEntry> importedPackageEntries = felixPl.getImportedPackageEntries();
+        assertEquals("Reex: " + importedPackageEntries, 20, importedPackageEntries.size());
+        int dynCount = 0;
+        for (ManifestEntry me : importedPackageEntries) {
+            if(me.isDynamicImport()) {
+                dynCount ++;
+            }
+        }
+        assertEquals("Expect to see 2 dynamic imports", 2, dynCount);
     }
 
 
