@@ -1,5 +1,5 @@
 Help page
-java plugin_dependencies [-javaHome path] -eclipsePath folder1 folder2.. [Options]:
+java plugin_dependencies [-javaHome path] -eclipsePaths folder1 folder2.. [Options]:
 -providing package			Prints the plugin(s), which export the specified package
 -dependOnPlugin plugin		Prints all plugins which need the specified plugin.
 -dependOnPackage package		Prints all plugins which need the specified package.
