@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
+import static org.eclipselabs.plugindependencies.core.Logging.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -162,7 +162,7 @@ public class CommandLineInterpreter {
     }
 
     static void printHelpPage() {
-        String help = "Help page\njava plugin_dependencies [-javaHome path] -eclipsePath folder1 folder2.. [Options]:";
+        String help = "Help page\njava plugin_dependencies [-javaHome path] -eclipsePaths folder1 folder2.. [Options]:";
         Logging.writeStandardOut(help);
         for (Options opt : Options.values()) {
             if (!opt.toString().equals("UNKNOWN")) {
