@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +130,7 @@ public class TestCLI extends BaseTest {
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
 
-            assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(CommandLineInterpreter.RC_RUNTIME_ERROR, SecurityMan.runMain(args));
 
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
             expectedOutputList = addNewlineToAllStrings(expectedOutputList);
@@ -206,7 +205,7 @@ public class TestCLI extends BaseTest {
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
 
-            assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(), StandardCharsets.UTF_8);
             expectedOutputList = addNewlineToAllStrings(expectedOutputList);
@@ -230,7 +229,7 @@ public class TestCLI extends BaseTest {
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
 
-            assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
                     StandardCharsets.UTF_8);
@@ -256,7 +255,7 @@ public class TestCLI extends BaseTest {
         try(PrintStream out = new PrintStream(outputFile);){
             Logging.setLogger(new Logging.SimpleLogger(out));
 
-            assertEquals(-1, SecurityMan.runMain(args));
+            assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
             List<String> expectedOutputList = Files.readAllLines(expectedOutput.toPath(),
                     StandardCharsets.UTF_8);

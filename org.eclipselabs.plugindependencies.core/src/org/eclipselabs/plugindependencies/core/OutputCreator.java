@@ -12,6 +12,8 @@
 
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,7 +23,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 /**
  * @author obroesam
  *
@@ -44,17 +45,17 @@ public class OutputCreator {
         File out = new File(fileName);
         if (out.exists() && !out.delete()) {
             Logging.getLogger().error("can't delete file " + fileName);
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
         if (!out.createNewFile()) {
             Logging.getLogger().error("can't create File " + fileName);
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
         try (FileWriter toFileOut = new FileWriter(out, false)) {
             toFileOut.write(toWrite.toString());
         }
         Logging.writeStandardOut("\t" + fileName);
-        return 0;
+        return RC_OK;
     }
 
     public static int generateRequirementsfile(String outfile, PlatformState state) throws IOException {
@@ -103,14 +104,14 @@ public class OutputCreator {
             String classPaths = getClassPaths(resolvedPlugin, false);
             if (classPaths == null) {
                 Logging.getLogger().error("can't resolve classpath for " + plugin);
-                return -1;
+                return RC_ANALYSIS_ERROR;
             }
             classPathList.append(classPaths);
         }
         String classPaths = getClassPaths(plugin, true);
         if (classPaths == null) {
             Logging.getLogger().error("can't resolve classpath for " + plugin);
-            return -1;
+            return RC_ANALYSIS_ERROR;
         }
         classPathList.append(classPaths);
         return writeToFile(plugin.getPath() + SEP + ".classpath.generated", classPathList);

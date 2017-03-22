@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,6 +37,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 /**
  * @author obroesam
  *
@@ -65,21 +66,19 @@ public class PluginParser {
 
         if (!rootDir.exists()) {
             Logging.getLogger().error("given directory does not exist: " + rootDir);
-            return 2;
+            return RC_RUNTIME_ERROR;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
             Logging.getLogger().error("given directory is not a directory or is not readable: " + rootDir);
-            return 3;
+            return RC_RUNTIME_ERROR;
         }
         sortFiles(dirArray);
 
-        int result = 0;
+        int result = RC_OK;
         for (File pluginOrDirectory : dirArray) {
-            if (createPluginAndAddToSet(pluginOrDirectory) != 0) {
-                result = -1;
-            }
+            result = Math.min(result, createPluginAndAddToSet(pluginOrDirectory));
         }
         return result;
     }
@@ -91,20 +90,20 @@ public class PluginParser {
         if (manifest == null) {
             pluginXml = getPluginXml(pluginOrDirectory);
             if(pluginXml == null){
-                return 0;
+                return RC_OK;
             }
         }
         plugin = parseManifest(manifest, state);
         if (plugin == null) {
             if (manifest == null && pluginXml == null) {
-                return 0;
+                return RC_OK;
             }
             if(pluginXml == null){
                 pluginXml = getPluginXml(pluginOrDirectory);
             }
             plugin = parsePluginPromXml(pluginXml);
             if (plugin == null) {
-                return 0;
+                return RC_OK;
             }
         }
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
@@ -113,9 +112,9 @@ public class PluginParser {
         }
         Plugin addedPlugin = state.addPlugin(plugin);
         if (addedPlugin == plugin) {
-            return 0;
+            return RC_OK;
         }
-        return -1;
+        return RC_ANALYSIS_ERROR;
     }
 
     private static Plugin parsePluginPromXml(String pluginXml) {

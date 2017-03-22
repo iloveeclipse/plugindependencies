@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 /**
  * @author obroesam
  *
@@ -53,20 +54,18 @@ public class FeatureParser {
             throws IOException, SAXException, ParserConfigurationException {
         if (!rootDir.isDirectory()) {
             Logging.getLogger().error("given directory does not exist: " + rootDir);
-            return 2;
+            return RC_RUNTIME_ERROR;
         }
 
         File[] dirArray = rootDir.listFiles();
         if(dirArray == null){
             Logging.getLogger().error("given directory is not a directory or is not readable: " + rootDir);
-            return 3;
+            return RC_RUNTIME_ERROR;
         }
         PluginParser.sortFiles(dirArray);
-        int result = 0;
+        int result = RC_OK;
         for (File featureFolder : dirArray) {
-            if (createFeatureAndAddToSet(featureFolder, state) != 0) {
-                result = -1;
-            }
+            result = Math.min(result, createFeatureAndAddToSet(featureFolder, state));
         }
         return result;
     }
@@ -79,20 +78,20 @@ public class FeatureParser {
             // check if we have an archive here.
             // this would be usually "broken", not extracted feature
             if(!featureFolder.getName().endsWith(".jar") || !featureFolder.isFile()){
-                return 0;
+                return RC_OK;
             }
 
             try (JarFile jarfile = new JarFile(featureFolder)) {
                 JarEntry entry = jarfile.getJarEntry("feature.xml");
                 if(entry == null){
-                    return 0;
+                    return RC_OK;
                 }
                 try (InputStream inputStream = jarfile.getInputStream(entry)){
                     feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(inputStream));
                 }
             }
             if(feature == null){
-                return 0;
+                return RC_OK;
             }
             // TODO add flag if we should warn in this case
             feature.addWarningToLog("Feature is contained in a jar file!");
@@ -102,14 +101,14 @@ public class FeatureParser {
             feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
         }
         if (feature == null) {
-            return 0;
+            return RC_OK;
         }
         feature.setPath(featureXMLFile.toString());
         Feature addedFeature = state.addFeature(feature);
         if (addedFeature == feature) {
-            return 0;
+            return RC_OK;
         }
-        return -1;
+        return RC_ANALYSIS_ERROR;
     }
 
     /**

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class TestBuildFileGen2 extends BaseTest {
                 "-bundleVersion", "99.0.0", "-generateAllBuild",
                 "testdata_circular/eclipse/plugins", "company/eclipse/plugins"};
 
-        assertEquals(-1, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
         for (File plugin : pluginDirs) {
             String path = plugin.getCanonicalPath();

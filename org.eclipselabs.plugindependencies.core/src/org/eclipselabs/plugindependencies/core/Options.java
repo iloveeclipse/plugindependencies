@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ enum Options {
             for (String arg : args) {
                 cli.printProvidingPackage(arg);
             }
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -47,7 +49,7 @@ enum Options {
             for (String arg : args) {
                 cli.printDependingOnPlugin(arg);
             }
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -64,7 +66,7 @@ enum Options {
             for (String arg : args) {
                 cli.printDependingOnPackage(arg);
             }
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -81,11 +83,11 @@ enum Options {
         int handle(CommandLineInterpreter cli, List<String> args) {
             for (String arg : args) {
                 int result = cli.generateRequirementsFile(arg);
-                if(result != 0){
+                if(result != RC_OK){
                     return result;
                 }
             }
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -145,7 +147,7 @@ enum Options {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
             CommandLineInterpreter.printHelpPage();
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -158,7 +160,7 @@ enum Options {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
             cli.setFullLog(args.size() > 0? args.get(0) : "");
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -178,16 +180,16 @@ enum Options {
                 args = resolveAndSkipDuplicates(args);
                 for (String arg : args) {
                     int result = cli.readInEclipseFolder(arg);
-                    if(result != 0){
+                    if(result != RC_OK){
                         return result;
                     }
                 }
                 cli.getState().resolveDependencies();
-                return 0;
+                return RC_OK;
             } catch (IOException | SAXException | ParserConfigurationException e) {
                 Logging.getLogger().error("failed to read from: " + args, e);
+                return RC_RUNTIME_ERROR;
             }
-            return -1;
         }
 
         @Override
@@ -206,11 +208,11 @@ enum Options {
         int handle(CommandLineInterpreter cli, List<String> args) {
             try {
                 cli.getState().setJavaHome(args.get(0));
+                return RC_OK;
             } catch (IllegalArgumentException e) {
                 Logging.getLogger().error(e.getMessage(), e);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
-            return 0;
         }
 
         @Override
@@ -227,11 +229,11 @@ enum Options {
         int handle(CommandLineInterpreter cli, List<String> args) {
             try {
                 OutputCreator.setEclipseRoot(args.get(0));
+                return RC_OK;
             } catch (IOException e) {
                 Logging.getLogger().error(" failed to resolve deployment root: " + args, e);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
-            return 0;
         }
 
         @Override
@@ -268,10 +270,10 @@ enum Options {
             if(args.size() != 3) {
                 String message = "Platform requires 3 arguments: OS, WS, ARCH";
                 Logging.getLogger().error(message);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
             cli.setPlatformSpecs(new PlatformState.PlatformSpecs(args.get(0), args.get(1), args.get(2)));
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -289,7 +291,7 @@ enum Options {
             for (String arg : args) {
                 cli.printFocusedOSGIElement(arg);
             }
-            return 0;
+            return RC_OK;
         }
 
         @Override
@@ -306,7 +308,7 @@ enum Options {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
             cli.printAllPluginsAndFeatures();
-            return 0;
+            return RC_OK;
         }
 
         @Override

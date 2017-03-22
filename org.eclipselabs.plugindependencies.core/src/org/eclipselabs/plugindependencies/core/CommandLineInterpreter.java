@@ -39,6 +39,10 @@ public class CommandLineInterpreter {
     private String fullLog;
     private final PluginParser pp;
 
+    public static final int RC_OK = 0;
+    public static final int RC_RUNTIME_ERROR = -1;
+    public static final int RC_ANALYSIS_ERROR = -2;
+
     public CommandLineInterpreter() {
         super();
         state = new PlatformState();
@@ -53,7 +57,7 @@ public class CommandLineInterpreter {
         int numOfArgs = args.length;
         if(numOfArgs == 0){
             printHelpPage();
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
         LinkedList<String> tmp = new LinkedList<>(Arrays.asList(args));
         ListIterator<String> iterator = tmp.listIterator();
@@ -65,10 +69,10 @@ public class CommandLineInterpreter {
                 if (option == Options.UNKNOWN) {
                     Logging.getLogger().error("unknown option: '"+ argument +"'\n");
                     printHelpPage();
-                    return -1;
+                    return RC_RUNTIME_ERROR;
                 } else if (option == Options.Help) {
                     printHelpPage();
-                    return 0;
+                    return RC_OK;
                 } else if (!option.isCommand()) {
                     iterator.remove();
                     List<String> options = new ArrayList<>();
@@ -100,28 +104,33 @@ public class CommandLineInterpreter {
 
         }
 
+        int result = RC_OK;
         try {
             for (List<String> list : commands) {
                 Options option = Options.getOption(list.remove(0));
-                int result = option.handle(this, list);
-                if(result == -1){
-                    return -1;
+                result = option.handle(this, list);
+                if(result < RC_OK){
+                    break;
                 }
             }
         } finally {
-            if(getFullLog() != null){
+            String logPath = getFullLog();
+            if(logPath != null || result <= RC_ANALYSIS_ERROR){
+                if(result < RC_OK){
+                    Logging.writeStandardOut("Anaylsis failed with errors, check the platform state!");
+                }
                 String logs = state.dumpLogs().toString();
-                if(getFullLog().isEmpty()) {
+                if(logPath == null || logPath.isEmpty()) {
                     Logging.writeStandardOut(logs);
                 } else {
-                    int result = writeErrorLogFile(new File(getFullLog()), logs);
-                    if(result != 0){
+                    int logResult = writeErrorLogFile(new File(logPath), logs);
+                    if(logResult < RC_OK){
                         Logging.writeStandardOut(logs);
                     }
                 }
             }
         }
-        return 0;
+        return result;
     }
 
     void printProvidingPackage(String packageName) {
@@ -151,14 +160,11 @@ public class CommandLineInterpreter {
 
     int generateRequirementsFile(String path) {
         try {
-            if (OutputCreator.generateRequirementsfile(path, state) == -1) {
-                return -1;
-            }
+            return OutputCreator.generateRequirementsfile(path, state);
         } catch (IOException e) {
             Logging.getLogger().error("failed to write dependencies file to " + path, e);
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
-        return 0;
     }
 
     static void printHelpPage() {
@@ -175,21 +181,21 @@ public class CommandLineInterpreter {
         try {
             if (out.exists() && !out.delete()) {
                 Logging.getLogger().error("failed to delete file " + out);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
             if (!out.createNewFile()) {
                 Logging.getLogger().error("failed to create file " + out);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
 
             try (FileWriter toFileOut = new FileWriter(out, true)) {
                 toFileOut.write(logs);
                 toFileOut.write("\n");
             }
-            return 0;
+            return RC_OK;
         } catch (IOException e) {
             Logging.getLogger().error("failed to write: " + out, e);
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
     }
 
@@ -201,48 +207,45 @@ public class CommandLineInterpreter {
             String sourceFolder = plugin.getPath().substring(0, index);
             OutputCreator.setSourceFolder(sourceFolder);
             try {
-                if (OutputCreator.generateBuildFile(plugin) == -1) {
-                    return -1;
-                }
+                return OutputCreator.generateBuildFile(plugin);
             } catch (IOException e) {
                 Logging.getLogger().error("writing build file failed:" + plugin.getInformationLine(), e);
-                return -1;
+                return RC_RUNTIME_ERROR;
             }
-            return 0;
         }
         Logging.getLogger().error("plugin with symbolic name " + pluginName + "not found.");
-        return -1;
+        return RC_RUNTIME_ERROR;
     }
 
     int generateAllBuildFiles(String sourceDir) {
         OutputCreator.setSourceFolder(sourceDir);
         if(state.getPlugins().isEmpty()){
             Logging.getLogger().error("generation failed: no plugins found, arguments: " + sourceDir);
-            return -1;
+            return RC_RUNTIME_ERROR;
         }
         Logging.writeStandardOut("Starting to generate classpath files, platform size: " + state.getPlugins().size() + " plugins");
-        boolean success = true;
+        int result = RC_OK;
         int generated = 0;
         for (Plugin plugin : state.getPlugins()) {
             if (plugin.getPath().contains(sourceDir)) {
                 try {
-                    if (OutputCreator.generateBuildFile(plugin) == -1) {
-                        success = false;
+                    int rc = OutputCreator.generateBuildFile(plugin);
+                    if (rc < RC_OK) {
+                        result = Math.min(result, rc);
                         Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine());
                     } else {
                         generated ++;
                     }
                 } catch (IOException e) {
-                    success = false;
+                    result = Math.min(result, RC_RUNTIME_ERROR);
                     Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine(), e);
                 }
             }
         }
-        if(success) {
+        if(result == RC_OK) {
             Logging.writeStandardOut("Successfully generated " + generated + " classpath files");
-            return 0;
         }
-        return -1;
+        return result;
     }
 
     void printFocusedOSGIElement(String arg) {
@@ -346,25 +349,21 @@ public class CommandLineInterpreter {
 
     public int readInEclipseFolder(String eclipsePath)
             throws IOException, SAXException, ParserConfigurationException {
+        int result = RC_OK;
         if(eclipsePath.startsWith("#")){
-            return 0;
+            return result;
         }
         File root = new File(eclipsePath);
         File pluginsDir = new File(root, "plugins");
-        int result = 0;
         boolean hasPlugins = false;
         if (pluginsDir.exists()) {
-            if (pp.createPluginsAndAddToSet(pluginsDir) == -1) {
-                result = -1;
-            }
+            result = Math.min(result, pp.createPluginsAndAddToSet(pluginsDir));
             hasPlugins = true;
         }
         File featureDir = new File(root, "features");
         boolean hasFeatures = false;
         if (featureDir.exists()) {
-            if (FeatureParser.createFeaturesAndAddToSet(featureDir, state) == -1) {
-                result = -1;
-            }
+            result = Math.min(result, FeatureParser.createFeaturesAndAddToSet(featureDir, state));
             hasFeatures = true;
         }
         if(hasPlugins && hasFeatures){
@@ -373,21 +372,13 @@ public class CommandLineInterpreter {
                 result =  readInChildren(dropinsDir);
             }
         }
-        result += readInChildren(root);
-        if(result < 0){
-            return -1;
-        }
+        result = Math.min(result, readInChildren(root));
         return result;
     }
 
     public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
-        int result = 0;
-        if (pp.createPluginsAndAddToSet(directory) == -1) {
-            result = -1;
-        }
-        if (FeatureParser.createFeaturesAndAddToSet(directory, state) == -1) {
-            result = -1;
-        }
+        int result = pp.createPluginsAndAddToSet(directory);
+        result = Math.min(result, FeatureParser.createFeaturesAndAddToSet(directory, state));
         return result;
     }
 
