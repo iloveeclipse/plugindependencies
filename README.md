@@ -16,3 +16,9 @@ The main goals for UI:
   * Useful for analysis of huge target platforms
   * Easy navigation 
   * Easy discovery of platform issues
+
+The plugindependencies plugin contributes "Plug-In Explorer" view to Eclipse.
+
+The command line can be started via
+
+`java -jar org.eclipselabs.plugindependencies.core_1.0.5.201703221614.jar`
