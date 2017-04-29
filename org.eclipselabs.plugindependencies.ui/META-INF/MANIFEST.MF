@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipselabs.plugindependencies.ui;singleton:=true
-Bundle-Version: 1.0.5.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipselabs.plugindependencies.ui.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.console
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %Vendor
 Export-Package: org.eclipselabs.plugindependencies.ui,
  org.eclipselabs.plugindependencies.ui.adapter,
