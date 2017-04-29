@@ -107,8 +107,10 @@ public class PluginTreeView extends ViewPart {
     private boolean disposed;
 
     private Action showErrors;
+    private Action hideWorkspacePlugins;
 
     private boolean showErrorsOnly;
+    private boolean isHideWorkspacePlugins;
 
     private Action copyToClipboardAction;
 
@@ -167,9 +169,6 @@ public class PluginTreeView extends ViewPart {
                     ITargetHandle[] targets = TargetPlatformService.getDefault().getTargets(monitor);
                     for (ITargetHandle target : targets) {
                         ITargetDefinition def = target.getTargetDefinition();
-                        if(!def.isResolved()) {
-                            def.resolve(monitor);
-                        }
                         TargetAction action = new TargetAction(def);
                         targetActions.add(action);
                     }
@@ -217,18 +216,24 @@ public class PluginTreeView extends ViewPart {
         });
         dropDownMenu.add(showErrors);
         dropDownMenu.add(showConsole);
+        dropDownMenu.add(hideWorkspacePlugins);
         dropDownMenu.add(loadTarget);
         dropDownMenu.add(reloadTargets);
     }
 
     private void fillTargetMenu(IMenuManager manager) {
         manager.removeAll();
+        manager.add(showErrors);
+        manager.add(showConsole);
+        manager.add(hideWorkspacePlugins);
+        manager.add(loadTarget);
+        manager.add(reloadTargets);
         if (targetActions != null) {
+            manager.add(new Separator());
             for (Action targetAction : targetActions) {
                 manager.add(targetAction);
             }
         }
-        manager.add(reloadTargets);
     }
 
     private void fillContextMenu(IMenuManager manager) {
@@ -290,6 +295,19 @@ public class PluginTreeView extends ViewPart {
         showErrors.setImageDescriptor(errImg);
         showErrors.setChecked(false);
 
+        hideWorkspacePlugins = new Action() {
+            @Override
+            public void run() {
+                boolean toggle = !isHideWorkspacePlugins();
+                hideWorkspacePlugins(toggle);
+            }
+        };
+        hideWorkspacePlugins.setText("Hide Workspace Plug-ins");
+        hideWorkspacePlugins.setToolTipText("Hide Workspace Plug-ins");
+//        ImageDescriptor errImg = Activator.getImageDescriptor("icons/errorwarning_tab.gif");
+//        hideWorkspacePlugins.setImageDescriptor(errImg);
+        hideWorkspacePlugins.setChecked(false);
+
         loadTarget = new Action() {
             @Override
             public void run() {
@@ -302,6 +320,10 @@ public class PluginTreeView extends ViewPart {
         reloadTargets = new Action() {
             @Override
             public void run() {
+                ViewContentProvider provider = getContentProvider();
+                IWorkbenchSiteProgressService progressService = getProgressService();
+                progressService.schedule(provider.getJob((TargetData)null));
+                refresh(new Object());
                 readTargetDefinitions();
             }
         };
@@ -407,7 +429,7 @@ public class PluginTreeView extends ViewPart {
 
         public OpenTargetFileDialog(Shell parentShell, IContainer container, int typesMask) {
             super(parentShell, container, typesMask);
-            setTitle("Select Target File");
+            setTitle("Select Target (.t2) File");
             setMessage("Please select target file (.t2) to load");
         }
 
@@ -427,7 +449,6 @@ public class PluginTreeView extends ViewPart {
                         Text text = (Text) focus;
                         text.setText("*");
                     }
-
                 }
             });
         }
@@ -449,6 +470,15 @@ public class PluginTreeView extends ViewPart {
 
     boolean isShowErrorsOnly() {
         return showErrorsOnly;
+    }
+
+    protected void hideWorkspacePlugins(boolean on) {
+        isHideWorkspacePlugins = on;
+        refresh(new Object());
+    }
+
+    boolean isHideWorkspacePlugins() {
+        return isHideWorkspacePlugins;
     }
 
     void refresh(Object input) {

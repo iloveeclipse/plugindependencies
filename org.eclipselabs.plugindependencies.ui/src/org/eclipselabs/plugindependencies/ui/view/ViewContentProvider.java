@@ -214,7 +214,13 @@ public class ViewContentProvider implements ITreeContentProvider {
 
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-            monitor.beginTask(getName(), 4);
+            monitor.beginTask(getName(), 5);
+            monitor.subTask("Resolving target platform");
+            if(itd != null && !itd.isResolved()) {
+                itd.resolve(monitor);
+            }
+            monitor.internalWorked(1);
+
             monitor.subTask("Reading platform plugins");
             CommandLineInterpreter parser = new CommandLineInterpreter();
             state = parser.getState();
@@ -224,17 +230,23 @@ public class ViewContentProvider implements ITreeContentProvider {
                     Platform.getWS(),
                     Platform.getOSArch()));
 
-            MultiStatus ms;
+            IStatus ms;
+            boolean cleanOnly = false;
             if(itd != null){
                 ms = loadTargetPlatform(monitor, parser, itd);
-            } else {
+            } else if(td != null){
                 ms = loadTargetPlatform(monitor, parser, td);
+            } else {
+                ms = Status.OK_STATUS;
+                cleanOnly = true;
             }
+            monitor.internalWorked(1);
 
-            monitor.subTask("Resolving dependencies");
-
-            parser.getState().computeAllDependenciesRecursive();
-            state = parser.getState();
+            if (!cleanOnly) {
+                monitor.subTask("Resolving dependencies");
+                parser.getState().computeAllDependenciesRecursive();
+                state = parser.getState();
+            }
             monitor.internalWorked(1);
 
             monitor.done();
