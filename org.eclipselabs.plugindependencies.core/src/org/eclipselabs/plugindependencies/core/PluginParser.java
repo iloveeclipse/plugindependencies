@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_ANALYSIS_ERROR;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_OK;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_RUNTIME_ERROR;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -78,12 +81,12 @@ public class PluginParser {
 
         int result = RC_OK;
         for (File pluginOrDirectory : dirArray) {
-            result = Math.min(result, createPluginAndAddToSet(pluginOrDirectory));
+            result = Math.min(result, createPluginAndAddToSet(pluginOrDirectory, false));
         }
         return result;
     }
 
-    public int createPluginAndAddToSet(File pluginOrDirectory) throws IOException {
+    public int createPluginAndAddToSet(File pluginOrDirectory, boolean workspace) throws IOException {
         Manifest manifest = getManifest(pluginOrDirectory);
         Plugin plugin;
         String pluginXml = null;
@@ -106,6 +109,7 @@ public class PluginParser {
                 return RC_OK;
             }
         }
+        plugin.setFromWorkspace(workspace);
         plugin.setPath(pluginOrDirectory.getCanonicalPath());
         if(parseEarlyStartup){
             plugin.setEarlyStartup(parseEarlyStartup(pluginOrDirectory));

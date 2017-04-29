@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.Logging.*;
+import static org.eclipselabs.plugindependencies.core.Logging.PREFIX_ERROR;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -382,13 +382,13 @@ public class CommandLineInterpreter {
         return result;
     }
 
-    public int readInFeature(File directory) throws IOException,
+    public int readInFeature(File directory, boolean workspace) throws IOException,
         SAXException, ParserConfigurationException {
-        return FeatureParser.createFeatureAndAddToSet(directory, state);
+        return FeatureParser.createFeatureAndAddToSet(directory, workspace, state);
     }
 
-    public int readInPlugin(File directory) throws IOException {
-        return pp.createPluginAndAddToSet(directory);
+    public int readInPlugin(File directory, boolean workspace) throws IOException {
+        return pp.createPluginAndAddToSet(directory, workspace);
     }
 
     public String getFullLog() {

@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_ANALYSIS_ERROR;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_OK;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_RUNTIME_ERROR;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixName;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,12 +68,12 @@ public class FeatureParser {
         PluginParser.sortFiles(dirArray);
         int result = RC_OK;
         for (File featureFolder : dirArray) {
-            result = Math.min(result, createFeatureAndAddToSet(featureFolder, state));
+            result = Math.min(result, createFeatureAndAddToSet(featureFolder, false, state));
         }
         return result;
     }
 
-    public static int createFeatureAndAddToSet(File featureFolder, PlatformState state)
+    public static int createFeatureAndAddToSet(File featureFolder, boolean workspace, PlatformState state)
             throws IOException, SAXException, ParserConfigurationException {
         File featureXMLFile = new File(featureFolder, "feature.xml").getCanonicalFile();
         Feature feature = null;
@@ -103,6 +106,7 @@ public class FeatureParser {
         if (feature == null) {
             return RC_OK;
         }
+        feature.setFromWorkspace(workspace);
         feature.setPath(featureXMLFile.toString());
         Feature addedFeature = state.addFeature(feature);
         if (addedFeature == feature) {

@@ -305,92 +305,103 @@ public class PlatformState {
         validate();
     }
 
-   public void validate() {
-       if(validated){
-           return;
-       }
-       validated = true;
-       // validate same package contributed by different plugins in same dependency chain
-       for (Package pack : packages) {
-           if(pack.getExportedBy().size() > 1){
-               Set<Plugin> exportedBy = new HashSet<>(pack.getExportedBy());
+    public void validate() {
+        if(validated){
+            return;
+        }
+        validated = true;
+        // validate same package contributed by different plugins in same dependency chain
+        for (Package pack : packages) {
+            if(pack.getExportedBy().size() > 1){
+                Set<Plugin> exportedBy = new HashSet<>(pack.getExportedBy());
 
-               Iterator<Plugin> exportedByIter = exportedBy.iterator();
-               Set<Plugin> toRemove = new HashSet<>();
-               while (exportedByIter.hasNext()) {
-                   Plugin p1 = exportedByIter.next();
-                   if(pack.getSplit().contains(p1)){
-                       exportedByIter.remove();
-                       continue;
-                   }
-                   // plugins which import and export same package are most likely
-                   // just forwarding that dependency to clients
-                   if(p1.getImportedPackages().contains(pack)){
-                       exportedByIter.remove();
-                       continue;
-                   }
+                Iterator<Plugin> exportedByIter = exportedBy.iterator();
+                Set<Plugin> toRemove = new HashSet<>();
+                while (exportedByIter.hasNext()) {
+                    Plugin p1 = exportedByIter.next();
+                    if(pack.getSplit().contains(p1)){
+                        exportedByIter.remove();
+                        continue;
+                    }
+                    // plugins which import and export same package are most likely
+                    // just forwarding that dependency to clients
+                    if(p1.getImportedPackages().contains(pack)){
+                        exportedByIter.remove();
+                        continue;
+                    }
 
-                   // plugins which exports a package already reexported by re-exporting required bundle is most likely
-                   // just forwarding that dependency to clients
-                   if (p1.getReExportedPackages().contains(pack)) {
-                       exportedByIter.remove();
-                       continue;
-                   }
+                    // plugins which exports a package already reexported by re-exporting required bundle is most likely
+                    // just forwarding that dependency to clients
+                    if (p1.getReExportedPackages().contains(pack)) {
+                        exportedByIter.remove();
+                        continue;
+                    }
 
-                   for (Plugin p2 : exportedBy) {
-                       // ignore packages from same plugin with different version
-                       // ignore packages from fragments and hosts
-                       if(p1 != p2 && (p1.getName().equals(p2.getName()) || p1.isFragmentOrHost(p2))){
-                           toRemove.add(p2);
-                           toRemove.add(p1);
-                       }
-                   }
-               }
-               exportedBy.removeAll(toRemove);
+                    for (Plugin p2 : exportedBy) {
+                        // ignore packages from same plugin with different version
+                        // ignore packages from fragments and hosts
+                        if(p1 != p2 && (p1.getName().equals(p2.getName()) || p1.isFragmentOrHost(p2))){
+                            toRemove.add(p2);
+                            toRemove.add(p1);
+                        }
+                    }
+                }
+                exportedBy.removeAll(toRemove);
 
-               if(exportedBy.size() > 1){
-                   pack.addWarningToLog("package contributed by multiple, not related plugins");
-                   for (Plugin plugin : exportedBy) {
-                       plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
-                   }
+                if(exportedBy.size() > 1){
+                    pack.addWarningToLog("package contributed by multiple, not related plugins");
+                    for (Plugin plugin : exportedBy) {
+                        plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
+                    }
 
-                   Set<Plugin> importedBy = pack.getImportedBy();
-                   for (Plugin plugin : importedBy) {
-                       plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
-                   }
-               }
-           }
-       }
-       for (Plugin plugin : plugins) {
-           List<OSGIElement> dups = plugin.getDuplicates();
-           if(!dups.isEmpty()){
-               logDuplicates(plugin, dups);
-           }
-       }
-       for (Feature feature : features) {
-           List<OSGIElement> dups = feature.getDuplicates();
-           if(!dups.isEmpty()){
-               logDuplicates(feature, dups);
-           }
-       }
-       // TODO validate packages with different versions used by different plugins in same dependency chain
-       // TODO validate singleton plugins with different versions used by different plugins in same dependency chain
-   }
+                    Set<Plugin> importedBy = pack.getImportedBy();
+                    for (Plugin plugin : importedBy) {
+                        plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
+                    }
+                }
+            }
+        }
+        for (Plugin plugin : plugins) {
+            List<OSGIElement> dups = plugin.getDuplicates();
+            if(!dups.isEmpty()){
+                if(!hasOnlyWorkspaceDup(dups)) {
+                    logDuplicates(plugin, dups);
+                }
+            }
+        }
+        for (Feature feature : features) {
+            List<OSGIElement> dups = feature.getDuplicates();
+            if(!dups.isEmpty()){
+                if(!hasOnlyWorkspaceDup(dups)) {
+                    logDuplicates(feature, dups);
+                }
+            }
+        }
+        // TODO validate packages with different versions used by different plugins in same dependency chain
+        // TODO validate singleton plugins with different versions used by different plugins in same dependency chain
+    }
 
-   private static void logDuplicates(OSGIElement plugin, List<OSGIElement> dups) {
-       StringBuilder sb = new StringBuilder();
-       sb.append((dups.size() + 1));
-       if(plugin instanceof Feature){
-           sb.append(" features ");
-       } else {
-           sb.append(" plugins ");
-       }
-       sb.append("with equal symbolic name and version, located at:\n\t").append(plugin.getPath());
-       for (OSGIElement elt : dups) {
-           sb.append("\n\t").append(elt.getPath());
-       }
-       plugin.addErrorToLog(sb.toString());
-   }
+    private static boolean hasOnlyWorkspaceDup(List<OSGIElement> dups) {
+        if(dups.size() != 2) {
+            return false;
+        }
+        return dups.stream().anyMatch(x -> x.isFromWorkspace());
+    }
+
+    private static void logDuplicates(OSGIElement plugin, List<OSGIElement> dups) {
+        StringBuilder sb = new StringBuilder();
+        sb.append((dups.size() + 1));
+        if(plugin instanceof Feature){
+            sb.append(" features ");
+        } else {
+            sb.append(" plugins ");
+        }
+        sb.append("with equal symbolic name and version, located at:\n\t").append(plugin.getPath());
+        for (OSGIElement elt : dups) {
+            sb.append("\n\t").append(elt.getPath());
+        }
+        plugin.addErrorToLog(sb.toString());
+    }
 
     static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
         if(root.isRecursiveResolved()){

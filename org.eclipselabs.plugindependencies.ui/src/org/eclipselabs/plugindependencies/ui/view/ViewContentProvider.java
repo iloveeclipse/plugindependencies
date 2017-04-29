@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -154,23 +155,30 @@ public class ViewContentProvider implements ITreeContentProvider {
         // Plugins
         TreeParent plugins = new TreeParent(PLUGINS, invisibleRoot);
         boolean errorsOnly = view.isShowErrorsOnly();
+        boolean allowWorkspace = !view.isHideWorkspacePlugins();
         for (Plugin plugin : state.getPlugins()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
-                plugins.addChild(new TreePlugin(plugin, plugins));
+                if(allowWorkspace || !plugin.isFromWorkspace()) {
+                    plugins.addChild(new TreePlugin(plugin, plugins));
+                }
             }
         }
         // Packages
         TreeParent packages = new TreeParent(PACKAGES, invisibleRoot);
         for (Package pack : state.getPackages()) {
             if(! errorsOnly || (pack.hasErrors() || pack.hasWarnings())) {
-                packages.addChild(new TreePackage(pack, packages));
+                if(allowWorkspace || !isFromWorkspaceOnly(pack)) {
+                    packages.addChild(new TreePackage(pack, packages));
+                }
             }
         }
         // Features
         TreeParent features = new TreeParent(FEATURES, invisibleRoot);
         for (Feature feature : state.getFeatures()) {
             if(! errorsOnly || (feature.hasErrors() || feature.hasWarnings())) {
-                features.addChild(new TreeFeature(feature, features));
+                if(allowWorkspace || !feature.isFromWorkspace()) {
+                    features.addChild(new TreeFeature(feature, features));
+                }
             }
         }
         if(!plugins.hasChildren() &&  !packages.hasChildren() && !features.hasChildren()) {
@@ -184,11 +192,18 @@ public class ViewContentProvider implements ITreeContentProvider {
         for (Plugin plugin : state.getPlugins()) {
             if(! errorsOnly || (plugin.hasErrors() || plugin.hasWarnings())) {
                 if(plugin.isEarlyStartup()) {
-                    early.addChild(new TreePlugin(plugin, plugins));
+                    if(allowWorkspace || !plugin.isFromWorkspace()) {
+                        early.addChild(new TreePlugin(plugin, plugins));
+                    }
                 }
             }
         }
         invisibleRoot.addChild(early);
+    }
+
+    private static boolean isFromWorkspaceOnly(Package pack) {
+        Set<Plugin> exportedBy = pack.getExportedBy();
+        return exportedBy.stream().allMatch(x -> x.isFromWorkspace());
     }
 
     private LoadTarget createResolveDependenciesJob() {
@@ -283,7 +298,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
             String pluginPath = location.getPath();
             try {
-                parser.readInPlugin(new File(pluginPath));
+                parser.readInPlugin(new File(pluginPath), false);
             } catch (IOException e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
             }
@@ -301,13 +316,12 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
             String featurePath = feature.getLocation();
             try {
-                parser.readInFeature(new File(featurePath));
+                parser.readInFeature(new File(featurePath), false);
             } catch (IOException | SAXException | ParserConfigurationException e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
             }
         }
         monitor.internalWorked(1);
-
         readWorkspace(monitor, parser, ms);
         return ms;
     }
@@ -345,7 +359,6 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
         }
         monitor.internalWorked(2);
-
         readWorkspace(monitor, parser, ms);
         return ms;
     }
@@ -372,9 +385,9 @@ public class ViewContentProvider implements ITreeContentProvider {
             try {
                 IPluginModelBase model = PluginRegistry.findModel(project);
                 if(model != null){
-                    parser.readInPlugin(location.toFile());
+                    parser.readInPlugin(location.toFile(), true);
                 } else {
-                    parser.readInFeature(location.toFile());
+                    parser.readInFeature(location.toFile(), true);
                 }
             } catch (IOException | SAXException | ParserConfigurationException e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));

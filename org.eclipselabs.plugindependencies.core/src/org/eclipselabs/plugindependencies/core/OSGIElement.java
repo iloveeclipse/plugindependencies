@@ -37,6 +37,8 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
 
     private List<ManifestEntry> requiredPluginEntries;
 
+    private boolean isFromWorkspace;
+
     public OSGIElement(String name, String version) {
         super(name, version);
         this.requiredPlugins = new LinkedHashSet<>();
@@ -204,5 +206,13 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
             }
         }
         return out.toString();
+    }
+
+    public boolean isFromWorkspace() {
+        return isFromWorkspace;
+    }
+
+    public void setFromWorkspace(boolean isFromWorkspace) {
+        this.isFromWorkspace = isFromWorkspace;
     }
 }
