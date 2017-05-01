@@ -391,7 +391,7 @@ public class PluginTreeView extends ViewPart {
             if(object instanceof TreeParent){
                 TreeParent tp = (TreeParent) object;
                 object = tp.getNamedElement();
-                if(object instanceof NamedElement){
+                if(object != null){
                     NamedElement elt = (NamedElement) object;
                     sb.append(elt.getNameAndVersion()).append("\n");
                 } else if(tp instanceof TreeProblem) {
