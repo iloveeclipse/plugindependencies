@@ -90,17 +90,25 @@ public class StringUtil {
         return counter % 2 == 0;
     }
 
+    public static String extractBundleVersionOrRange(String versionString) {
+        return extractVersionOrRange(versionString, "bundle-version=");
+    }
+
     public static String extractVersionOrRange(String versionString) {
+        return extractVersionOrRange(versionString, "version=");
+    }
+
+    private static String extractVersionOrRange(String versionString, String versionPrefix) {
         if (versionString == null) {
             return NamedElement.EMPTY_VERSION;
         }
 
-        int positionOfVersion = versionString.indexOf("version=");
+        int positionOfVersion = versionString.indexOf(versionPrefix);
         if (positionOfVersion == -1) {
             return NamedElement.EMPTY_VERSION;
         }
 
-        int versionStart = positionOfVersion + "version=".length();
+        int versionStart = positionOfVersion + versionPrefix.length();
         versionString = versionString.substring(versionStart);
         versionStart = 0;
 

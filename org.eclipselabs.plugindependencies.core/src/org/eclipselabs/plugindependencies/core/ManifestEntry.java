@@ -16,6 +16,7 @@ import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
 import org.w3c.dom.Element;
@@ -29,12 +30,14 @@ public class ManifestEntry extends NamedElement {
     final List<String> attributes;
     private final PlatformSpecs platformSpecs;
     private final boolean optional;
+    private final boolean usesBundleVersion;
 
     public ManifestEntry(String name, String vers) {
         super(fixName(name), fixVersion(vers));
         attributes = Collections.emptyList();
         platformSpecs = readPlatformSpecs();
         optional = hasOptionalAttr();
+        usesBundleVersion = false;
     }
 
     public ManifestEntry(String name, String vers, boolean optional) {
@@ -42,6 +45,7 @@ public class ManifestEntry extends NamedElement {
         attributes = Collections.emptyList();
         platformSpecs = readPlatformSpecs();
         this.optional = optional;
+        usesBundleVersion = false;
     }
 
     /**
@@ -54,6 +58,7 @@ public class ManifestEntry extends NamedElement {
         attributes = createAttributes(manifestEntries);
         platformSpecs = readPlatformSpecs();
         optional = hasOptionalAttr();
+        usesBundleVersion = attributesContain("bundle-version");
     }
 
     /**
@@ -67,6 +72,7 @@ public class ManifestEntry extends NamedElement {
         attributes = Collections.emptyList();
         platformSpecs = computeSystemFlags(xmlElement);
         optional = false;
+        usesBundleVersion = false;
     }
 
     private PlatformSpecs readPlatformSpecs() {
@@ -138,6 +144,10 @@ public class ManifestEntry extends NamedElement {
         return optional;
     }
 
+    public boolean usesBundleVersion() {
+        return usesBundleVersion;
+    }
+
     public boolean isDynamicImport() {
         return attributesContain("dynamicImport");
     }
@@ -164,6 +174,9 @@ public class ManifestEntry extends NamedElement {
      */
     private static String getVersion(List<String> manifestEntries) {
         for (String attr : manifestEntries) {
+            if (attr.contains("bundle-version=")) {
+                return StringUtil.extractBundleVersionOrRange(attr);
+            }
             if (attr.contains("version=")) {
                 return StringUtil.extractVersionOrRange(attr);
             }
@@ -179,8 +192,29 @@ public class ManifestEntry extends NamedElement {
      * @return true for matching name and compatible version
      */
     public boolean isMatching(NamedElement element) {
-        return getName().equals(element.getName())
-                && DependencyResolver.isCompatibleVersion(getVersion(), element.getVersion());
+        boolean nameOk = getName().equals(element.getName());
+        if(!nameOk) {
+            return false;
+        }
+        if(usesBundleVersion && element instanceof Package) {
+            Package p = (Package) element;
+            Set<Plugin> exportedBy = p.getExportedBy();
+            for (Plugin plugin : exportedBy) {
+                boolean match = DependencyResolver.isCompatibleVersion(getVersion(), plugin.getVersion());
+                if(match) {
+                    return true;
+                }
+            }
+            Set<Plugin> reExportedBy = p.getReexportedBy();
+            for (Plugin plugin : reExportedBy) {
+                boolean match = DependencyResolver.isCompatibleVersion(getVersion(), plugin.getVersion());
+                if(match) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return DependencyResolver.isCompatibleVersion(getVersion(), element.getVersion());
     }
 
     @Override

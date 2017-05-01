@@ -16,35 +16,39 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestDepResSearchMethodPack extends BaseTest {
-    static Set<Package> packageSet;
+    Set<Package> packageSet;
 
-    static Set<Plugin> pluginSet;
+    Set<Plugin> pluginSet;
 
-    static Set<Feature> featureSet;
+    Set<Feature> featureSet;
 
-    static Package package1;
+    Package package1;
 
-    static Package package2;
+    Package package2;
+
+    Package package3;
 
     DependencyResolver depres;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    @Before
+    public void setUpBeforeClass() throws Exception {
         package1 = new Package("com.company.core", "3.4.5");
         package2 = new Package("com.company.core", "1.2.0");
+        package3 = new Package("org.eclipse.core.net.proxy", null);
         packageSet = new LinkedHashSet<Package>();
         packageSet.add(new Package("org.eclipse.p1", "1.2.3"));
         packageSet.add(new Package("org.eclipse.p2", "4.5.6"));
@@ -55,15 +59,21 @@ public class TestDepResSearchMethodPack extends BaseTest {
         packageSet.add(new Package("javax.crypto", ""));
         packageSet.add(package1);
         packageSet.add(package2);
+        packageSet.add(package3);
         pluginSet = new LinkedHashSet<Plugin>();
+        Plugin plugin = new Plugin("org.eclipse.core.net", "1.2.0");
+        plugin.getExportedPackages().add(package3);
+        package3.addExportPlugin(plugin);
+        pluginSet.add(plugin);
         featureSet = new LinkedHashSet<Feature>();
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    @After
+    public void tearDownAfterClass() throws Exception {
         packageSet = null;
         package1 = null;
         package2 = null;
+        package3 = null;
         pluginSet = null;
         featureSet = null;
     }
@@ -124,6 +134,12 @@ public class TestDepResSearchMethodPack extends BaseTest {
 
         entry = new ManifestEntry("javax.crypto", "[1.2,2.0.0)");
         assertEquals("[]", depres.searchInPackageSet(entry).toString());
+
+        resultSet.clear();
+        resultSet.add(package3);
+
+        entry = new ManifestEntry(new ArrayList<>(Arrays.asList("org.eclipse.core.net.proxy", "bundle-version=\"[1.1.0,2.0.0)\"")));
+        assertEquals(resultSet.toString(), depres.searchInPackageSet(entry).toString());
     }
 
     @Test
