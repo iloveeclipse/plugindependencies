@@ -322,7 +322,9 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
         }
         monitor.internalWorked(1);
-        readWorkspace(monitor, parser, ms);
+        if(!view.isHideWorkspacePlugins()) {
+            readWorkspace(monitor, parser, ms);
+        }
         return ms;
     }
 
@@ -359,7 +361,9 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
         }
         monitor.internalWorked(2);
-        readWorkspace(monitor, parser, ms);
+        if(!view.isHideWorkspacePlugins()) {
+            readWorkspace(monitor, parser, ms);
+        }
         return ms;
     }
 

@@ -118,6 +118,8 @@ public class PluginTreeView extends ViewPart {
 
     private Action showConsole;
 
+    ITargetDefinition lastTargetDef;
+
     @Override
     public void createPartControl(Composite parent) {
         Filter filter = new Filter();
@@ -476,6 +478,9 @@ public class PluginTreeView extends ViewPart {
 
     protected void hideWorkspacePlugins(boolean on) {
         isHideWorkspacePlugins = on;
+        ViewContentProvider provider = getContentProvider();
+        IWorkbenchSiteProgressService progressService = getProgressService();
+        progressService.schedule(provider.getJob(lastTargetDef));
         refresh(new Object());
     }
 
@@ -603,8 +608,10 @@ public class PluginTreeView extends ViewPart {
                 ViewContentProvider provider = getContentProvider();
                 IWorkbenchSiteProgressService progressService = getProgressService();
                 progressService.schedule(provider.getJob(targetDef));
+                lastTargetDef = targetDef;
                 setChecked(true);
             } else {
+                lastTargetDef = null;
                 viewer.setInput(null);
                 setChecked(false);
             }
