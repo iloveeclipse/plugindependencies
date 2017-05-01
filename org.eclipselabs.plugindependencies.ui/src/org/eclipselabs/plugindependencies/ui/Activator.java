@@ -14,6 +14,8 @@ package org.eclipselabs.plugindependencies.ui;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipselabs.plugindependencies.core.Logging;
 import org.eclipselabs.plugindependencies.core.Logging.AbstractLogger;
@@ -68,6 +70,21 @@ public class Activator extends AbstractUIPlugin {
 
     public static ImageDescriptor getImageDescriptor(String path) {
         return imageDescriptorFromPlugin(getPluginId(), path);
+    }
+
+    public static Image getImage(String path) {
+        ImageRegistry registry = getDefault().getImageRegistry();
+        ImageDescriptor descriptor = registry.getDescriptor(path);
+        if(descriptor == null) {
+            descriptor = getImageDescriptor(path);
+            if(descriptor != null) {
+                registry.put(path, descriptor);
+            }
+        }
+        if(descriptor != null) {
+            return registry.get(path);
+        }
+        return null;
     }
 
     public static String getPluginId() {

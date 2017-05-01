@@ -349,14 +349,14 @@ public class PlatformState {
                 exportedBy.removeAll(toRemove);
 
                 if(exportedBy.size() > 1){
-                    pack.addWarningToLog("package contributed by multiple, not related plugins");
+                    pack.addWarningToLog("package contributed by multiple, not related plugins", exportedBy);
                     for (Plugin plugin : exportedBy) {
-                        plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'");
+                        plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'", pack);
                     }
 
                     Set<Plugin> importedBy = pack.getImportedBy();
                     for (Plugin plugin : importedBy) {
-                        plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins");
+                        plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins", pack);
                     }
                 }
             }
@@ -400,7 +400,7 @@ public class PlatformState {
         for (OSGIElement elt : dups) {
             sb.append("\n\t").append(elt.getPath());
         }
-        plugin.addErrorToLog(sb.toString());
+        plugin.addErrorToLog(sb.toString(), dups);
     }
 
     static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {

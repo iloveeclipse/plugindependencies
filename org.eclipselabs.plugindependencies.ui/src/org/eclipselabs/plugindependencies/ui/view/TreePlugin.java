@@ -12,8 +12,6 @@
 package org.eclipselabs.plugindependencies.ui.view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,20 +37,6 @@ public class TreePlugin extends TreeParent {
     static final String PLUGINS = "Plugins";
     static final String REQUIRED_BY = "Required by";
     static final String REQUIRES = "Requires";
-
-    static final List<String> NAMES = Collections.unmodifiableList(Arrays.asList(
-            ALL_DEPS,
-            EARLY_STARTUP,
-            EXPORTS,
-            REEXPORTS,
-            FEATURES,
-            IMPORTS,
-            INCLUDED_IN,
-            PACKAGES,
-            PLUGINS,
-            REQUIRED_BY,
-            REQUIRES
-            ));
 
     private final Plugin plugin;
 
@@ -161,6 +145,8 @@ public class TreePlugin extends TreeParent {
             if (requiredBy.hasChildren()) {
                 this.addChild(requiredBy);
             }
+
+            addProblems();
         }
         return children.toArray(new TreeParent[children.size()]);
     }
@@ -177,8 +163,9 @@ public class TreePlugin extends TreeParent {
         boolean hasImportedPackages = !plugin.getImportedPackages().isEmpty();
         boolean isIncludedInFeatures = !plugin.getIncludedInFeatures().isEmpty();
         boolean isRequiredByPlugins = !plugin.getRequiredBy().isEmpty();
+        boolean hasProblems = !plugin.getLog().isEmpty();
 
         return hasResolvedPlugins || hasExportedPackages || hasImportedPackages
-                || isIncludedInFeatures || isRequiredByPlugins;
+                || isIncludedInFeatures || isRequiredByPlugins || hasProblems;
     }
 }

@@ -144,12 +144,12 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
             for (OSGIElement element : elements) {
                 logStr.append("\t" + element.getInformationLine() + "\n");
             }
-            addWarningToLog(logStr.toString());
+            addWarningToLog(logStr.toString(), elements);
         } else if (setSize == 0 && optional.isEmpty()) {
             if(entry.getName().endsWith(".source")) {
-                addWarningToLog(type + " not found: " + entry.getNameAndVersion() + optional);
+                addWarningToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
             } else {
-                addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional);
+                addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
             }
         }
     }

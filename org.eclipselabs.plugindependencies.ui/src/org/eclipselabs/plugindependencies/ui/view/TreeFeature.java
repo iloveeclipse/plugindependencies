@@ -103,6 +103,7 @@ public class TreeFeature extends TreeParent {
             if (includedInFeature.hasChildren()) {
                 this.addChild(includedInFeature);
             }
+            addProblems();
         }
         return children.toArray(new TreeParent[children.size()]);
     }
@@ -119,7 +120,9 @@ public class TreeFeature extends TreeParent {
         boolean hasIncludedPlugins = !feature.getIncludedPlugins().isEmpty();
         boolean hasIncludedFeatures = !feature.getIncludedFeatures().isEmpty();
         boolean isIncludedInFeatures = !feature.getIncludedInFeatures().isEmpty();
+        boolean hasProblems = !feature.getLog().isEmpty();
 
-        return hasRequiredPlugins || hasRrequiredFeatures || hasIncludedPlugins || hasIncludedFeatures || isIncludedInFeatures;
+        return hasRequiredPlugins || hasRrequiredFeatures || hasIncludedPlugins
+                || hasIncludedFeatures || isIncludedInFeatures || hasProblems;
     }
 }

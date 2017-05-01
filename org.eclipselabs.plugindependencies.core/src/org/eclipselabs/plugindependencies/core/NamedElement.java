@@ -7,9 +7,13 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author aloskuto
@@ -24,7 +28,7 @@ public abstract class NamedElement {
     private final Version version;
     private boolean versionRange;
 
-    protected final List<String> log;
+    protected final List<Problem> log;
     public static final String PREFIX_ERROR = Logging.PREFIX_ERROR;
     public static final String PREFIX_WARN =  Logging.PREFIX_WARN;
 
@@ -112,44 +116,62 @@ public abstract class NamedElement {
         return versionStr;
     }
 
-    protected void addToLog(String note) {
-        if (note != null && !note.isEmpty() && !log.contains(note)) {
-            log.add(note);
-        }
-    }
-
-    protected void addErrorToLog(String note) {
+    protected void addErrorToLog(String note, NamedElement... related) {
         if (note == null || note.isEmpty()) {
             return;
         }
-        if(Logging.prefixLogWithId){
-            note = PREFIX_ERROR + "[" + getNameAndVersion() + "] " + note;
+        List<NamedElement> list;
+        if(related == null || related.length == 0) {
+            list = Collections.EMPTY_LIST;
         } else {
-            note = PREFIX_ERROR + note;
+            list = Arrays.asList(related);
         }
-        if (!log.contains(note)) {
-            log.add(note);
+        Problem p = new Problem(note, Problem.ERROR, this, list);
+        if (!log.contains(p)) {
+            log.add(p);
         }
     }
 
-    protected void addWarningToLog(String note) {
+    protected void addErrorToLog(String note, Collection<? extends NamedElement> related) {
         if (note == null || note.isEmpty()) {
             return;
         }
-        if(Logging.prefixLogWithId){
-            note = PREFIX_WARN + "[" + getNameAndVersion() + "] " + note;
-        } else {
-            note = PREFIX_WARN + note;
+        Problem p = new Problem(note, Problem.ERROR, this, related);
+        if (!log.contains(p)) {
+            log.add(p);
         }
-        if (!log.contains(note)) {
-            log.add(note);
+    }
+
+    protected void addWarningToLog(String note, NamedElement... related) {
+        if (note == null || note.isEmpty()) {
+            return;
+        }
+        List<NamedElement> list;
+        if(related == null || related.length == 0) {
+            list = Collections.EMPTY_LIST;
+        } else {
+            list = Arrays.asList(related);
+        }
+        Problem p = new Problem(note, Problem.WARN, this, list);
+        if (!log.contains(p)) {
+            log.add(p);
+        }
+    }
+
+    protected void addWarningToLog(String note, Set<? extends NamedElement> related) {
+        if (note == null || note.isEmpty()) {
+            return;
+        }
+        Problem p = new Problem(note, Problem.WARN, this, related);
+        if (!log.contains(p)) {
+            log.add(p);
         }
     }
 
     /**
      * @return never null
      */
-    public final List<String> getLog() {
+    public final List<Problem> getLog() {
         return log;
     }
 
@@ -186,8 +208,8 @@ public abstract class NamedElement {
     }
 
     public boolean hasWarnings(){
-        for (String string : log) {
-            if(string.startsWith(PREFIX_WARN)){
+        for (Problem p : log) {
+            if(p.getSeverity() == Problem.WARN){
                 return true;
             }
         }
@@ -195,8 +217,8 @@ public abstract class NamedElement {
     }
 
     public boolean hasErrors(){
-        for (String string : log) {
-            if(string.startsWith(PREFIX_ERROR)){
+        for (Problem p : log) {
+            if(p.getSeverity() == Problem.ERROR){
                 return true;
             }
         }

@@ -312,8 +312,8 @@ public class CommandLineInterpreter {
         StringBuilder ret = new StringBuilder();
 
         for (OSGIElement element : elements) {
-            List<String> log = element.getLog();
-            if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
+            List<Problem> log = element.getLog();
+            if (!log.isEmpty() && (log.stream().anyMatch(x -> x.isError()) || showWarnings)) {
                 ret.append(element.getPath()).append("\n");
                 ret.append(printLog(element, showWarnings, "\t"));
                 ret.append("\n");
@@ -326,7 +326,7 @@ public class CommandLineInterpreter {
         StringBuilder ret = new StringBuilder();
 
         for (Package pack : elements) {
-            List<String> log = pack.getLog();
+            List<Problem> log = pack.getLog();
             if (!log.isEmpty() && (log.toString().contains(PREFIX_ERROR) || showWarnings)) {
                 ret.append(pack.getNameAndVersion()).append("\n");
                 ret.append(printLog(pack, showWarnings, "\t"));
@@ -338,10 +338,10 @@ public class CommandLineInterpreter {
 
     private static String printLog(NamedElement element, boolean showWarnings, String prefix) {
         StringBuilder ret = new StringBuilder();
-        List<String> log = element.getLog();
-        for (String logEntry : log) {
-            if (logEntry.contains("Error") || showWarnings) {
-                ret.append(prefix).append(logEntry).append("\n");
+        List<Problem> log = element.getLog();
+        for (Problem logEntry : log) {
+            if (logEntry.isError() || showWarnings) {
+                ret.append(prefix).append(logEntry.getLogMessage()).append("\n");
             }
         }
         return ret.toString();

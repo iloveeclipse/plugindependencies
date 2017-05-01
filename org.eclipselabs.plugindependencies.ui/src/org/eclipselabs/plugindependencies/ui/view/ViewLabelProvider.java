@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipselabs.plugindependencies.core.NamedElement;
+import org.eclipselabs.plugindependencies.core.Problem;
 import org.eclipselabs.plugindependencies.ui.Activator;
 
 /**
@@ -35,12 +36,16 @@ public class ViewLabelProvider extends ColumnLabelProvider {
     private final Image packageImage;
 
     private final Image featureImage;
+    private final Image errorImage;
+    private final Image warningImage;
 
     public ViewLabelProvider() {
         super();
-        pluginImage = Activator.getImageDescriptor("$nl$/icons/plugin_obj.gif").createImage();
-        packageImage = Activator.getImageDescriptor("$nl$/icons/package_obj.gif").createImage();
-        featureImage = Activator.getImageDescriptor("$nl$/icons/feature_obj.gif").createImage();
+        pluginImage = Activator.getImage("$nl$/icons/plugin_obj.gif");
+        packageImage = Activator.getImage("$nl$/icons/package_obj.gif");
+        featureImage = Activator.getImage("$nl$/icons/feature_obj.gif");
+        errorImage = Activator.getImage("$nl$/icons/message_error.png");
+        warningImage = Activator.getImage("$nl$/icons/message_warning.png");
     }
 
     @Override
@@ -59,6 +64,11 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         if (obj instanceof TreeFeature) {
             return featureImage;
         }
+        if (obj instanceof TreeProblem) {
+            TreeProblem tp = (TreeProblem) obj;
+            Problem p = tp.getProblem();
+            return p.isError()? errorImage : warningImage;
+        }
         String imageKey = ISharedImages.IMG_OBJ_FOLDER;
         return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
     }
@@ -70,9 +80,9 @@ public class ViewLabelProvider extends ColumnLabelProvider {
             if(elt == null){
                 return null;
             }
-            List<String> log = elt.getLog();
+            List<Problem> log = elt.getLog();
             if (!log.isEmpty()) {
-                if (log.toString().contains("Error")) {
+                if (log.stream().anyMatch(x -> x.isError())) {
                     return Display.getDefault().getSystemColor(SWT.COLOR_RED);
                 }
                 return Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);
@@ -89,24 +99,16 @@ public class ViewLabelProvider extends ColumnLabelProvider {
             if(elt == null){
                 return null;
             }
-            List<String> log = elt.getLog();
+            List<Problem> log = elt.getLog();
             if(log.isEmpty()){
                 return null;
             }
             StringBuilder sb = new StringBuilder();
-            for (String err : log) {
+            for (Problem err : log) {
                 sb.append(err).append("\n");
             }
             return sb.toString();
         }
         return super.getToolTipText(element);
-    }
-
-    @Override
-    public void dispose() {
-        pluginImage.dispose();
-        packageImage.dispose();
-        featureImage.dispose();
-        super.dispose();
     }
 }

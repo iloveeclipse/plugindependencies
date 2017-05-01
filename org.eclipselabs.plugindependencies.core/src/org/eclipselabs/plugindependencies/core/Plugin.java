@@ -116,7 +116,7 @@ public class Plugin extends OSGIElement {
         if (entries.size() < 2) {
             this.fragmentHostEntry = entries.get(0);
         } else {
-            addErrorToLog("fragment has more than one host");
+            addErrorToLog("fragment has more than one host", entries);
         }
     }
 
@@ -238,7 +238,7 @@ public class Plugin extends OSGIElement {
 
     public void addFragments(Plugin fragment) {
         if(isFragment()){
-            addErrorToLog("fragment can't have additional fragments: " + fragment);
+            addErrorToLog("fragment can't have additional fragments: " + fragment, fragment);
             return;
         }
         this.fragments.add(fragment);
@@ -276,15 +276,15 @@ public class Plugin extends OSGIElement {
             for (Package pack : packages) {
                 logEntry.append("\t" + pack.getInformationLine());
             }
-            addWarningToLog(logEntry.toString());
+            addWarningToLog(logEntry.toString(), packages);
         }
         if (packagesSize == 0 ) {
             StringBuilder logEntry = new StringBuilder("package not found: ");
             logEntry.append(rname + " " + rversion + optional + dynamicImport);
             if(requiredPackage.isDynamicImport()) {
-                addWarningToLog(logEntry.toString());
+                addWarningToLog(logEntry.toString(), requiredPackage);
             } else if(optional.isEmpty()){
-                addErrorToLog(logEntry.toString());
+                addErrorToLog(logEntry.toString(), requiredPackage);
             }
         }
     }
@@ -357,13 +357,13 @@ public class Plugin extends OSGIElement {
                 recursiveResolvedPlugins.add(plugin);
                 recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
                 if(!isFragmentOrHost(plugin)){
-                    addErrorToLog("plugin has cycle with: " + plugin.getInformationLine());
-                    plugin.addErrorToLog("plugin has cycle with: " + getInformationLine());
+                    addErrorToLog("plugin has cycle with: " + plugin.getInformationLine(), plugin);
+                    plugin.addErrorToLog("plugin has cycle with: " + getInformationLine(), this);
                 }
             } else {
                 if(!isFragmentOrHost(plugin)){
-                    addErrorToLog("plugin has indirect cycle with: " + plugin.getInformationLine());
-                    plugin.addErrorToLog("plugin has indirect cycle with: " + getInformationLine());
+                    addErrorToLog("plugin has indirect cycle with: " + plugin.getInformationLine(), plugin);
+                    plugin.addErrorToLog("plugin has indirect cycle with: " + getInformationLine(), this);
                 }
             }
             return;
@@ -397,7 +397,7 @@ public class Plugin extends OSGIElement {
             if(!exportedPackages.contains(rp)){
                 for (Package ep : exportedPackages) {
                     if (ep.exactMatch(rp)) {
-                        addWarningToLog("plugin exports already exported package: " + ep);
+                        addWarningToLog("plugin exports already exported package: " + ep, ep);
                         break;
                     }
                 }

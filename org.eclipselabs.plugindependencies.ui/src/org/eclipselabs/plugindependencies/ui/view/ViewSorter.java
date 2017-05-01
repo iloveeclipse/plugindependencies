@@ -29,12 +29,21 @@ public class ViewSorter extends ViewerComparator {
             if(elt.getName().equals(TreePlugin.EARLY_STARTUP)){
                 return 20;
             }
+            if(elt.getName().equals(TreeParent.ERRORS)){
+                return 1;
+            }
+            if(elt.getName().equals(TreeParent.WARNINGS)){
+                return 2;
+            }
         }
         if(element instanceof TreePlugin){
             return 19;
         }
         if(element instanceof TreePackage){
             return 20;
+        }
+        if(element instanceof TreeProblem){
+            return 30;
         }
         return 10;
     }

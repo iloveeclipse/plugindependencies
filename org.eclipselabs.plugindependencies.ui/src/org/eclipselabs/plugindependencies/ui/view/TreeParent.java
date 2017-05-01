@@ -14,6 +14,7 @@ package org.eclipselabs.plugindependencies.ui.view;
 import java.util.ArrayList;
 
 import org.eclipselabs.plugindependencies.core.NamedElement;
+import org.eclipselabs.plugindependencies.core.Problem;
 
 /**
  * @author obroesam
@@ -25,6 +26,9 @@ public class TreeParent {
     private final String name;
 
     private TreeParent parent;
+
+    static final String ERRORS = "Errors";
+    static final String WARNINGS = "Warnings";
 
     public TreeParent(String name, TreeParent treeparent) {
         this.name = name;
@@ -54,6 +58,29 @@ public class TreeParent {
 
     public TreeParent[] getChildren() {
         return children.toArray(new TreeParent[children.size()]);
+    }
+
+    void addProblems() {
+        NamedElement elt = getNamedElement();
+        if(elt == null) {
+            return;
+        }
+        // Errors
+        TreeParent errors = new TreeParent(ERRORS, this);
+        TreeParent warnings = new TreeParent(WARNINGS, this);
+        for (Problem p : elt.getLog()) {
+            if(p.isError()) {
+                errors.addChild(new TreeProblem(p, errors));
+            } else if(p.isWarning()) {
+                warnings.addChild(new TreeProblem(p, warnings));
+            }
+        }
+        if (errors.hasChildren()) {
+            this.addChild(errors);
+        }
+        if (warnings.hasChildren()) {
+            this.addChild(warnings);
+        }
     }
 
     public NamedElement getNamedElement(){

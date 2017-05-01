@@ -80,7 +80,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipselabs.plugindependencies.core.OSGIElement;
+import org.eclipselabs.plugindependencies.core.NamedElement;
 import org.eclipselabs.plugindependencies.ui.Activator;
 import org.eclipselabs.plugindependencies.ui.console.PluginDependenciesConsole;
 
@@ -391,9 +391,11 @@ public class PluginTreeView extends ViewPart {
             if(object instanceof TreeParent){
                 TreeParent tp = (TreeParent) object;
                 object = tp.getNamedElement();
-                if(object instanceof OSGIElement){
-                    OSGIElement elt = (OSGIElement) object;
+                if(object instanceof NamedElement){
+                    NamedElement elt = (NamedElement) object;
                     sb.append(elt.getNameAndVersion()).append("\n");
+                } else if(tp instanceof TreeProblem) {
+                    sb.append(((TreeProblem) tp).getProblem()).append("\n");
                 }
             }
         }

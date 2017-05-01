@@ -68,6 +68,7 @@ public class TreePackage extends TreeParent {
             if (importedBy.hasChildren()) {
                 this.addChild(importedBy);
             }
+            addProblems();
         }
         return children.toArray(new TreeParent[children.size()]);
     }
@@ -81,7 +82,7 @@ public class TreePackage extends TreeParent {
     public boolean hasChildren() {
         boolean hasExportedBy = !getNamedElement().getExportedBy().isEmpty();
         boolean hasImportedBy = !getNamedElement().getImportedBy().isEmpty();
-
-        return hasExportedBy || hasImportedBy;
+        boolean hasProblems = !getNamedElement().getLog().isEmpty();
+        return hasExportedBy || hasImportedBy || hasProblems;
     }
 }

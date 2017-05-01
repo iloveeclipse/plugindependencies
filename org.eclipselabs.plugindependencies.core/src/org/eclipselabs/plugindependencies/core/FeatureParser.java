@@ -97,7 +97,7 @@ public class FeatureParser {
                 return RC_OK;
             }
             // TODO add flag if we should warn in this case
-            feature.addWarningToLog("Feature is contained in a jar file!");
+            feature.addWarningToLog("Feature is contained in a jar file: " + featureFolder + "!");
         }
 
         if(feature == null) {
