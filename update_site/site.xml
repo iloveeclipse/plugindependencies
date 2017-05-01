@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipselabs.plugindependencies_1.0.5.201703221614.jar" id="org.eclipselabs.plugindependencies" version="1.0.5.201703221614">
+   <feature url="features/org.eclipselabs.plugindependencies_1.1.0.201705011828.jar" id="org.eclipselabs.plugindependencies" version="1.1.0.201705011828">
       <category name="Plugin Dependencies"/>
    </feature>
    <category-def name="Plugin Dependencies" label="Plugin Dependencies"/>
