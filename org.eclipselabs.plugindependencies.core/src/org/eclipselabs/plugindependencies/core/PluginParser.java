@@ -81,7 +81,11 @@ public class PluginParser {
 
         int result = RC_OK;
         for (File pluginOrDirectory : dirArray) {
-            result = Math.min(result, createPluginAndAddToSet(pluginOrDirectory, false));
+            try {
+                result = Math.min(result, createPluginAndAddToSet(pluginOrDirectory, false));
+            } catch (Throwable t) {
+                Logging.getLogger().error("Error while discovering plugins from: " + pluginOrDirectory, t);
+            }
         }
         return result;
     }
@@ -103,6 +107,9 @@ public class PluginParser {
             }
             if(pluginXml == null){
                 pluginXml = getPluginXml(pluginOrDirectory);
+                if (pluginXml == null) {
+                    return RC_OK;
+                }
             }
             plugin = parsePluginPromXml(pluginXml);
             if (plugin == null) {
