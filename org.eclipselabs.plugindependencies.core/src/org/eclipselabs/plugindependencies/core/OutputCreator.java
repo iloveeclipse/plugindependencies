@@ -12,7 +12,9 @@
 
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.*;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_ANALYSIS_ERROR;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_OK;
+import static org.eclipselabs.plugindependencies.core.CommandLineInterpreter.RC_RUNTIME_ERROR;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -103,7 +105,7 @@ public class OutputCreator {
         for (Plugin resolvedPlugin : resolvedPlugins) {
             String classPaths = getClassPaths(resolvedPlugin, false);
             if (classPaths == null) {
-                Logging.getLogger().error("can't resolve classpath for " + plugin);
+                Logging.getLogger().error("can't resolve classpath for " + resolvedPlugin);
                 return RC_ANALYSIS_ERROR;
             }
             classPathList.append(classPaths);
