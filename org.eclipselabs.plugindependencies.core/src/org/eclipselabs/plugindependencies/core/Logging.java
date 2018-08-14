@@ -79,7 +79,9 @@ public class Logging {
 
         @Override
         public void error(String message, Throwable ... t) {
-            err.print(PREFIX_ERROR);
+            if(! message.startsWith(PREFIX_ERROR)) {
+                err.print(PREFIX_ERROR);
+            }
             err.println(message);
             if(t != null && t.length > 0){
                 t[0].printStackTrace(err);
