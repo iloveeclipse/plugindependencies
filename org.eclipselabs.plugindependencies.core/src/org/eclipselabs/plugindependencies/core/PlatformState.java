@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Consumer;
 
 import org.eclipselabs.plugindependencies.core.DependencyResolver.PluginElt;
 
@@ -295,19 +296,19 @@ public class PlatformState {
         return list.get(0);
     }
 
-    public void computeAllDependenciesRecursive() {
+    public List<Problem> computeAllDependenciesRecursive() {
         if(!dependenciesresolved){
             resolveDependencies();
         }
         for (Plugin plugin : plugins) {
             computeAllDependenciesRecursive(plugin);
         }
-        validate();
+        return validate();
     }
 
-    public void validate() {
+    public List<Problem> validate() {
         if(validated){
-            return;
+            return collectErrors();
         }
         validated = true;
         // validate same package contributed by different plugins in same dependency chain
@@ -379,6 +380,24 @@ public class PlatformState {
         }
         // TODO validate packages with different versions used by different plugins in same dependency chain
         // TODO validate singleton plugins with different versions used by different plugins in same dependency chain
+        List<Problem> errors = collectErrors();
+        return errors;
+    }
+
+    private List<Problem> collectErrors() {
+        List<Problem> errors = new ArrayList<>();
+        Consumer<? super Problem> collectErrors = x -> {
+            if (x.isError()) {
+                errors.add(x);
+            }
+        };
+        for (Plugin plugin : plugins) {
+            plugin.getLog().forEach(collectErrors);
+        }
+        for (Feature feature : features) {
+            feature.getLog().forEach(collectErrors);
+        }
+        return errors;
     }
 
     private static boolean hasOnlyWorkspaceDup(List<OSGIElement> dups) {
