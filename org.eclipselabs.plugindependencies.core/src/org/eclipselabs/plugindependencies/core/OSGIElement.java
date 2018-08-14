@@ -146,7 +146,7 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
             }
             addWarningToLog(logStr.toString(), elements);
         } else if (setSize == 0 && optional.isEmpty()) {
-            if(entry.getName().endsWith(".source")) {
+            if(entry.getName().endsWith(".source") || entry.getName().endsWith(".sources")) {
                 addWarningToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
             } else {
                 addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
