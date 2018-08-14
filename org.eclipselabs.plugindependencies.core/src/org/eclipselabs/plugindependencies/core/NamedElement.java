@@ -182,7 +182,8 @@ public abstract class NamedElement {
         if(!name.equals(id)){
             return false;
         }
-        if(vers.isEmpty()){
+        // 0.0.0 matches everything
+        if(vers.isEmpty() || ZERO_VERSION.equals(vers)){
             return true;
         }
         if(versionRange){
