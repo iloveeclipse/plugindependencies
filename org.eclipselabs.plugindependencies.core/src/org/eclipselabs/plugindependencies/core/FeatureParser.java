@@ -130,7 +130,7 @@ public class FeatureParser {
             Element root = featureXml.getDocumentElement();
             String id = root.getAttribute("id");
             String version = root.getAttribute("version");
-            Feature ret = new Feature(id, version);
+            Feature ret = new Feature(id, fixVersion(version));
 
             ret.addIncludedPluginEntries(root.getElementsByTagName("plugin"));
             ret.addIncludedFeatureEntries(root.getElementsByTagName("includes"));
