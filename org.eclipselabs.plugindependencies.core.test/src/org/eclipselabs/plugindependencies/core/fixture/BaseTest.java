@@ -9,6 +9,9 @@ package org.eclipselabs.plugindependencies.core.fixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runners.MethodSorters;
 
 /**
@@ -32,5 +35,26 @@ public class BaseTest {
             return null;
         }
         return s.replace('\\', '/');
+    }
+
+    @Rule
+    public TestFailReporter failReporter= new TestFailReporter();
+
+    public class TestFailReporter extends TestWatcher {
+
+        @Override
+        protected void starting(Description description) {
+            System.out.println("STARTING " + description.toString());
+        }
+        @Override
+        protected void failed(Throwable e, Description description) {
+            System.out.println("FAIL in " + description.toString());
+            e.printStackTrace(System.out);
+        }
+
+        @Override
+        protected void succeeded(Description description) {
+            System.out.println("PASS in " + description.toString());
+        }
     }
 }
