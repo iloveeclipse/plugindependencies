@@ -48,6 +48,7 @@ public class PlatformState {
     private static String realVersion = NamedElement.ZERO_VERSION;
 
     private final Set<ManifestEntry> hiddenElements;
+    private Set<String> ignoredBundlesWithCycles;
 
     private PlatformSpecs platformSpecs;
 
@@ -63,12 +64,13 @@ public class PlatformState {
     public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features) {
         hiddenElements = new LinkedHashSet<>();
         platformSpecs = new PlatformSpecs(null, null, null);
-        this.plugins = plugins == null? new LinkedHashSet<Plugin>() : plugins;
-        this.packages = packages == null? new LinkedHashSet<Package>() : packages;
-        this.features = features == null? new LinkedHashSet<Feature>() : features;
+        this.plugins = plugins == null? new LinkedHashSet<>() : plugins;
+        this.packages = packages == null? new LinkedHashSet<>() : packages;
+        this.features = features == null? new LinkedHashSet<>() : features;
         nameToPackages = new LinkedHashMap<>();
         nameToPlugins = new LinkedHashMap<>();
         nameToFeatures = new LinkedHashMap<>();
+        ignoredBundlesWithCycles = new LinkedHashSet<>();
 
         javaHome = DEFAULT_JAVA_HOME;
 
@@ -422,7 +424,7 @@ public class PlatformState {
         plugin.addErrorToLog(sb.toString(), dups);
     }
 
-    static Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
+    Set<Plugin> computeAllDependenciesRecursive(final Plugin root) {
         if(root.isRecursiveResolved()){
             return root.getRecursiveResolvedPlugins();
         }
@@ -446,7 +448,15 @@ public class PlatformState {
                         current.resolved(p);
                     }
                 }
-                // avoid cyclic dependencies
+                // avoid (but report) cyclic dependencies
+                if(current.plugin != next.plugin.getHost()
+                        && next.plugin != current.plugin.getHost()) {
+                    if(getIgnoredBundlesWithCycles().contains(next.plugin.getName())) {
+                        next.plugin.addWarningToLog("Dependency cycle detected with " + current.plugin.getNameAndVersion(), next.toVisit);
+                    } else {
+                        next.plugin.addErrorToLog("Dependency cycle detected with " + current.plugin.getNameAndVersion(), next.toVisit);
+                    }
+                }
                 continue;
             }
 
@@ -654,6 +664,15 @@ public class PlatformState {
         out.append("Packages:\n");
         out.append(CommandLineInterpreter.printPackageLogs(getPackages(), true));
         return out;
+    }
+
+    public Set<String> getIgnoredBundlesWithCycles() {
+        return ignoredBundlesWithCycles;
+    }
+
+    public void setIgnoredBundlesWithCycles(Set<String> ignoredBundlesWithCycles) {
+        Objects.requireNonNull(ignoredBundlesWithCycles);
+        this.ignoredBundlesWithCycles = ignoredBundlesWithCycles;
     }
 
     public static class PlatformSpecs {

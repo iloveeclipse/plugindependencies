@@ -38,6 +38,7 @@ public class CommandLineInterpreter {
     final PlatformState state;
     private String fullLog;
     private final PluginParser pp;
+    private boolean continueOnFail;
 
     public static final int RC_OK = 0;
     public static final int RC_RUNTIME_ERROR = -1;
@@ -108,8 +109,9 @@ public class CommandLineInterpreter {
         try {
             for (List<String> list : commands) {
                 Options option = Options.getOption(list.remove(0));
-                result = option.handle(this, list);
-                if(result < RC_OK){
+                int newResult = option.handle(this, list);
+                result = Math.min(result, newResult);
+                if(result < RC_OK && !continueOnFail){
                     break;
                 }
             }
@@ -207,7 +209,7 @@ public class CommandLineInterpreter {
             String sourceFolder = plugin.getPath().substring(0, index);
             OutputCreator.setSourceFolder(sourceFolder);
             try {
-                return OutputCreator.generateBuildFile(plugin);
+                return OutputCreator.generateBuildFile(state, plugin);
             } catch (IOException e) {
                 Logging.getLogger().error("writing build file failed:" + plugin.getInformationLine(), e);
                 return RC_RUNTIME_ERROR;
@@ -229,7 +231,7 @@ public class CommandLineInterpreter {
         for (Plugin plugin : state.getPlugins()) {
             if (plugin.getPath().contains(sourceDir)) {
                 try {
-                    int rc = OutputCreator.generateBuildFile(plugin);
+                    int rc = OutputCreator.generateBuildFile(state, plugin);
                     if (rc < RC_OK) {
                         result = Math.min(result, rc);
                         Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine());
@@ -241,6 +243,13 @@ public class CommandLineInterpreter {
                     Logging.getLogger().error("generation failed for: " + plugin.getPath() + ", " + plugin.getInformationLine(), e);
                 }
             }
+        }
+        List<Problem> errors = state.computeAllDependenciesRecursive();
+        if(!errors.isEmpty()) {
+            Logging.writeStandardOut("Generated " + generated + " classpath files, but platform state has errors!");
+            Logging.getLogger().error("Errors computing bundle dependencies in: " + sourceDir);
+            errors.forEach(e -> Logging.getLogger().error(e.toString()));
+            return RC_ANALYSIS_ERROR;
         }
         if(result == RC_OK) {
             Logging.writeStandardOut("Successfully generated " + generated + " classpath files");
@@ -417,5 +426,13 @@ public class CommandLineInterpreter {
 
     public void setPlatformSpecs(PlatformSpecs platformSpecs) {
         state.setPlatformSpecs(platformSpecs);
+    }
+
+    public void setBundlesWithCycles(List<String> bundleIds) {
+        state.setIgnoredBundlesWithCycles(new LinkedHashSet<>(bundleIds));
+    }
+
+    public void setContinueOnFail(boolean b) {
+        continueOnFail = b;
     }
 }

@@ -65,7 +65,7 @@ public class OutputCreator {
         List<String> sortedDependencyList;
 
         for (Plugin plugin : state.getPlugins()) {
-            sortedDependencyList = getSortedDependencyList(plugin);
+            sortedDependencyList = getSortedDependencyList(state, plugin);
             String elementPath = plugin.getPath();
             for (String path : sortedDependencyList) {
                 dependencyBuilder.append(elementPath + ":" + path + "\n");
@@ -75,11 +75,11 @@ public class OutputCreator {
         return writeToFile(outfile, dependencyBuilder);
     }
 
-    private static List<String> getSortedDependencyList(Plugin plugin) {
+    private static List<String> getSortedDependencyList(PlatformState state, Plugin plugin) {
         List<Plugin> dependencyList = new ArrayList<>();
         List<String> dependencyPathList = new ArrayList<>();
 
-        dependencyList.addAll(PlatformState.computeAllDependenciesRecursive(plugin));
+        dependencyList.addAll(state.computeAllDependenciesRecursive(plugin));
 
         // build dependency file for given plugin should NOT contain it's fragments (recursive dep!)
         if(plugin.isHost()){
@@ -93,9 +93,9 @@ public class OutputCreator {
         return dependencyPathList;
     }
 
-    public static int generateBuildFile(Plugin plugin) throws IOException {
+    public static int generateBuildFile(PlatformState state, Plugin plugin) throws IOException {
         Set<Plugin> resolvedPlugins = new LinkedHashSet<>();
-        resolvedPlugins.addAll(PlatformState.computeAllDependenciesRecursive(plugin));
+        resolvedPlugins.addAll(state.computeAllDependenciesRecursive(plugin));
         return writeClassPathsToFile(plugin, resolvedPlugins);
     }
 

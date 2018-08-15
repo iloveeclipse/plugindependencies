@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author aloskuto
@@ -158,7 +157,7 @@ public abstract class NamedElement {
         }
     }
 
-    protected void addWarningToLog(String note, Set<? extends NamedElement> related) {
+    protected void addWarningToLog(String note, Collection<? extends NamedElement> related) {
         if (note == null || note.isEmpty()) {
             return;
         }

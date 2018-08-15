@@ -92,6 +92,9 @@ public class Plugin extends OSGIElement {
     }
 
     void setHost(Plugin host) {
+        if(this == host) {
+            throw new IllegalArgumentException("Bundle can't be a host of itself");
+        }
         this.host = host;
     }
 
@@ -342,7 +345,10 @@ public class Plugin extends OSGIElement {
     }
 
     public void addToRecursiveResolvedPlugins(Plugin plugin) {
-        if(plugin == null || this.equals(plugin)){
+        if(plugin == null){
+            return;
+        } else if (this.equals(plugin)) {
+            log.add(new Problem("Dependency cycle detected", Problem.ERROR, this, Collections.EMPTY_LIST));
             return;
         }
         if(recursiveResolvedPlugins == null){

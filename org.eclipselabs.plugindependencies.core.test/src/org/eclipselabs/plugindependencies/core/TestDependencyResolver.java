@@ -246,6 +246,71 @@ public class TestDependencyResolver extends BaseTest {
     }
 
     @Test
+    public void testSimpleCycle() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+
+        p2.setRequiredPlugins("p1;version=\"1.0.0\"");
+        p1.setRequiredPlugins("p2;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p2 1.0.0]", p1.getLog().toString());
+    }
+
+    @Test
+    public void testIndirectCycle() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setRequiredPlugins("p2;version=\"1.0.0\"");
+        p2.setRequiredPlugins("p3;version=\"1.0.0\"");
+        p3.setRequiredPlugins("p1;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
+    }
+
+    @Test
+    public void testIndirectCycleViaPackages() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        p1.setExportedPackages("hello1;version=\"0.5.0\"", ps);
+        p2.setExportedPackages("hello2;version=\"0.5.0\"", ps);
+        p3.setExportedPackages("hello3;version=\"0.5.0\"", ps);
+
+        p1.setImportedPackageEntries("hello2;version=\"0.5.0\"");
+        p2.setImportedPackageEntries("hello3;version=\"0.5.0\"");
+        p3.setImportedPackageEntries("hello1;version=\"0.5.0\"");
+
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
+    }
+
+    @Test
     public void testMultipleOccurenciesOfSamePluginInPlatform() {
         Plugin p1 = new Plugin("p1", "1.0.0", false, false);
         p1.setPath("/tmp");

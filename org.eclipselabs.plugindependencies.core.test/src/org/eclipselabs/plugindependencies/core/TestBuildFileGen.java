@@ -94,11 +94,12 @@ public class TestBuildFileGen extends BaseTest {
                 "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
                 "testdata_OutputGeneration/workspace", "-deploymentRoot",
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-continueOnFail",
                 "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins",
                 "-generateReqFile", "testdata_OutputGeneration/dependencies.txt"
                 };
 
-        assertEquals(0, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
         checkBuildAndDepFileResult();
     }
@@ -114,7 +115,7 @@ public class TestBuildFileGen extends BaseTest {
                 "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins"
                 };
 
-        assertEquals(0, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
         checkBuildAndDepFileResult();
     }
@@ -158,7 +159,7 @@ public class TestBuildFileGen extends BaseTest {
                 "-generateAllBuild", "testdata_OutputGeneration/workspace", "company/eclipse/plugins",
                 };
 
-        assertEquals(0, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
         for (File plugin : workspacePlugins) {
             String path = plugin.getCanonicalPath();
