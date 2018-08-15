@@ -94,6 +94,10 @@ public class Problem {
         return getSeverity() == WARN;
     }
 
+    public NamedElement getOwner() {
+        return owner;
+    }
+
     public Collection<? extends NamedElement> getRelated() {
         return related;
     }

@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.equinox.security.linux.x86_64
+Bundle-SymbolicName: org.eclipse.equinox.security.linux.x86_64;singlet
+ on:=true
+Built-By: genie.releng
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-PlatformFilter: (& (osgi.os=linux) (osgi.arch=x86_64))
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/equino
+ x/rt.equinox.bundles.git;path="bundles/org.eclipse.equinox.security.l
+ inux.x86_64";tag="I20180716-2000";commitId=af94e41c798fa0bd11626deaa8
+ 564ab7642d19e2
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.equinox.security;bundle-version="[1.0.0,2.0
+ .0)"
+Export-Package: org.eclipse.equinox.internal.security.linux;x-internal
+ :=true
+Bundle-Name: %fragmentName
+Bundle-Version: 1.1.100.v20180716-1449
+Bundle-Localization: fragment
+Created-By: Apache Maven 3.3.3
+Build-Jdk: 1.8.0_162
+Eclipse-BundleShape: dir

@@ -8,8 +8,8 @@ Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.ui.workbench.compatibility
 Eclipse-SourceReferences: scm:cvs:pserver:dev.eclipse.org:/cvsroot/ecl
  ipse:org.eclipse.ui.workbench.compatibility;tag=I20110413-1600
-Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.
- 0)"
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.equinox.security;bundle-version="1.2.500"
 Bundle-Version: 3.2.100.I20110413-1600
 Bundle-ManifestVersion: 2
 

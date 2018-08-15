@@ -26,6 +26,8 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ant.core_3.2.302.v201201
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20110423-0524.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.filesystem_1.3.100.v20110423-0524.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.resources_3.7.101.v20120125-1505.jar
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.security.linux.x86_64_1.1.100.v20180716-1449
+testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.security_1.2.500.v20180612-1048.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench.compatibility_3.2.100.I20110413-1600/compatibility.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ui_3.7.0.v20110928-1505.jar

@@ -105,6 +105,7 @@ public class OutputCreator {
         for (Plugin resolvedPlugin : resolvedPlugins) {
             String classPaths = getClassPaths(resolvedPlugin, false);
             if (classPaths == null) {
+                resolvedPlugin.addErrorToLog("can't resolve classpath", plugin);
                 Logging.getLogger().error("can't resolve classpath for " + resolvedPlugin);
                 return RC_ANALYSIS_ERROR;
             }
@@ -175,7 +176,7 @@ public class OutputCreator {
         StringBuilder ret = new StringBuilder();
         String targetDir = plugin.getTargetDirectory();
         if (targetDir == null) {
-            return null;
+            return plugin.getPath() + "\n";
         }
         List<String> bundleClassPathList = plugin.getBundleClassPath();
 

@@ -12,6 +12,7 @@
 package org.eclipselabs.plugindependencies.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +102,16 @@ public class TestBuildFileGen extends BaseTest {
 
         assertEquals(CommandLineInterpreter.RC_ANALYSIS_ERROR, SecurityMan.runMain(args));
 
+        CommandLineInterpreter cli = MainClass.interpreter;
+        assertNotNull(cli);
+        List<Problem> errors = cli.getState().validate();
+        for (Problem problem : errors) {
+            String bundleIdNoError = "org.eclipse.equinox.security.linux.x86_64";
+            if(bundleIdNoError.equals(problem.getOwner().getName())){
+                assertEquals("No errors expected for: " + bundleIdNoError, "", problem.toString());
+            }
+        }
+
         checkBuildAndDepFileResult();
     }
 
@@ -186,7 +197,7 @@ public class TestBuildFileGen extends BaseTest {
                 "-platform", "linux", "gtk", "x86_64",
                 "-generateReqFile", "testdata_OutputGeneration/dependencies.txt" };
 
-        assertEquals(0, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_OK, SecurityMan.runMain(args));
 
         String folder = "testdata_OutputGeneration";
         Path expected = Paths.get(folder, "dependencies_expected.txt");
@@ -210,7 +221,7 @@ public class TestBuildFileGen extends BaseTest {
                 "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
                 "-generateBuildFile", "com.company.itee.maint.common", "company/eclipse/plugins" };
 
-        assertEquals(0, SecurityMan.runMain(args));
+        assertEquals(CommandLineInterpreter.RC_OK, SecurityMan.runMain(args));
 
         String pluginFolder = "testdata_OutputGeneration/workspace/com.company.itee.maint.common";
         File expected = new File(pluginFolder + "/classpathfile_expected");

@@ -50,6 +50,7 @@ imported by:
 	plugin: org.eclipse.equinox.common 3.6.0.v20110523 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar
 	plugin: org.eclipse.equinox.preferences 3.4.2.v20120111-2020 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.preferences_3.4.2.v20120111-2020.jar
 	plugin: org.eclipse.equinox.registry 3.5.101.R37x_v20110810-1611 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar
+	plugin: org.eclipse.equinox.security 1.2.500.v20180612-1048 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.equinox.security_1.2.500.v20180612-1048.jar
 	plugin: org.eclipse.jface 3.7.0.v20110928-1505 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar
 	plugin: org.eclipse.osgi.services 3.3.0.v20110513 testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.osgi.services_3.3.0.v20110513.jar
 
