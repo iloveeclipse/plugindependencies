@@ -32,3 +32,5 @@ The command line can be started via
 `java -jar org.eclipselabs.plugindependencies.core_1.0.5.201703221614.jar`
 
 and offers some analysis functionality (via text reporting) but also possibility to generate two different dependency files (which can be used by other tools computing build dependencies).
+
+See https://github.com/iloveeclipse/plugindependencies/wiki for some more help how to use the plugin.
