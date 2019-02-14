@@ -348,7 +348,17 @@ public class Plugin extends OSGIElement {
         if(plugin == null){
             return;
         } else if (this.equals(plugin)) {
-            log.add(new Problem("Dependency cycle detected", Problem.ERROR, this, Collections.EMPTY_LIST));
+            if(isRecursiveResolved()) {
+                Problem problem;
+                if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                    problem = new Problem("Self-dependency cycle detected", Problem.WARN, this, Collections.EMPTY_LIST);
+                } else {
+                    problem = new Problem("Self-dependency cycle detected", Problem.ERROR, this, Collections.EMPTY_LIST);
+                }
+                if(!log.contains(problem)) {
+                    log.add(problem);
+                }
+            }
             return;
         }
         if(recursiveResolvedPlugins == null){

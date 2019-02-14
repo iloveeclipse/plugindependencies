@@ -330,6 +330,25 @@ public class TestDependencyResolver extends BaseTest {
     }
 
     @Test
+    public void testSelfCycle() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setRequiredPlugins("p1;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Error: [p1 1.0.0] Self-dependency cycle detected]", p1.getLog().toString());
+    }
+
+    @Test
     public void testIndirectCycleViaPackages() {
         Plugin p1 = new Plugin("p1", "1.0.0", false, false);
         Plugin p2 = new Plugin("p2", "1.0.0", false, false);
