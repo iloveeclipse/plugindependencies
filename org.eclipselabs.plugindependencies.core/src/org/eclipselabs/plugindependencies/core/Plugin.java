@@ -344,7 +344,7 @@ public class Plugin extends OSGIElement {
         return recursiveResolvedPlugins.contains(p);
     }
 
-    public void addToRecursiveResolvedPlugins(Plugin plugin) {
+    public void addToRecursiveResolvedPlugins(Plugin plugin, PlatformState state) {
         if(plugin == null){
             return;
         } else if (this.equals(plugin)) {
@@ -363,13 +363,23 @@ public class Plugin extends OSGIElement {
                 recursiveResolvedPlugins.add(plugin);
                 recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
                 if(!isFragmentOrHost(plugin)){
-                    addErrorToLog("plugin has cycle with: " + plugin.getInformationLine(), plugin);
-                    plugin.addErrorToLog("plugin has cycle with: " + getInformationLine(), this);
+                    if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                        addWarningToLog("plugin has cycle with: " + plugin.getInformationLine(), plugin);
+                        plugin.addWarningToLog("plugin has cycle with: " + getInformationLine(), this);
+                    } else {
+                        addErrorToLog("plugin has cycle with: " + plugin.getInformationLine(), plugin);
+                        plugin.addErrorToLog("plugin has cycle with: " + getInformationLine(), this);
+                    }
                 }
             } else {
                 if(!isFragmentOrHost(plugin)){
-                    addErrorToLog("plugin has indirect cycle with: " + plugin.getInformationLine(), plugin);
-                    plugin.addErrorToLog("plugin has indirect cycle with: " + getInformationLine(), this);
+                    if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                        addWarningToLog("plugin has indirect cycle with: " + plugin.getInformationLine(), plugin);
+                        plugin.addWarningToLog("plugin has indirect cycle with: " + getInformationLine(), this);
+                    } else {
+                        addErrorToLog("plugin has indirect cycle with: " + plugin.getInformationLine(), plugin);
+                        plugin.addErrorToLog("plugin has indirect cycle with: " + getInformationLine(), this);
+                    }
                 }
             }
             return;
@@ -454,7 +464,7 @@ public class Plugin extends OSGIElement {
         return reex;
     }
 
-    public void setResolved(){
+    public void setResolved(PlatformState state){
         if(isRecursiveResolved()){
             return;
         }
@@ -463,7 +473,7 @@ public class Plugin extends OSGIElement {
                 if (!host.isRecursiveResolved()) {
                     return;
                 }
-                addToRecursiveResolvedPlugins(host);
+                addToRecursiveResolvedPlugins(host, state);
             }
         }
         if(recursiveResolvedPlugins == null || recursiveResolvedPlugins.isEmpty()){

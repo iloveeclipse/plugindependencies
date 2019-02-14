@@ -313,19 +313,22 @@ public class DependencyResolver {
             addDirectDependencies();
         }
 
-        void setResolved(){
-            plugin.setResolved();
-            resolved(plugin);
+        void setResolved(PlatformState state){
+            plugin.setResolved(state);
+            if(plugin.getRequiredPlugins().contains(plugin)) {
+                plugin.addToRecursiveResolvedPlugins(plugin, state);
+            }
+            resolved(plugin, state);
         }
 
-        void resolved(Plugin p){
+        void resolved(Plugin p, PlatformState state){
             toVisit.remove(p);
             if(plugin != p){
-                plugin.addToRecursiveResolvedPlugins(p);
+                plugin.addToRecursiveResolvedPlugins(p, state);
             }
 
             if(parent != null && parent != this){
-                parent.resolved(p);
+                parent.resolved(p, state);
             }
         }
 

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.junit.Test;
@@ -282,6 +283,50 @@ public class TestDependencyResolver extends BaseTest {
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
+    }
+
+    @Test
+    public void testIndirectCycleAllIgnored() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setRequiredPlugins("p2;version=\"1.0.0\"");
+        p2.setRequiredPlugins("p3;version=\"1.0.0\"");
+        p3.setRequiredPlugins("p1;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.setIgnoredBundlesWithCycles(plugins.stream().map(p -> p.getName()).collect(Collectors.toSet()));
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Warning: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
+    }
+
+    @Test
+    public void testIndirectCycleOneIgnored() {
+        Plugin p1 = new Plugin("p1", "1.0.0", false, false);
+        Plugin p2 = new Plugin("p2", "1.0.0", false, false);
+        Plugin p3 = new Plugin("p3", "1.0.0", false, false);
+
+        p1.setRequiredPlugins("p2;version=\"1.0.0\"");
+        p2.setRequiredPlugins("p3;version=\"1.0.0\"");
+        p3.setRequiredPlugins("p1;version=\"1.0.0\"");
+
+        Set<Plugin> plugins = new LinkedHashSet<>();
+        plugins.add(p1);
+        plugins.add(p2);
+        plugins.add(p3);
+
+        PlatformState ps = new PlatformState(plugins, null, null);
+        ps.setIgnoredBundlesWithCycles(plugins.stream().map(p -> p.getName()).filter(s -> !s.contains("p2")).collect(Collectors.toSet()));
+        ps.computeAllDependenciesRecursive();
+
+        assertEquals("[Warning: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
     }
 
     @Test

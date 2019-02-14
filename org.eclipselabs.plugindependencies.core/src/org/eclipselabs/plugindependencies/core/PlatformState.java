@@ -437,7 +437,7 @@ public class PlatformState {
             if(next == PluginElt.EMPTY) {
                 stack.pop();
                 // make sure we finished the iteration and replace the default empty set if no dependencies found
-                current.setResolved();
+                current.setResolved(this);
                 continue;
             }
 
@@ -445,7 +445,7 @@ public class PlatformState {
                 if(!next.plugin.isRecursiveResolved()){
                     Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
                     for (Plugin p : resolvedPlugins) {
-                        current.resolved(p);
+                        current.resolved(p, this);
                     }
                 }
                 // avoid (but report) cyclic dependencies
@@ -463,9 +463,9 @@ public class PlatformState {
             if(root.containsRecursiveResolved(next.plugin)) {
                 Set<Plugin> resolvedPlugins = next.plugin.getRecursiveResolvedPlugins();
                 for (Plugin p : resolvedPlugins) {
-                    current.resolved(p);
+                    current.resolved(p, this);
                 }
-                current.resolved(next.plugin);
+                current.resolved(next.plugin, this);
             } else {
                 stack.push(next);
             }
@@ -474,7 +474,7 @@ public class PlatformState {
         for (Plugin plugin : rrp) {
             if(!plugin.isRecursiveResolved()){
                 if(plugin.isFragment()){
-                    plugin.setResolved();
+                    plugin.setResolved(this);
                 }
             }
             if(!plugin.isRecursiveResolved()) {

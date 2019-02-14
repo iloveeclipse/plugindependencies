@@ -35,22 +35,23 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    TestVersions.class,
     TestBuildFileGen.class,
     TestBuildFileGen2.class,
     TestCLI.class,
+    TestDependencyResolver.class,
     TestDepResIsRightVersion.class,
     TestDepResResolving.class,
     TestDepResSearchMethodFeature.class,
     TestDepResSearchMethodPack.class,
     TestDepResSearchMethodPlugin.class,
+    TestDependencyResolver.class,
     TestExceptions.class,
     TestFeatureParser.class,
     TestPlugin.class,
     TestPluginParser.class,
     TestPluginParser2.class,
     TestStringUtil.class,
-    TestDependencyResolver.class
+    TestVersions.class,
 })
 public class AllTests {
     //
