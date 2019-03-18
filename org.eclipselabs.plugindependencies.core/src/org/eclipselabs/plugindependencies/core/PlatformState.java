@@ -466,7 +466,8 @@ public class PlatformState {
                 // avoid (but report) cyclic dependencies
                 if(current.plugin != next.plugin.getHost()
                         && next.plugin != current.plugin.getHost()) {
-                    if(getIgnoredBundlesWithCycles().contains(next.plugin.getName())) {
+//                    String[] affected = stack.stream().map(p -> p.plugin.getName()).toArray(String[]::new);
+                    if(shouldIgnoreCycleError(current.plugin.getName(), next.plugin.getName())) {
                         next.plugin.addWarningToLog("Dependency cycle detected with " + current.plugin.getNameAndVersion(), next.toVisit);
                     } else {
                         next.plugin.addErrorToLog("Dependency cycle detected with " + current.plugin.getNameAndVersion(), next.toVisit);
@@ -727,6 +728,15 @@ public class PlatformState {
 
     public Set<String> getIgnoredBundlesWithCycles() {
         return ignoredBundlesWithCycles;
+    }
+
+    public boolean shouldIgnoreCycleError(String ... affectedIds) {
+        for (String id : affectedIds) {
+            if(ignoredBundlesWithCycles.contains(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setIgnoredBundlesWithCycles(Set<String> ignoredBundlesWithCycles) {

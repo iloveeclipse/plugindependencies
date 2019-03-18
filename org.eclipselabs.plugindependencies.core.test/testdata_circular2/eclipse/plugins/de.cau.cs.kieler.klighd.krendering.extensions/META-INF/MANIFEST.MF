@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.krendering.extensions
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: de.cau.cs.kieler.klighd.krendering
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Kiel University
+Export-Package: de.cau.cs.kieler.klighd.krendering.extensions
+Bundle-Name: KIELER Lightweight Diagrams Xtend-based Extension Library
+Bundle-Version: 0.42.1.201708311633
+Bundle-Activator: de.cau.cs.kieler.klighd.krendering.extensions.KRende
+ ringExtensionsPlugin
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

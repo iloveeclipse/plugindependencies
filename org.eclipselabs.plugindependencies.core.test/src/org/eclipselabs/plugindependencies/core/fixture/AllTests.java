@@ -12,6 +12,7 @@ package org.eclipselabs.plugindependencies.core.fixture;
 
 import org.eclipselabs.plugindependencies.core.TestBuildFileGen;
 import org.eclipselabs.plugindependencies.core.TestBuildFileGen2;
+import org.eclipselabs.plugindependencies.core.TestBuildFileGen3;
 import org.eclipselabs.plugindependencies.core.TestCLI;
 import org.eclipselabs.plugindependencies.core.TestDepResIsRightVersion;
 import org.eclipselabs.plugindependencies.core.TestDepResResolving;
@@ -37,6 +38,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     TestBuildFileGen.class,
     TestBuildFileGen2.class,
+    TestBuildFileGen3.class,
     TestCLI.class,
     TestDependencyResolver.class,
     TestDepResIsRightVersion.class,

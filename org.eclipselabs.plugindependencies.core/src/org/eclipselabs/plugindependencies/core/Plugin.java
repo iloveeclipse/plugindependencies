@@ -350,7 +350,7 @@ public class Plugin extends OSGIElement {
         } else if (this.equals(plugin)) {
             if(isRecursiveResolved()) {
                 Problem problem;
-                if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                if(state.shouldIgnoreCycleError(this.getName())) {
                     problem = new Problem("Self-dependency cycle detected", Problem.WARN, this, Collections.EMPTY_LIST);
                 } else {
                     problem = new Problem("Self-dependency cycle detected", Problem.ERROR, this, Collections.EMPTY_LIST);
@@ -373,7 +373,7 @@ public class Plugin extends OSGIElement {
                 recursiveResolvedPlugins.add(plugin);
                 recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
                 if(!isFragmentOrHost(plugin)){
-                    if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                    if(state.shouldIgnoreCycleError(plugin.getName(), this.getName())) {
                         addWarningToLog("plugin has cycle with: " + plugin.getInformationLine(), plugin);
                         plugin.addWarningToLog("plugin has cycle with: " + getInformationLine(), this);
                     } else {
@@ -383,7 +383,7 @@ public class Plugin extends OSGIElement {
                 }
             } else {
                 if(!isFragmentOrHost(plugin)){
-                    if(state.getIgnoredBundlesWithCycles().contains(plugin.getName())) {
+                    if(state.shouldIgnoreCycleError(plugin.getName(), this.getName())) {
                         addWarningToLog("plugin has indirect cycle with: " + plugin.getInformationLine(), plugin);
                         plugin.addWarningToLog("plugin has indirect cycle with: " + getInformationLine(), this);
                     } else {

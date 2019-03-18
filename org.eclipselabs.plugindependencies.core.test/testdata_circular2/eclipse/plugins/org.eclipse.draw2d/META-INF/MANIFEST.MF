@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.eclipse.draw2d
+Archiver-Version: Plexus Archiver
+Built-By: genie.gef
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-SourceReferences: scm:git:https://github.com/eclipse/gef-legac
+ y.git;path="org.eclipse.draw2d";commitId=14563a9e1f2af636a5364d195cf0
+ 7dbff6f35fa6
+Bundle-Vendor: %Plugin.providerName
+Export-Package: org.eclipse.draw2d,org.eclipse.draw2d.graph,org.eclips
+ e.draw2d.geometry,org.eclipse.draw2d.images,org.eclipse.draw2d.intern
+ al;x-internal:=true,org.eclipse.draw2d.parts,org.eclipse.draw2d.text,
+ org.eclipse.draw2d.widgets
+Bundle-Name: %Plugin.name
+Bundle-Version: 3.10.200.201712150306
+Bundle-Localization: plugin
+Created-By: Apache Maven 3.1.1
+Build-Jdk: 1.8.0_131

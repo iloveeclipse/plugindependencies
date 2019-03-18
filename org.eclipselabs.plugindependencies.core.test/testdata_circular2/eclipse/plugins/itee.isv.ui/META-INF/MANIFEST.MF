@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: itee.isv.ui;singleton:=true
+Bundle-Version: 99.0.0
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.cau.cs.kieler.klighd.ui,
+ itee.icdiagram

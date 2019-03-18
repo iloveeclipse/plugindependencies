@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: de.cau.cs.kieler.klighd;bundle-version="0.3.0";visibility:=reexport
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Kiel University
+Export-Package: de.cau.cs.kieler.klighd.piccolo,de.cau.cs.kieler.kligh
+ d.piccolo.export,de.cau.cs.kieler.klighd.piccolo.internal; x-friends:
+ ="de.cau.cs.kieler.klighd.piccolo.svg,  de.cau.cs.kieler.klighd.picco
+ lo.test,  de.cau.cs.kieler.klighd.ui",de.cau.cs.kieler.klighd.piccolo
+ .internal.activities;x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
+ de.cau.cs.kieler.klighd.piccolo.test",de.cau.cs.kieler.klighd.piccolo
+ .internal.controller; x-friends:="de.cau.cs.kieler.klighd.piccolo.svg
+ ,  de.cau.cs.kieler.klighd.piccolo.test,  de.cau.cs.kieler.klighd.ui"
+ ,de.cau.cs.kieler.klighd.piccolo.internal.events; x-friends:="de.cau.
+ cs.kieler.klighd.piccolo.svg,  de.cau.cs.kieler.klighd.piccolo.test, 
+  de.cau.cs.kieler.klighd.ui",de.cau.cs.kieler.klighd.piccolo.internal
+ .nodes; x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,  de.cau.cs.k
+ ieler.klighd.piccolo.test,  de.cau.cs.kieler.klighd.ui",de.cau.cs.kie
+ ler.klighd.piccolo.internal.util; x-friends:="de.cau.cs.kieler.klighd
+ .piccolo.svg,  de.cau.cs.kieler.klighd.piccolo.test,  de.cau.cs.kiele
+ r.klighd.ui",de.cau.cs.kieler.klighd.piccolo.viewer
+Bundle-Name: KIELER Lightweight Diagrams Powered by Piccolo2D
+Bundle-Version: 0.42.4.201708311633
+Bundle-Activator: de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

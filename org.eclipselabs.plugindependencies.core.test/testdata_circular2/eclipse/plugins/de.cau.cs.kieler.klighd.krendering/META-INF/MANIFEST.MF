@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.krendering;singleton:=tru
+ e
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Kiel University
+Export-Package: de.cau.cs.kieler.klighd.krendering,de.cau.cs.kieler.kl
+ ighd.krendering.impl,de.cau.cs.kieler.klighd.krendering.util
+Bundle-Name: KIELER Transient Diagram Format Definition
+Bundle-Version: 0.42.1.201708311633
+Bundle-ClassPath: .
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.kivi;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: de.cau.cs.kieler.klighd;visibility:=reexport,
+ de.cau.cs.kieler.klighd.ui
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Kiel University
+Export-Package: de.cau.cs.kieler.klighd.kivi.combinations,de.cau.cs.ki
+ eler.klighd.kivi.effects,de.cau.cs.kieler.klighd.kivi.internal;x-inte
+ rnal:=true,de.cau.cs.kieler.klighd.kivi.triggers
+Bundle-Name: KIELER Lightweight Diagrams Support for KIVi
+Bundle-Version: 0.42.0.201708311633
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

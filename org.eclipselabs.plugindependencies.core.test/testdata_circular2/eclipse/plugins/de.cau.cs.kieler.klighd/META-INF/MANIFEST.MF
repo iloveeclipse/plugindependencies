@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: de.cau.cs.kieler.klighd.krendering;visibility:=reexport
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Kiel University
+DynamicImport-Package: de.cau.cs.kieler.klighd.kivi.internal
+Export-Package: de.cau.cs.kieler.klighd,de.cau.cs.kieler.klighd.action
+ s,de.cau.cs.kieler.klighd.internal;x-friends:="de.cau.cs.kieler.kligh
+ d.piccolo,de.cau.cs.kieler.klighd.kivi,de.cau.cs.kieler.klighd.ui",de
+ .cau.cs.kieler.klighd.internal.macrolayout;x-friends:="de.cau.cs.kiel
+ er.klighd.ui,de.cau.cs.kieler.klighd.piccolo",de.cau.cs.kieler.klighd
+ .internal.preferences;x-internal:=true,de.cau.cs.kieler.klighd.intern
+ al.util;x-friends:="de.cau.cs.kieler.klighd.piccolo,de.cau.cs.kieler.
+ klighd.test,de.cau.cs.kieler.klighd.incremental",de.cau.cs.kieler.kli
+ ghd.krendering,de.cau.cs.kieler.klighd.labels,de.cau.cs.kieler.klighd
+ .microlayout,de.cau.cs.kieler.klighd.modifiers,de.cau.cs.kieler.kligh
+ d.syntheses,de.cau.cs.kieler.klighd.util,de.cau.cs.kieler.klighd.view
+ ers
+Bundle-Name: KIELER Lightweight Diagrams (KLighD)
+Bundle-Version: 0.42.5.201708311633
+Bundle-Activator: de.cau.cs.kieler.klighd.KlighdPlugin
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

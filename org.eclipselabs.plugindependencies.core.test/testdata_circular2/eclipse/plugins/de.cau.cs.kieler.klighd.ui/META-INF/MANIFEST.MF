@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.ui;singleton:=true
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: de.cau.cs.kieler.klighd;bundle-version="0.3.0";visibility:=reexport,
+ de.cau.cs.kieler.klighd.piccolo;bundle-version="0.3.0";visibility:=reexport
+Bundle-ManifestVersion: 2
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Kiel University
+Export-Package: de.cau.cs.kieler.klighd.ui,de.cau.cs.kieler.klighd.ui.
+ internal;x-friends:="de.cau.cs.kieler.klighd.ui.contrib3x",de.cau.cs.
+ kieler.klighd.ui.internal.handlers;x-friends:="de.cau.cs.kieler.kligh
+ d.ui.contrib3x,de.cau.cs.kieler.klighd.ui.view",de.cau.cs.kieler.klig
+ hd.ui.internal.options;x-internal:=true,de.cau.cs.kieler.klighd.ui.mo
+ difymodel,de.cau.cs.kieler.klighd.ui.parts,de.cau.cs.kieler.klighd.ui
+ .printing,de.cau.cs.kieler.klighd.ui.printing.dialog,de.cau.cs.kieler
+ .klighd.ui.viewers
+Bundle-Name: KIELER Lightweight Diagrams UI Components
+Bundle-Version: 0.42.1.201708311633
+Bundle-Activator: de.cau.cs.kieler.klighd.ui.KlighdUIPlugin
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+

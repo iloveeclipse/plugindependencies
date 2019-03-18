@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo.draw2d;singleton:
+ =true
+Archiver-Version: Plexus Archiver
+Built-By: bamboo
+Require-Bundle: org.eclipse.draw2d;bundle-version="3.7.0"
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Kiel University
+Fragment-Host: de.cau.cs.kieler.klighd.piccolo
+Bundle-Name: KLighD Piccolo Binding Extension Supporting Draw2d Figure
+ s
+Bundle-Version: 0.42.1.201708311633
+Created-By: Apache Maven 3.0.4
+Build-Jdk: 1.8.0_121
+
