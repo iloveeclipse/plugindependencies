@@ -11,10 +11,19 @@
 package org.eclipselabs.plugindependencies.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,6 +34,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Consumer;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipselabs.plugindependencies.core.DependencyResolver.PluginElt;
 
@@ -53,6 +65,9 @@ public class PlatformState {
     private PlatformSpecs platformSpecs;
 
     private boolean validated;
+
+
+    static Map<File, Set<String>> knownSystemPackages = new HashMap<>();
 
     /**
      *
@@ -551,6 +566,50 @@ public class PlatformState {
 
     public void setPlatformSpecs(PlatformSpecs platformSpecs) {
         this.platformSpecs = platformSpecs;
+    }
+
+    public Set<String> checkJrtFsPackages(File jar) {
+        if (!jar.getName().equals("jrt-fs.jar")) {
+            return Collections.emptySet();
+        }
+        Set<String> set = knownSystemPackages.get(jar);
+        if (set != null) {
+            return set;
+        }
+        try(URLClassLoader loader = new URLClassLoader(new URL[] { jar.toPath().toUri().toURL() })) {
+            FileSystem fs = FileSystems.newFileSystem(URI.create("jrt:/"), Collections.emptyMap(), loader);
+            Path top = fs.getPath("/packages");
+            Stream<Path> list = Files.list(top).filter(Files::isDirectory).map(n -> n.getFileName()).filter(n -> n != null);
+            set = list.map(p -> p.toString()).filter(n -> n.indexOf('.') > 0).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            set = Collections.unmodifiableSet(set);
+            knownSystemPackages.put(jar, set);
+            return set;
+        } catch (IOException e) {
+            Logging.getLogger().error(" failed to read system packages from '" + jar + "'.", e);
+            return Collections.emptySet();
+        }
+    }
+
+    public Set<String> checkRtPackages(File jar) {
+        if (!jar.getName().equals("rt.jar")) {
+            return Collections.emptySet();
+        }
+        Set<String> set = knownSystemPackages.get(jar);
+        if (set != null) {
+            return set;
+        }
+        try (JarFile jarfile = new JarFile(jar)) {
+            Stream<String> stream = jarfile.stream().map(e -> e.getName());
+            stream = stream.filter(e -> e.endsWith(".class")).map(e -> e.substring(0, e.lastIndexOf('/')));
+            stream = stream.map(e -> e.replace('/', '.'));
+            set = stream.sorted().collect(Collectors.toCollection(LinkedHashSet::new));
+            set = Collections.unmodifiableSet(set);
+            knownSystemPackages.put(jar, set);
+            return set;
+        } catch (IOException e) {
+            Logging.getLogger().error(" failed to read system packages from '" + jar + "'.", e);
+            return Collections.emptySet();
+        }
     }
 
     public StringBuilder dumpAllPluginsAndFeatures() {

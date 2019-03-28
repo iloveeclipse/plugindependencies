@@ -15,17 +15,13 @@ import static org.eclipselabs.plugindependencies.core.NamedElement.ZERO_VERSION;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 /**
@@ -187,13 +183,9 @@ public class DependencyResolver {
     private void resolveRequiredPackage(Plugin startPlugin, ManifestEntry requiredPackage) {
         Set<Package> packages = searchInPackageSet(requiredPackage);
         if(packages.isEmpty()){
-            try {
-                packages = searchInJavaHomeJar(requiredPackage);
-                if(!packages.isEmpty()) {
-                    state.addPackage(packages.iterator().next());
-                }
-            } catch (IOException e) {
-                Logging.getLogger().error(" failed to read libraries from '$JAVA_HOME' (" + state.getJavaHome() + ").", e);
+            packages = searchInJavaHomeJar(requiredPackage);
+            if(!packages.isEmpty()) {
+                state.addPackage(packages.iterator().next());
             }
         }
         int packagesSize = packages.size();
@@ -244,7 +236,7 @@ public class DependencyResolver {
         return ret;
     }
 
-    public Set<Package> searchInJavaHomeJar(ManifestEntry requiredPackage) throws IOException {
+    public Set<Package> searchInJavaHomeJar(ManifestEntry requiredPackage) {
         if (requiredPackage == null || requiredPackage.getName().isEmpty()) {
             return Collections.emptySet();
         }
@@ -262,27 +254,45 @@ public class DependencyResolver {
             return Collections.emptySet();
         }
 
-        File javaHomeLib = new File(state.getJavaHome(), "lib");
-        File[] jarList = javaHomeLib.listFiles(new JarFilter());
-        if(jarList == null){
-            return Collections.emptySet();
+        File jar;
+        File jreLib;
+        jreLib = new File(state.getJavaHome(), "lib");
+        jar = new File(jreLib, "rt.jar");
+        if(jar.exists()) {
+            Set<String> rtFs = state.checkRtPackages(jar);
+            if(!rtFs.isEmpty()) {
+                if (rtFs.contains(packageName)) {
+                    return createPackage(packageName);
+                }
+            }
         }
-        String packagePath = packageName.replace('.', '/') + "/";
-        for (File jar : jarList) {
-            try (JarFile jarfile = new JarFile(jar)) {
-                Enumeration<JarEntry> jarEntries = jarfile.entries();
-                while (jarEntries.hasMoreElements()) {
-                    JarEntry entry = jarEntries.nextElement();
-                    if (entry.getName().startsWith(packagePath)) {
-                        Package p = state.createPackage(packageName, NamedElement.EMPTY_VERSION);
-                        Set<Package> result = new LinkedHashSet<>();
-                        result.add(p);
-                        return result;
-                    }
+        jar = new File(jreLib, "jrt-fs.jar");
+        if(jar.exists()) {
+            Set<String> jrtFs = state.checkJrtFsPackages(jar);
+            if(!jrtFs.isEmpty()) {
+                if (jrtFs.contains(packageName)) {
+                    return createPackage(packageName);
+                }
+            }
+        }
+        jreLib = new File(state.getJavaHome(), "jre/lib");
+        jar = new File(jreLib, "rt.jar");
+        if(jar.exists()) {
+            Set<String> rtFs = state.checkRtPackages(jar);
+            if(!rtFs.isEmpty()) {
+                if (rtFs.contains(packageName)) {
+                    return createPackage(packageName);
                 }
             }
         }
         return Collections.emptySet();
+    }
+
+    private Set<Package> createPackage(String packageName) {
+        Package p = state.createPackage(packageName, NamedElement.EMPTY_VERSION);
+        Set<Package> result = new LinkedHashSet<>();
+        result.add(p);
+        return result;
     }
 
     static class JarFilter implements FilenameFilter {
