@@ -21,6 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -48,6 +50,10 @@ public class PlatformState {
 
     public static PlatformSpecs UNDEFINED_SPECS = new PlatformSpecs(null, null, null);
 
+    private static final List<String> JDK_PACK_PREFIXES = Collections.unmodifiableList(
+            Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom", "org.xml.sax",
+                    "org.ietf.jgss", "org.jcp.xml.", "com.sun.", "com.oracle.", "jdk.", "sun."));
+
     private Set<Plugin> plugins;
     private Set<Package> packages;
     private Set<Feature> features;
@@ -55,6 +61,7 @@ public class PlatformState {
     private final Map<String, List<Plugin>> nameToPlugins;
     private final Map<String, List<Feature>> nameToFeatures;
     private String javaHome;
+    private File javaHomeRtJar;
     private boolean dependenciesresolved;
     private static String dummyVersion;
     private static String realVersion = NamedElement.ZERO_VERSION;
@@ -65,7 +72,6 @@ public class PlatformState {
     private PlatformSpecs platformSpecs;
 
     private boolean validated;
-
 
     static Map<File, Set<String>> knownSystemPackages = new HashMap<>();
 
@@ -87,7 +93,7 @@ public class PlatformState {
         nameToFeatures = new LinkedHashMap<>();
         ignoredBundlesWithCycles = new LinkedHashSet<>();
 
-        javaHome = DEFAULT_JAVA_HOME;
+        setJavaHome(DEFAULT_JAVA_HOME);
 
         if(!this.plugins.isEmpty()){
             for (Plugin plugin : this.plugins) {
@@ -131,14 +137,27 @@ public class PlatformState {
 
     void setJavaHome(String newHome) {
         if (newHome == null || newHome.trim().isEmpty()) {
-            javaHome = DEFAULT_JAVA_HOME;
+            newHome = DEFAULT_JAVA_HOME;
+        }
+        File jreLib = new File(newHome, "lib");
+        File jar = new File(jreLib, "rt.jar");
+        if(jar.exists()) {
+            javaHomeRtJar = jar;
+        }
+        jar = new File(jreLib, "jrt-fs.jar");
+        if(jar.exists()) {
+            javaHomeRtJar = jar;
+        }
+        jreLib = new File(newHome, "jre/lib");
+        jar = new File(jreLib, "rt.jar");
+        if(jar.exists()) {
+            javaHomeRtJar = jar;
+        }
+        if (javaHomeRtJar != null) {
+            javaHome = newHome;
         } else {
-            File javaHomeLib = new File(newHome + "/lib");
-            if (javaHomeLib.isDirectory()) {
-                javaHome = newHome;
-            } else {
-                throw new IllegalArgumentException("specified $JAVA_HOME (" + newHome + ") does not exist. Changing to " + DEFAULT_JAVA_HOME);
-            }
+            javaHome = DEFAULT_JAVA_HOME;
+            throw new IllegalArgumentException("specified $JAVA_HOME (" + newHome + ") does not exist or is not a valid JDK directory. Changing to " + DEFAULT_JAVA_HOME);
         }
     }
 
@@ -569,7 +588,40 @@ public class PlatformState {
         this.platformSpecs = platformSpecs;
     }
 
-    public Set<String> checkJrtFsPackages(File jar) {
+    public Set<Package> searchInJavaHome(String packageName) {
+        List<String> prefixes = JDK_PACK_PREFIXES;
+        boolean canBeFromJdk = false;
+        for (String prefix : prefixes) {
+            if(packageName.startsWith(prefix)){
+                canBeFromJdk = true;
+                break;
+            }
+        }
+        if(!canBeFromJdk){
+            return Collections.emptySet();
+        }
+        Set<String> allSystem = checkSystemPackages(javaHomeRtJar);
+        if (allSystem.contains(packageName)) {
+            return createPackage(packageName);
+        }
+        return Collections.emptySet();
+    }
+
+    private Set<Package> createPackage(String packageName) {
+        Package p = createPackage(packageName, NamedElement.EMPTY_VERSION);
+        Set<Package> result = new LinkedHashSet<>();
+        result.add(p);
+        return result;
+    }
+
+    static Set<String> checkSystemPackages(File jar) {
+        if (jar.getName().equals("jrt-fs.jar")) {
+            return checkJrtFsPackages(jar);
+        }
+        return checkRtPackages(jar);
+    }
+
+    static Set<String> checkJrtFsPackages(File jar) {
         if (!jar.getName().equals("jrt-fs.jar")) {
             return Collections.emptySet();
         }
@@ -591,7 +643,7 @@ public class PlatformState {
         }
     }
 
-    public Set<String> checkRtPackages(File jar) {
+    static Set<String> checkRtPackages(File jar) {
         if (!jar.getName().equals("rt.jar")) {
             return Collections.emptySet();
         }
@@ -599,18 +651,27 @@ public class PlatformState {
         if (set != null) {
             return set;
         }
-        try (JarFile jarfile = new JarFile(jar)) {
-            Stream<String> stream = jarfile.stream().map(e -> e.getName());
-            stream = stream.filter(e -> e.endsWith(".class")).map(e -> e.substring(0, e.lastIndexOf('/')));
-            stream = stream.map(e -> e.replace('/', '.'));
-            set = stream.sorted().collect(Collectors.toCollection(LinkedHashSet::new));
-            set = Collections.unmodifiableSet(set);
-            knownSystemPackages.put(jar, set);
-            return set;
-        } catch (IOException e) {
-            Logging.getLogger().error(" failed to read system packages from '" + jar + "'.", e);
+
+        File libDir = jar.getParentFile();
+        File[] jarList = libDir.listFiles((dir, name) -> name.endsWith(".jar"));
+        if(jarList == null){
             return Collections.emptySet();
         }
+        Set<String> result = new TreeSet<>();
+        for (File file : jarList) {
+            try (JarFile jarfile = new JarFile(file)) {
+                Stream<String> stream = jarfile.stream().map(e -> e.getName());
+                stream = stream.filter(e -> e.endsWith(".class")).map(e -> e.substring(0, e.lastIndexOf('/')));
+                stream = stream.map(e -> e.replace('/', '.'));
+                set = stream.collect(Collectors.toCollection(LinkedHashSet::new));
+                result.addAll(set);
+            } catch (IOException e) {
+                Logging.getLogger().error(" failed to read system packages from '" + jar + "'.", e);
+            }
+        }
+        result = Collections.unmodifiableSet(result);
+        knownSystemPackages.put(jar, result);
+        return result;
     }
 
     public StringBuilder dumpAllPluginsAndFeatures() {

@@ -13,9 +13,6 @@ package org.eclipselabs.plugindependencies.core;
 
 import static org.eclipselabs.plugindependencies.core.NamedElement.ZERO_VERSION;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -29,10 +26,6 @@ import java.util.regex.Pattern;
  *
  */
 public class DependencyResolver {
-
-    private static final List<String> JDK_PACK_PREFIXES = Collections.unmodifiableList(
-            Arrays.asList("javax.",  "java.", "org.omg.", "org.w3c.dom", "org.xml.sax",
-                    "org.ietf.jgss", "org.jcp.xml.", "com.sun.", "com.oracle.", "jdk.", "sun."));
 
     private final PlatformState state;
 
@@ -242,68 +235,9 @@ public class DependencyResolver {
         }
 
         String packageName = requiredPackage.getName().trim();
-        List<String> prefixes = JDK_PACK_PREFIXES;
-        boolean canBeFromJdk = false;
-        for (String prefix : prefixes) {
-            if(packageName.startsWith(prefix)){
-                canBeFromJdk = true;
-                break;
-            }
-        }
-        if(!canBeFromJdk){
-            return Collections.emptySet();
-        }
-
-        File jar;
-        File jreLib;
-        jreLib = new File(state.getJavaHome(), "lib");
-        jar = new File(jreLib, "rt.jar");
-        if(jar.exists()) {
-            Set<String> rtFs = state.checkRtPackages(jar);
-            if(!rtFs.isEmpty()) {
-                if (rtFs.contains(packageName)) {
-                    return createPackage(packageName);
-                }
-            }
-        }
-        jar = new File(jreLib, "jrt-fs.jar");
-        if(jar.exists()) {
-            Set<String> jrtFs = state.checkJrtFsPackages(jar);
-            if(!jrtFs.isEmpty()) {
-                if (jrtFs.contains(packageName)) {
-                    return createPackage(packageName);
-                }
-            }
-        }
-        jreLib = new File(state.getJavaHome(), "jre/lib");
-        jar = new File(jreLib, "rt.jar");
-        if(jar.exists()) {
-            Set<String> rtFs = state.checkRtPackages(jar);
-            if(!rtFs.isEmpty()) {
-                if (rtFs.contains(packageName)) {
-                    return createPackage(packageName);
-                }
-            }
-        }
-        return Collections.emptySet();
+        return state.searchInJavaHome(packageName);
     }
 
-    private Set<Package> createPackage(String packageName) {
-        Package p = state.createPackage(packageName, NamedElement.EMPTY_VERSION);
-        Set<Package> result = new LinkedHashSet<>();
-        result.add(p);
-        return result;
-    }
-
-    static class JarFilter implements FilenameFilter {
-        @Override
-        public boolean accept(File dir, String name) {
-            if (name.endsWith(".jar")) {
-                return true;
-            }
-            return false;
-        }
-    }
 
     /**
      * Stack element for resolving plugin dependencies. If {@link #toVisit} is empty, plugin is resolved.

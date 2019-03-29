@@ -46,7 +46,6 @@ import org.junit.runners.Suite.SuiteClasses;
     TestDepResSearchMethodFeature.class,
     TestDepResSearchMethodPack.class,
     TestDepResSearchMethodPlugin.class,
-    TestDependencyResolver.class,
     TestExceptions.class,
     TestFeatureParser.class,
     TestPlugin.class,

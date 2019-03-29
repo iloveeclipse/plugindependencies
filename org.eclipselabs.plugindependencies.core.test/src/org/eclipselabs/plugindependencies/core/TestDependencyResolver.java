@@ -17,12 +17,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * @author aloskuto
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestDependencyResolver extends BaseTest {
 
     @Test
