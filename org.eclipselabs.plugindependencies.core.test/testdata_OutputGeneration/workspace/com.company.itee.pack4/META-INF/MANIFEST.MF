@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: com.company.itee.pack4;singleton:=true
+Bundle-Version: 99.0.0
+Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
+Require-Bundle: com.company.itee.pack3
+Export-Package: com.company.itee.pack.ui

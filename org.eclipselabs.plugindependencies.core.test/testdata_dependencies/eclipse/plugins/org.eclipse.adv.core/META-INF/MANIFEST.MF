@@ -5,6 +5,6 @@ Bundle-Version: 4.0.1.v93_k
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.equinox.core;bundle-version="[1.0.0,2.0.0)"
+Require-Bundle: org.eclipse.equinox.core;bundle-version="[1.0.0,2.0.0)";visibility:=reexport
 Export-Package: 
  org.adv.core

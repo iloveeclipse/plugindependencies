@@ -33,5 +33,14 @@ testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.swt_3.7.2.v3740f.jar
 	Warning: [org.eclipse.swt 3.7.2.v3740f] package not found: org.eclipse.swt.accessibility2  *dynamicImport*
 	Warning: [org.eclipse.swt 3.7.2.v3740f] package not found: org.mozilla.xpcom  *dynamicImport*
 
+testdata_OutputGeneration/workspace/com.company.itee.pack1
+	Warning: [com.company.itee.pack1 99.0.0] this plugin is one of 2 plugins contributing package 'com.company.itee.pack'
+
+testdata_OutputGeneration/workspace/com.company.itee.pack2
+	Warning: [com.company.itee.pack2 99.0.0] this plugin is one of 2 plugins contributing package 'com.company.itee.pack'
+
 Packages:
+com.company.itee.pack
+	Warning: [com.company.itee.pack] package contributed by multiple, not related plugins
+
 

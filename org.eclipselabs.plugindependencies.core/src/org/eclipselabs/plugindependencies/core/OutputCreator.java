@@ -95,7 +95,7 @@ public class OutputCreator {
 
     public static int generateBuildFile(PlatformState state, Plugin plugin) throws IOException {
         Set<Plugin> resolvedPlugins = new LinkedHashSet<>();
-        resolvedPlugins.addAll(state.computeAllDependenciesRecursive(plugin));
+        resolvedPlugins.addAll(state.computeCompilationDependencies(plugin));
         return writeClassPathsToFile(plugin, resolvedPlugins);
     }
 

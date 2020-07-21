@@ -519,6 +519,11 @@ public class PlatformState {
         return rrp;
     }
 
+    Set<Plugin> computeCompilationDependencies(final Plugin root) {
+        computeAllDependenciesRecursive(root);
+        return root.getVisibleOnCompilePlugins();
+    }
+
     public DependencyResolver resolveDependencies() {
         DependencyResolver depres = new DependencyResolver(this);
 

@@ -27,9 +27,11 @@ import org.eclipselabs.plugindependencies.core.Plugin;
  */
 public class TreePlugin extends TreeParent {
     static final String ALL_DEPS = "All dependencies";
+    static final String COMPILE_DEPS = "Compilation dependencies";
     static final String EARLY_STARTUP = "EarlyStartup";
     static final String EXPORTS = "Exports";
     static final String REEXPORTS = "Reexports";
+    static final String REEXPORTS_BY = "Reexported by";
     static final String FEATURES = "Features";
     static final String IMPORTS = "Imports";
     static final String INCLUDED_IN = "Included in";
@@ -78,6 +80,15 @@ public class TreePlugin extends TreeParent {
                 this.addChild(resPlugins);
             }
 
+            // Needed for compilation Plugins
+            TreeParent compPlugins = new TreeParent(COMPILE_DEPS, this);
+            for (Plugin plug : plugin.getVisibleOnCompilePlugins()) {
+                compPlugins.addChild(new TreePlugin(plug, compPlugins));
+            }
+            if (compPlugins.hasChildren()) {
+                this.addChild(compPlugins);
+            }
+
             // Imported Packages
             TreeParent impPackages = new TreeParent(IMPORTS, this);
             for (Package pack : plugin.getImportedPackages()) {
@@ -110,18 +121,27 @@ public class TreePlugin extends TreeParent {
                 this.addChild(reexp);
             }
 
+            // Re-exported by plugins
+            TreeParent reexpby = new TreeParent(REEXPORTS_BY, this);
+            for (Plugin plug : plugin.getReexportedBy()) {
+                reexpby.addChild(new TreePlugin(plug, reexpby));
+            }
+            if (reexpby.hasChildren()) {
+                this.addChild(reexpby);
+            }
+
             // Resolved Plugins recursive
-            resPlugins = new TreeParent(ALL_DEPS, this);
+            TreeParent rresPlugins = new TreeParent(ALL_DEPS, this);
             Set<Package> allImpPack = new HashSet<>();
             for (Plugin plug : plugin.getRecursiveResolvedPlugins()) {
-                resPlugins.addChild(new TreePlugin(plug, resPlugins));
+            	rresPlugins.addChild(new TreePlugin(plug, rresPlugins));
                 allImpPack.addAll(plug.getImportedPackages());
             }
             for (Package pack : allImpPack) {
-                resPlugins.addChild(new TreePackage(pack, resPlugins));
+            	rresPlugins.addChild(new TreePackage(pack, rresPlugins));
             }
-            if (resPlugins.hasChildren()) {
-                this.addChild(resPlugins);
+            if (rresPlugins.hasChildren()) {
+                this.addChild(rresPlugins);
             }
 
             // Included in Features

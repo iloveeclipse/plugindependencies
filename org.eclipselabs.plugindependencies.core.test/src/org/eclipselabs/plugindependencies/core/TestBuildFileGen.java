@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -236,4 +235,30 @@ public class TestBuildFileGen extends BaseTest {
 
         assertEquals(expectedOutputList.toString(), outputList.toString());
     }
+
+    @Test
+    public void testExportedDuplicatedPackagesSingle() throws IOException {
+        String args[] = new String[] { "-eclipsePaths",
+                "testdata_OutputGeneration/eclipseRE",
+                "testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse",
+                "testdata_OutputGeneration/workspace", "-deploymentRoot",
+                "testdata_OutputGeneration", "-bundleVersion", "99.0.0",
+                "-generateBuildFile", "com.company.itee.usespack", "company/eclipse/plugins" };
+
+        assertEquals(CommandLineInterpreter.RC_OK, SecurityMan.runMain(args));
+
+        String pluginFolder = "testdata_OutputGeneration/workspace/com.company.itee.usespack";
+        File expected = new File(pluginFolder + "/classpathfile_expected");
+        File actual = new File(pluginFolder + "/.classpath.generated");
+        List<String> expectedOutputList = Files.readAllLines(expected.toPath(),
+                StandardCharsets.UTF_8);
+        expectedOutputList = TestCLI.addNewlineToAllStrings(expectedOutputList);
+
+        List<String> outputList = Files.readAllLines(actual.toPath(),
+                StandardCharsets.UTF_8);
+        outputList = TestCLI.addNewlineToAllStrings(outputList);
+
+        assertEquals(expectedOutputList.toString(), outputList.toString());
+    }
+
 }

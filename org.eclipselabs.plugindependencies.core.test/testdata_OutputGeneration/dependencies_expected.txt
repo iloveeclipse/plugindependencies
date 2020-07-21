@@ -348,6 +348,10 @@ testdata_OutputGeneration/workspace/com.company.itee.maint.common:testdata_Outpu
 testdata_OutputGeneration/workspace/com.company.itee.maint.common:testdata_OutputGeneration/workspace/com.company.itee.core
 testdata_OutputGeneration/workspace/com.company.itee.maint.common:testdata_OutputGeneration/workspace/com.company.itee.services
 testdata_OutputGeneration/workspace/com.company.itee.maint.common:testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess
+testdata_OutputGeneration/workspace/com.company.itee.pack2:testdata_OutputGeneration/workspace/com.company.itee.pack1
+testdata_OutputGeneration/workspace/com.company.itee.pack4:testdata_OutputGeneration/workspace/com.company.itee.pack3
+testdata_OutputGeneration/workspace/com.company.itee.pack5:testdata_OutputGeneration/workspace/com.company.itee.pack3
+testdata_OutputGeneration/workspace/com.company.itee.pack5:testdata_OutputGeneration/workspace/com.company.itee.pack4
 testdata_OutputGeneration/workspace/com.company.itee.services:testdata_OutputGeneration/eclipseRE/plugins/javax.xml_1.3.4.v201005080400.jar
 testdata_OutputGeneration/workspace/com.company.itee.services:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.ant.core_3.2.302.v20120110-1739.jar
 testdata_OutputGeneration/workspace/com.company.itee.services:testdata_OutputGeneration/eclipseRE/plugins/org.eclipse.core.contenttype_3.4.100.v20110423-0524.jar
@@ -391,3 +395,8 @@ testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess:testdata_Outp
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess:testdata_OutputGeneration/packages/generated/TESTS_ONLY/eclipse/plugins/JSR305-ri_0.0.1.jar
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess:testdata_OutputGeneration/workspace/com.company.itee.core
 testdata_OutputGeneration/workspace/com.company.itee.svc.unoaccess:testdata_OutputGeneration/workspace/com.company.itee.services
+testdata_OutputGeneration/workspace/com.company.itee.usespack:testdata_OutputGeneration/workspace/com.company.itee.pack1
+testdata_OutputGeneration/workspace/com.company.itee.usespack:testdata_OutputGeneration/workspace/com.company.itee.pack2
+testdata_OutputGeneration/workspace/com.company.itee.usespack:testdata_OutputGeneration/workspace/com.company.itee.pack3
+testdata_OutputGeneration/workspace/com.company.itee.usespack:testdata_OutputGeneration/workspace/com.company.itee.pack4
+testdata_OutputGeneration/workspace/com.company.itee.usespack:testdata_OutputGeneration/workspace/com.company.itee.pack5

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -48,6 +48,10 @@ public class Plugin extends OSGIElement {
 
     private Set<Plugin> recursiveResolvedPlugins;
 
+    private Set<Plugin> visibleOnCompilePlugins;
+
+    private Set<Plugin> reexportedBy;
+
     private final boolean isFragment;
 
     private final boolean isSingleton;
@@ -82,6 +86,8 @@ public class Plugin extends OSGIElement {
         this.reExportedPackages = new LinkedHashSet<>();
         this.importedPackages = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
+        this.visibleOnCompilePlugins = new LinkedHashSet<>();
+        this.reexportedBy = new LinkedHashSet<>();
         this.isFragment = fragment;
     }
 
@@ -153,6 +159,18 @@ public class Plugin extends OSGIElement {
 
     public Set<Package> getReExportedPackages() {
         return reExportedPackages;
+    }
+
+    public Set<Plugin> getVisibleOnCompilePlugins() {
+        return visibleOnCompilePlugins;
+    }
+
+    public Set<Plugin> getReexportedBy() {
+        return reexportedBy;
+    }
+
+    public void addReExportPlugin(Plugin plugin) {
+        this.reexportedBy.add(plugin);
     }
 
     public void setExportedPackages(String expPackagesString, PlatformState state) {
@@ -418,6 +436,7 @@ public class Plugin extends OSGIElement {
         reExportedPackages = computeReexportedPackages();
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
+        reexportedBy = reexportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reexportedBy);
 
         for (Package rp : reExportedPackages) {
             if(!exportedPackages.contains(rp)){
@@ -486,11 +505,131 @@ public class Plugin extends OSGIElement {
                 addToRecursiveResolvedPlugins(host, state);
             }
         }
+
+        computeClasspath();
+
         if(recursiveResolvedPlugins == null || recursiveResolvedPlugins.isEmpty()){
             recursiveResolvedPlugins = Collections.emptySet();
         } else {
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
         }
+    }
+
+    /**
+     * Collect compilation visible dependencies:
+     * <ol>
+     * <li>all direct required plugins including fragments
+     * <li>plus all plugins that are re-exported by direct dependencies.
+     * <li>including host if it is a fragment
+     * <li>plus plugins that host packages that are imported directly
+     * <li>plus all plugins that contribute split packages to packages exported by all plugins we had already
+     * </ol>
+     *
+     * @see DependencyResolver.PluginElt#addDirectDependencies()
+     */
+    private void computeClasspath() {
+
+        // org.eclipse.ui.workbench.texteditor exports org.eclipse.ui.texteditor *split* package
+        // the same package exported by org.eclipse.ui.editors bundle
+        // org.eclipse.ui.editors bundle is exported by org.eclipse.xtext.ui
+        // and plugin that requires only XtextEditor.getEditorSite() must see super class StatusTextEditor
+        // that is inside org.eclipse.ui.workbench.texteditor
+
+        // 1 all direct required plugins including fragments
+        // 2 plus all plugins that are re-exported by direct dependencies.
+        for (Plugin required : getRequiredPlugins()) {
+            addPluginWithAndReexported(visibleOnCompilePlugins, required);
+        }
+
+        // 3 including host if it is a fragment
+        if(isFragment() && getHost() != null) {
+            visibleOnCompilePlugins.add(getHost());
+        }
+
+        // 4 plus plugins that host packages that are imported directly
+        addPluginsForImportedPackages(this, visibleOnCompilePlugins);
+
+        // plus all plugins that contribute split packages to packages exported by all plugins we had already
+        addPluginsForExportedPackages(this, visibleOnCompilePlugins);
+
+        // paranoia
+        visibleOnCompilePlugins.remove(this);
+
+        visibleOnCompilePlugins = visibleOnCompilePlugins.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(visibleOnCompilePlugins);
+    }
+
+    void addPluginWithAndReexported(Set<Plugin> plugins, Plugin toAdd) {
+        plugins.add(toAdd);
+        if(toAdd.isHost()) {
+            Set<Plugin> fragmentSet = toAdd.getFragments();
+            for (Plugin fr : fragmentSet) {
+                plugins.add(fr);
+            }
+        }
+        Set<Plugin> requiredReexportedPlugins = toAdd.getRequiredReexportedPlugins();
+        for (Plugin req : requiredReexportedPlugins) {
+            if(!plugins.contains(req)) {
+                addPluginWithAndReexported(plugins, req);
+            }
+        }
+    }
+
+    // TODO throw away "duplicated" bundles with different versions, exporting same package
+    static void addPluginsForImportedPackages(Plugin p, Set<Plugin> exporting) {
+        for (Package imported : p.getImportedPackages()) {
+            Set<Plugin> exportedBy = imported.getExportedBy();
+            if(exportedBy.contains(p)){
+                // do not add dependencies for packages the plugin exports by itself
+                continue;
+            }
+            if(!exportedBy.isEmpty()) {
+                exporting.addAll(exportedBy);
+            } else {
+                Set<Plugin> reexportedBy = imported.getReexportedBy();
+                exporting.addAll(reexportedBy);
+            }
+            Set<Plugin> split = imported.getSplit();
+            exporting.addAll(split);
+        }
+
+        // fragment inherits all dependencies from host
+        if(p.isFragment() && p.getHost() != null){
+            addPluginsForImportedPackages(p.getHost(), exporting);
+        }
+        // paranoia, to avoid cycles
+        exporting.remove(p);
+    }
+
+    static void addPluginsForExportedPackages(Plugin p, Set<Plugin> exporting) {
+        LinkedHashSet<Plugin> extra = new LinkedHashSet<>();
+        for (Plugin pl : exporting) {
+            Set<Package> packages = pl.getExportedPackages();
+            Set<Plugin> requiredByPl = pl.getRequiredPlugins();
+
+            for (Package pack : packages) {
+                Set<Plugin> split = pack.getSplit();
+                for (Plugin plugin : split) {
+                    if(pl == plugin) {
+                        continue;
+                    }
+                    if(!exporting.contains(plugin)) {
+                        extra.add(plugin);
+                    }
+                }
+                Set<Plugin> exportedBy = pack.getExportedBy();
+                for (Plugin plugin : exportedBy) {
+                    if(pl == plugin) {
+                        continue;
+                    }
+                    if(!exporting.contains(plugin) && requiredByPl.contains(plugin)) {
+                        extra.add(plugin);
+                    }
+                }
+            }
+        }
+        exporting.addAll(extra);
+        // paranoia, to avoid cycles
+        exporting.remove(p);
     }
 
     @Override

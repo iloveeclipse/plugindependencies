@@ -122,6 +122,9 @@ public class DependencyResolver {
         if (highVersionPlugin != null) {
             boolean reexport = requiredPlugin.isReexport();
             elt.addRequiredPlugin(highVersionPlugin, reexport);
+            if(reexport && elt instanceof Plugin) {
+                highVersionPlugin.addReExportPlugin((Plugin)elt);
+            }
         }
     }
 
@@ -313,30 +316,11 @@ public class DependencyResolver {
 
             // TODO throw away "duplicated" bundles with different versions, exporting same package
             Set<Plugin> requiredByImportPackage = new LinkedHashSet<>();
-            addPluginsForImportedPackages(plugin, requiredByImportPackage);
-            // fragment inherits all dependencies from host
-            if(plugin.isFragment() && plugin.getHost() != null){
-                addPluginsForImportedPackages(plugin.getHost(), requiredByImportPackage);
-            }
-            requiredByImportPackage.remove(plugin);
+            Plugin.addPluginsForImportedPackages(plugin, requiredByImportPackage);
+
             addToVisit(requiredByImportPackage);
         }
 
-        static void addPluginsForImportedPackages(Plugin p, Set<Plugin> exporting) {
-            for (Package imported : p.getImportedPackages()) {
-                Set<Plugin> exportedBy = imported.getExportedBy();
-                if(exportedBy.contains(p)){
-                    // do not add dependencies for packages the plugin exports by yourself
-                    continue;
-                }
-                if(!exportedBy.isEmpty()) {
-                    exporting.addAll(exportedBy);
-                } else {
-                    Set<Plugin> reexportedBy = imported.getReexportedBy();
-                    exporting.addAll(reexportedBy);
-                }
-            }
-        }
 
         @Override
         public String toString() {
