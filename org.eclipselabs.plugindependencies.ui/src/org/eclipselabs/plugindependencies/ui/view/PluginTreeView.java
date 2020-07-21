@@ -281,7 +281,7 @@ public class PluginTreeView extends ViewPart {
         showProperties.setText("Properties");
         showProperties.setToolTipText("Properties");
         ImageDescriptor propsImg = AbstractUIPlugin.imageDescriptorFromPlugin(
-                "org.eclipse.ui", "$nl$/icons/full/eview16/prop_ps.gif");
+                "org.eclipse.ui", "$nl$/icons/full/eview16/prop_ps.png");
         showProperties.setImageDescriptor(propsImg);
 
         showErrors = new Action() {
