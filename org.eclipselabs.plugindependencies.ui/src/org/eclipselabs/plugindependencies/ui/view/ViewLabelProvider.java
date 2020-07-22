@@ -38,6 +38,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
     private final Image featureImage;
     private final Image errorImage;
     private final Image warningImage;
+    private final Image splitImage;
 
     public ViewLabelProvider() {
         super();
@@ -46,6 +47,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
         featureImage = Activator.getImage("$nl$/icons/feature_obj.gif");
         errorImage = Activator.getImage("$nl$/icons/message_error.png");
         warningImage = Activator.getImage("$nl$/icons/message_warning.png");
+        splitImage = Activator.getImage("$nl$/icons/split_package_obj.png");
     }
 
     @Override
@@ -59,6 +61,10 @@ public class ViewLabelProvider extends ColumnLabelProvider {
             return pluginImage;
         }
         if (obj instanceof TreePackage) {
+            TreePackage p = (TreePackage) obj;
+            if(!p.getNamedElement().getSplit().isEmpty()) {
+                return splitImage;
+            }
             return packageImage;
         }
         if (obj instanceof TreeFeature) {
