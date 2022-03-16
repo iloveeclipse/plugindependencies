@@ -134,6 +134,10 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
     }
 
     public void logBrokenEntry(ManifestEntry entry, Set<? extends OSGIElement> elements, String type) {
+        if(entry == null) {
+            addErrorToLog(type + " not found", elements);
+            return;
+        }
         String optional = entry.isOptional() ? " *optional*" : "";
         int setSize = elements.size();
 

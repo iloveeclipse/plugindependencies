@@ -16,7 +16,9 @@ import static org.eclipselabs.plugindependencies.core.PluginParser.readAttribute
 import static org.eclipselabs.plugindependencies.core.StringUtil.splitInManifestEntries;
 import static org.eclipselabs.plugindependencies.core.StringUtil.splitListOfEntries;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +47,8 @@ public class TestPluginParser2  extends BaseTest {
 
     private static File felixScr;
 
+    private static File fragment;
+
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -53,6 +57,7 @@ public class TestPluginParser2  extends BaseTest {
         xtextGenerator = new File(dirPath + "/org.eclipse.xtext.generator");
         xtextUtil = new File(dirPath + "/org.eclipse.xtext.util");
         felixScr = new File(dirPath + "/org.apache.felix.scr");
+        fragment = new File(dirPath + "/org.fragment");
     }
 
     @AfterClass
@@ -135,6 +140,28 @@ public class TestPluginParser2  extends BaseTest {
             }
         }
         assertEquals("Expect to see 2 dynamic imports", 2, dynCount);
+    }
+
+
+    @Test
+    public void testParseBrokenFragment() throws IOException {
+        PlatformState state = new PlatformState();
+        Manifest mf = PluginParser.getManifest(fragment);
+        Plugin plugin = PluginParser.parseManifest(mf, state);
+        assertEquals("org.fragment", plugin.getName());
+        assertEquals("1.2.3", plugin.getVersion());
+        assertTrue(plugin.isFragment());
+        ManifestEntry fragmentHost = plugin.getFragmentHost();
+        assertNotNull(fragmentHost);
+        assertEquals("hello1", fragmentHost.getName());
+        state.addPlugin(plugin);
+        state.computeAllDependenciesRecursive();
+        List<Problem> log = plugin.getLog();
+        assertEquals("Unexpected log: " + log, 2, log.size());
+        assertEquals("Unexpected log: " + log, Problem.ERROR, log.get(0).getSeverity());
+        assertEquals("Unexpected log: " + log, "fragment has more than one host", log.get(0).getMessage());
+        assertEquals("Unexpected log: " + log, Problem.ERROR, log.get(1).getSeverity());
+        assertEquals("Unexpected log: " + log, "fragment host not found: hello1 [3.116.0", log.get(1).getMessage());
     }
 
 

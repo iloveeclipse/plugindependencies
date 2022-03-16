@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: org.junit;bundle-version=4.11.0;resolution:=optional
+Bundle-Vendor: %providerName
+Attribute_below_is_not_valid: version_range must_be_in_quotes
+Fragment-Host: hello1;bundle-version=[3.116.0,4.0.0)
+Bundle-Version: 1.2.3
+Bundle-Name: %pluginName
+Bundle-Localization: plugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.fragment

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.File;
 import java.io.FileReader;
@@ -122,10 +122,13 @@ public class Plugin extends OSGIElement {
 
     public void setFragmentHost(String fragmentHost) {
         List<ManifestEntry> entries = StringUtil.splitInManifestEntries(fragmentHost);
-        if (entries.size() < 2) {
+        if (entries.size() > 0) {
             this.fragmentHostEntry = entries.get(0);
+            if (entries.size() > 1) {
+                addErrorToLog("fragment has more than one host", entries);
+            }
         } else {
-            addErrorToLog("fragment has more than one host", entries);
+            addErrorToLog("fragment has no host", entries);
         }
     }
 
