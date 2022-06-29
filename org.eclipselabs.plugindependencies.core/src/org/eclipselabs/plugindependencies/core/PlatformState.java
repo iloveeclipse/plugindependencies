@@ -436,6 +436,22 @@ public class PlatformState {
         return errors;
     }
 
+    List<Problem> collectWarnings() {
+        List<Problem> warnings = new ArrayList<>();
+        Consumer<? super Problem> collectWarnings = x -> {
+            if (x.isWarning()) {
+                warnings.add(x);
+            }
+        };
+        for (Plugin plugin : plugins) {
+            plugin.getLog().forEach(collectWarnings);
+        }
+        for (Feature feature : features) {
+            feature.getLog().forEach(collectWarnings);
+        }
+        return warnings;
+    }
+
     private static boolean hasOnlyWorkspaceDup(List<OSGIElement> dups) {
         if(dups.size() != 2) {
             return false;

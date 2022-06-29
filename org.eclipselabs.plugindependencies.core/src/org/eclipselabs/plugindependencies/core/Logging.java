@@ -90,7 +90,9 @@ public class Logging {
 
         @Override
         public void warning(String message, Throwable ... t) {
-            err.print(PREFIX_WARN);
+            if(! message.startsWith(PREFIX_WARN)) {
+                out.print(PREFIX_WARN);
+            }
             out.println(message);
             if(t != null && t.length > 0){
                 t[0].printStackTrace(out);

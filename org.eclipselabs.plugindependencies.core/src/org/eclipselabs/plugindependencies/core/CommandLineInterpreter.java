@@ -18,16 +18,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
-import org.xml.sax.SAXException;
 
 /**
  * @author obroesam
@@ -42,7 +40,8 @@ public class CommandLineInterpreter {
 
     public static final int RC_OK = 0;
     public static final int RC_RUNTIME_ERROR = -1;
-    public static final int RC_ANALYSIS_ERROR = -2;
+    public static final int RC_ANALYSIS_WARNING = -2;
+    public static final int RC_ANALYSIS_ERROR = -3;
 
     public CommandLineInterpreter() {
         super();
@@ -257,6 +256,35 @@ public class CommandLineInterpreter {
         return result;
     }
 
+    int analyzeTargetState(boolean showWarnings) {
+        if(state.getPlugins().isEmpty()){
+            Logging.getLogger().error("no plugins found");
+            return RC_RUNTIME_ERROR;
+        }
+        Logging.writeStandardOut("Starting to analyze, platform size: " + state.getPlugins().size() + " plugins");
+        List<Problem> errors = state.computeAllDependenciesRecursive();
+        if(!errors.isEmpty()) {
+            Logging.getLogger().error("Errors analyzing bundle dependencies");
+            errors.forEach(e -> Logging.getLogger().error(e.toString()));
+        }
+        List<Problem> warnings = Collections.emptyList();
+        if(showWarnings && errors.isEmpty()) {
+            warnings = state.collectWarnings();
+            if(!warnings.isEmpty()) {
+                Logging.getLogger().warning("Warnings analyzing bundle dependencies");
+                warnings.forEach(e -> Logging.getLogger().warning(e.toString()));
+            }
+        }
+        if(!errors.isEmpty()) {
+            return RC_ANALYSIS_ERROR;
+        }
+        if(!warnings.isEmpty()) {
+            return RC_ANALYSIS_WARNING;
+        }
+        Logging.writeStandardOut("Successfully analyzed " + state.getPlugins().size() + " plugins");
+        return RC_OK;
+    }
+
     void printFocusedOSGIElement(String arg) {
         int separatorIndex = arg.indexOf(',');
         String version = "";
@@ -356,8 +384,7 @@ public class CommandLineInterpreter {
         return ret.toString();
     }
 
-    public int readInEclipseFolder(String eclipsePath)
-            throws IOException, SAXException, ParserConfigurationException {
+    public int readInEclipseFolder(String eclipsePath) throws IOException {
         int result = RC_OK;
         if(eclipsePath.startsWith("#")){
             return result;

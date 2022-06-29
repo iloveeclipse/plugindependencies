@@ -6,6 +6,7 @@ java plugin_dependencies [-javaHome path] -eclipsePaths folder1 folder2.. [Optio
 -generateReqFile file		Writes requirements of each plugin in the specified file. The file has the form pluginA:pluginB in each line. This just means pluginA depends on pluginB. The plugins are written in the file as canonical paths.
 -generateBuildFile sourceFolder [targetFolder]		Generates the build file with all classpaths of the specified plugin. Optionally path to the extra plugins directory can be specified with targetFolder. Generated file is saved in the plugin folder. Eclipse root and bundle version have to be set before.
 -generateAllBuild sourceFolder [targetFolder]		Generates a build file with all classpaths of every plugin in the specified folder. Optionally path to the extra plugins directory can be specified with targetFolder. Generated files are saved in each plugin folder. Eclipse root and bundle version have to be set before.
+-analyzeTargetState [showWarnings]		 Analyzes target platform state, optionally shows warnings. Eclipse root and bundle version have to be set before.
 -fullLog [file]			Writes the full error log to the specified file (optional, if no file given, to standard out). Warnings are included.
 -eclipsePaths folder1 [folder2 ...]	Eclipse target platform plugin and feature folders are specified here (canonical paths). Either Eclipse folder with subfolders "plugins" and "features" or a folder just containing plugins is possible.
 -javaHome path				Changes the Java home path to the specified path. Default is the Java home of the running Java.

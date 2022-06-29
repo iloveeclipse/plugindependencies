@@ -21,10 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 enum Options {
 
     Providing("-providing", true) {
@@ -144,6 +140,26 @@ enum Options {
         }
     },
 
+    AnalyzeTargetState("-analyzeTargetState", true) {
+        @Override
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            boolean showWarnings = false;
+            if(args.size() > 0) {
+                showWarnings = "showWarnings".equals(args.get(0));
+            }
+            return cli.analyzeTargetState(showWarnings);
+        }
+
+        @Override
+        void printHelp(String arg) {
+            String help = "-analyzeTargetState [showWarnings]"
+                    + "\t\t"
+                    + " Analyzes target platform state, optionally shows warnings."
+                    + " Eclipse root and bundle version have to be set before.";
+            Logging.writeStandardOut(help);
+        }
+    },
+
     Help("-h", true) {
         @Override
         int handle(CommandLineInterpreter cli, List<String> args) {
@@ -187,7 +203,7 @@ enum Options {
                 }
                 cli.getState().resolveDependencies();
                 return RC_OK;
-            } catch (IOException | SAXException | ParserConfigurationException e) {
+            } catch (IOException e) {
                 Logging.getLogger().error("failed to read from: " + args, e);
                 return RC_RUNTIME_ERROR;
             }
