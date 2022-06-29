@@ -507,8 +507,8 @@ public class PluginTreeView extends ViewPart {
                 try (JarFile pluginJar = new JarFile(dir)) {
                     File tmpDir = extractFileToTmpDir(pluginJar, "feature.xml");
                     featureXMLPath = new File(tmpDir, "feature.xml").toString();
-                } catch (IOException e) {
-                    IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath, e);
+                } catch (Exception e) {
+                    IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath + " for " + obj, e);
                     StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
                     return;
                 }
@@ -521,14 +521,16 @@ public class PluginTreeView extends ViewPart {
                 if (!pluginDir.isDirectory()) {
                     try (JarFile pluginJar = new JarFile(pluginDir)) {
                         pluginDir = extractFileToTmpDir(pluginJar, pluginRelativePath);
+                    } catch(RuntimeException e) {
+                        throw new IOException("Unable to read " + pluginDir + "/" + pluginRelativePath, e);
                     }
                 }
                 if (pluginDir != null) {
                     IPath path = new Path(pluginDir.getCanonicalPath()).append(pluginRelativePath);
                     fileStore = EFS.getLocalFileSystem().getStore(path);
                 }
-            } catch (IOException e) {
-                IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath, e);
+            } catch (Exception e) {
+                IStatus status = new Status(IStatus.ERROR, Activator.getPluginId(), "Can not open editor on: " + pluginRelativePath + " for " + obj, e);
                 StatusManager.getManager().handle(status, StatusManager.LOG | StatusManager.SHOW);
                 return;
             }

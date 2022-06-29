@@ -47,14 +47,9 @@ public class FeatureParser {
      *            Path to Folder where Features are located
      * @throws IOException
      *             From reading file system
-     * @throws SAXException
-     *             if any parse Errors occur
-     * @throws ParserConfigurationException
-     *             if a DocumentBuilder cannot be created which satisfies the
-     *             configuration requested.
      */
     public static int createFeaturesAndAddToSet(File rootDir, PlatformState state)
-            throws IOException, SAXException, ParserConfigurationException {
+            throws IOException {
         if (!rootDir.isDirectory()) {
             Logging.getLogger().error("given directory does not exist: " + rootDir);
             return RC_RUNTIME_ERROR;
@@ -74,7 +69,7 @@ public class FeatureParser {
     }
 
     public static int createFeatureAndAddToSet(File featureFolder, boolean workspace, PlatformState state)
-            throws IOException, SAXException, ParserConfigurationException {
+            throws IOException {
         File featureXMLFile = new File(featureFolder, "feature.xml").getCanonicalFile();
         Feature feature = null;
         if (!featureXMLFile.exists()) {
@@ -92,6 +87,8 @@ public class FeatureParser {
                 try (InputStream inputStream = jarfile.getInputStream(entry)){
                     feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(inputStream));
                 }
+            } catch(SAXException | ParserConfigurationException | RuntimeException e) {
+                throw new IOException(e);
             }
             if(feature == null){
                 return RC_OK;
@@ -101,7 +98,11 @@ public class FeatureParser {
         }
 
         if(feature == null) {
-            feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
+            try {
+                feature = parseFeature(DB_FACTORY.newDocumentBuilder().parse(featureXMLFile));
+            } catch (SAXException | ParserConfigurationException | RuntimeException e) {
+                throw new IOException(e);
+            }
         }
         if (feature == null) {
             return RC_OK;

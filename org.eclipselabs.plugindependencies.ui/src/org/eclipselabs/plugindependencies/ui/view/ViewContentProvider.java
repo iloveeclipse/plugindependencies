@@ -17,12 +17,9 @@ import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.PACKAGES;
 import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.PLUGINS;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -52,7 +49,6 @@ import org.eclipselabs.plugindependencies.core.PlatformState.PlatformSpecs;
 import org.eclipselabs.plugindependencies.core.Plugin;
 import org.eclipselabs.plugindependencies.core.StringUtil;
 import org.eclipselabs.plugindependencies.ui.Activator;
-import org.xml.sax.SAXException;
 
 /**
  * @author obroesam
@@ -299,7 +295,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             String pluginPath = location.getPath();
             try {
                 parser.readInPlugin(new File(pluginPath), false);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading plugin: " + pluginPath, e));
             }
         }
@@ -317,7 +313,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             String featurePath = feature.getLocation();
             try {
                 parser.readInFeature(new File(featurePath), false);
-            } catch (IOException | SAXException | ParserConfigurationException e) {
+            } catch (Exception e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading feature: " + featurePath, e));
             }
         }
@@ -356,7 +352,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             }
             try {
                 parser.readInEclipseFolder(somePath);
-            } catch (IOException | SAXException | ParserConfigurationException e) {
+            } catch (Exception e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading: " + somePath, e));
             }
         }
@@ -393,7 +389,7 @@ public class ViewContentProvider implements ITreeContentProvider {
                 } else {
                     parser.readInFeature(location.toFile(), true);
                 }
-            } catch (IOException | SAXException | ParserConfigurationException e) {
+            } catch (Exception e) {
                 ms.add(new Status(IStatus.ERROR, Activator.getPluginId(), "Error while reading project: " + location, e));
             }
         }

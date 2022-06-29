@@ -32,14 +32,11 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * @author obroesam
@@ -133,7 +130,7 @@ public class PluginParser {
         try {
             doc = FeatureParser.DB_FACTORY.newDocumentBuilder()
                     .parse(new ByteArrayInputStream(pluginXml.getBytes()));
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+        } catch (Exception e) {
             Logging.getLogger().error("Failed to parse plugin.xml: " + pluginXml, e);
             return null;
         }
@@ -179,14 +176,19 @@ public class PluginParser {
         return plugin;
     }
 
-    private static boolean parseEarlyStartup(File pluginOrDirectory) throws IOException {
+    private static boolean parseEarlyStartup(File pluginOrDirectory) {
         // <extension point="org.eclipse.ui.startup">
-        String pluginXml = getPluginXml(pluginOrDirectory);
-        if(pluginXml == null){
-            return false;
+        try {
+            String pluginXml = getPluginXml(pluginOrDirectory);
+            if(pluginXml == null){
+                return false;
+            }
+            // TODO use real xml parser
+            return pluginXml.contains("\"org.eclipse.ui.startup\"");
+        } catch (Exception e) {
+            Logging.getLogger().error("Error while parsing plugin.xml from: " + pluginOrDirectory, e);
         }
-        // TODO use real xml parser
-        return pluginXml.contains("\"org.eclipse.ui.startup\"");
+        return false;
     }
 
     public static File[] sortFiles(File[] dirArray) {
@@ -282,24 +284,28 @@ public class PluginParser {
         if (pluginOrFolder.getName().endsWith(".jar")) {
             try (JarFile jarfile = new JarFile(pluginOrFolder)) {
                 return jarfile.getManifest();
+            } catch(RuntimeException e) {
+                throw new IOException(e);
             }
         }
         Path path = Paths.get(pluginOrFolder.getPath(), "/META-INF/MANIFEST.MF");
         if (path.toFile().exists() && !pluginOrFolder.isHidden()) {
             try (InputStream stream = Files.newInputStream(path)) {
                 return new Manifest(stream);
+            } catch(RuntimeException e) {
+                throw new IOException(e);
             }
         }
         return null;
     }
 
     /**
-     * Gets the Manifest of the pluginFolder. pluginFolder could be folder or Jar Archive.
-     * In both cases the Manifest is located at pluginFolder/META-INF/MANIFEST.MF .
+     * Gets the plugin.xml of the pluginFolder. pluginFolder could be folder or Jar Archive.
+     * In both cases the plugin.xml is located at pluginFolder/plugin.xml .
      *
      * @param pluginOrFolder
-     *            Folder or Jar Archive in which the Manifest could be found
-     * @return Manifest that is found in the folder or JAR Archive
+     *            Folder or Jar Archive in which the plugin.xml could be found
+     * @return plugin.xml that is found in the folder or JAR Archive
      * @throws IOException
      *             From reading file system
      */
@@ -318,6 +324,8 @@ public class PluginParser {
                     buffer.flush();
                     return new String(buffer.toByteArray());
                 }
+            } catch(RuntimeException e) {
+                throw new IOException(e);
             }
         }
         Path path = Paths.get(pluginOrFolder.getPath(), "plugin.xml");

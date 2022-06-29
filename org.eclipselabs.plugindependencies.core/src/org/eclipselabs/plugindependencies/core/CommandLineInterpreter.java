@@ -385,14 +385,13 @@ public class CommandLineInterpreter {
         return result;
     }
 
-    public int readInChildren(File directory) throws IOException, SAXException, ParserConfigurationException {
+    public int readInChildren(File directory) throws IOException {
         int result = pp.createPluginsAndAddToSet(directory);
         result = Math.min(result, FeatureParser.createFeaturesAndAddToSet(directory, state));
         return result;
     }
 
-    public int readInFeature(File directory, boolean workspace) throws IOException,
-        SAXException, ParserConfigurationException {
+    public int readInFeature(File directory, boolean workspace) throws IOException {
         return FeatureParser.createFeatureAndAddToSet(directory, workspace, state);
     }
 
