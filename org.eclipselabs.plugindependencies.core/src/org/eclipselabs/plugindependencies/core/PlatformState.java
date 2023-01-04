@@ -386,6 +386,16 @@ public class PlatformState {
                 exportedBy.removeAll(toRemove);
 
                 if(exportedBy.size() > 1){
+                    if(exportedBy.size() == 2) {
+                        Iterator<Plugin> iterator = exportedBy.iterator();
+                        String firstName = iterator.next().getName();
+                        String secondName = iterator.next().getName();
+                        if ((firstName.startsWith(secondName) && firstName.endsWith(".tests"))
+                                || (secondName.startsWith(firstName) && secondName.endsWith(".tests"))) {
+                            // ignore: it is a test bundle that has classes in same package like the production code
+                            continue;
+                        }
+                    }
                     pack.addWarningToLog("package contributed by multiple, not related plugins", exportedBy);
                     for (Plugin plugin : exportedBy) {
                         plugin.addWarningToLog("this plugin is one of " + exportedBy.size() + " plugins contributing package '" + pack.getNameAndVersion() + "'", pack);
