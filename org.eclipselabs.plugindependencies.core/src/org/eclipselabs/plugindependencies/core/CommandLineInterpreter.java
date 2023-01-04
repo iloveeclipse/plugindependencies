@@ -461,4 +461,8 @@ public class CommandLineInterpreter {
     public void setContinueOnFail(boolean b) {
         continueOnFail = b;
     }
+
+    public void reportPluginsNotContainedInFeatures(boolean enable) {
+        state.reportPluginsNotContainedInFeatures(enable);
+    }
 }

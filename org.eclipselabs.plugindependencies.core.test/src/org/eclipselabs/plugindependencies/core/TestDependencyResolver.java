@@ -187,9 +187,17 @@ public class TestDependencyResolver extends BaseTest {
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
 
-        assertEquals("[]", p1.getLog().toString());
-        assertEquals("[]", p1.getLog().toString());
-        assertEquals("[]", p2.getLog().toString());
+        String expected1 = "[Warning: [p1 1.0.0] more than one plugin found for p1\n"+
+                "\tp1 1.0.0 null\n" +
+                "\tp1 2.0.0 null\n]";
+        assertEquals(expected1, p1.getLog().toString());
+        assertEquals(expected1, p1.getLog().toString());
+
+        String expected2 = "[Warning: [p1 2.0.0] more than one plugin found for p1\n"+
+                "\tp1 1.0.0 null\n" +
+                "\tp1 2.0.0 null\n]";
+        assertEquals(expected2, p2.getLog().toString());
+
         assertEquals("[]", p3.getLog().toString());
         assertEquals(1,  ps.getPackages("hello").size());
         Set<Package> packages = ps.getPackages("hello");

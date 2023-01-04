@@ -65,12 +65,27 @@ public class DependencyResolver {
             searchHost(startPlugin);
         }
 
+        checkDuplicates(startPlugin);
+
         for (ManifestEntry requiredPlugin : startPlugin.getRequiredPluginEntries()) {
             resolveRequiredPlugin(startPlugin, requiredPlugin);
         }
 
         for (ManifestEntry requiredPackage : startPlugin.getImportedPackageEntries()) {
             resolveRequiredPackage(startPlugin, requiredPackage);
+        }
+    }
+
+    private void checkDuplicates(Plugin startPlugin) {
+        Set<Plugin> plugins = searchInPluginSet(startPlugin);
+        if (plugins.size() > 1) {
+            StringBuilder logStr = new StringBuilder();
+            logStr.append("more than one plugin found for ");
+            logStr.append(startPlugin.getName() + "\n");
+            for (Plugin element : plugins) {
+                logStr.append("\t" + element.getInformationLine() + "\n");
+            }
+            startPlugin.addWarningToLog(logStr.toString(), plugins);
         }
     }
 
@@ -375,6 +390,19 @@ public class DependencyResolver {
                     ret.add(plugin);
                 }
             }
+        }
+        return ret;
+    }
+
+    public Set<Plugin> searchInPluginSet(Plugin requiredPlugin) {
+        String pluginName = requiredPlugin.getName().trim();
+        Set<Plugin> plugins = state.getPlugins(pluginName);
+        if (plugins.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<Plugin> ret = new LinkedHashSet<Plugin>();
+        for (Plugin plugin : plugins) {
+            ret.add(plugin);
         }
         return ret;
     }

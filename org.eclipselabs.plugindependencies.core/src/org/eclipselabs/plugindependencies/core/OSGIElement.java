@@ -144,10 +144,7 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
         if (setSize > 1) {
             StringBuilder logStr = new StringBuilder();
             logStr.append("more than one " + type + " found for ");
-            logStr.append(entry.getNameAndVersion() + optional + "\n");
-            for (OSGIElement element : elements) {
-                logStr.append("\t" + element.getInformationLine() + "\n");
-            }
+            logStr.append(entry.getNameAndVersion() + optional);
             addWarningToLog(logStr.toString(), elements);
         } else if (setSize == 0 && optional.isEmpty()) {
             if(entry.getName().endsWith(".source") || entry.getName().endsWith(".sources")) {

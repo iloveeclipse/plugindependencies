@@ -379,6 +379,27 @@ enum Options {
         }
     },
 
+    ReportPluginsNotContainedInFeatures("-reportPluginsNotContainedInFeatures", false) {
+        @Override
+        int handle(CommandLineInterpreter cli, List<String> args) {
+            if(!args.isEmpty()) {
+                String message = "-reportPluginsNotContainedInFeatures does not require any arguments: " + args;
+                Logging.getLogger().error(message);
+                return RC_RUNTIME_ERROR;
+            }
+            cli.reportPluginsNotContainedInFeatures(true);
+            return RC_OK;
+        }
+
+        @Override
+        void printHelp(String arg) {
+            String help = "-reportPluginsNotContainedInFeatures" + "\t\t\t"
+                    + "Report plugins not contained in features."
+                    + " Default is unset.";
+            Logging.writeStandardOut(help);
+        }
+    },
+
     UNKNOWN("", false);
 
     private final String optionName;

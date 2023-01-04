@@ -73,6 +73,8 @@ public class PlatformState {
 
     private boolean validated;
 
+    private boolean reportPluginsNotContainedInFeatures;
+
     static Map<File, Set<String>> knownSystemPackages = new HashMap<>();
 
     /**
@@ -559,7 +561,7 @@ public class PlatformState {
         for (Feature feature : getFeatures()) {
             depres.resolveFeatureDependency(feature);
         }
-
+        checkPluginsContainedInFeatures();
         for (Plugin plugin : getPlugins()) {
             plugin.parsingDone();
         }
@@ -574,6 +576,31 @@ public class PlatformState {
         features = Collections.unmodifiableSet(features);
         dependenciesresolved = true;
         return depres;
+    }
+
+
+    private void checkPluginsContainedInFeatures() {
+        for (Plugin plugin : getPlugins()) {
+            String name = plugin.getName();
+            if(name.endsWith(".tests") || name.endsWith(".source")) {
+                continue;
+            }
+            Set<Feature> inFeatures = plugin.getIncludedInFeatures();
+            if(inFeatures.isEmpty()) {
+                if(isReportPluginsNotContainedInFeatures()) {
+                    plugin.addWarningToLog("not incuded in any feature", plugin);
+                }
+            } else if(inFeatures.size() > 1) {
+                /*
+                 * TODO add INFO level and report that
+                StringBuilder note = new StringBuilder("plugin incuded in more than one feature\n");
+                for (Feature feature : inFeatures) {
+                    note.append("\t" + feature.getInformationLine() + "\n");
+                }
+                plugin.addWarningToLog(note.toString(), inFeatures);
+                */
+            }
+        }
     }
 
     static String fixName(String name) {
@@ -903,5 +930,13 @@ public class PlatformState {
             Version v2 = new Version(o2.getVersion());
             return v1.compareTo(v2);
         }
+    }
+
+    public void reportPluginsNotContainedInFeatures(boolean enable) {
+        reportPluginsNotContainedInFeatures = enable;
+    }
+
+    public boolean isReportPluginsNotContainedInFeatures() {
+        return reportPluginsNotContainedInFeatures;
     }
 }

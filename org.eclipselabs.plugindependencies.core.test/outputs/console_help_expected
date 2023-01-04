@@ -17,3 +17,4 @@ java plugin_dependencies [-javaHome path] -eclipsePaths folder1 folder2.. [Optio
 -continueOnFail			If multiple commands are used, process all of them even if some are failing. Default is unset.
 -focus name[,version] name[,version]...	Focus on plugin/feature with given name. Optionally you can specify a version. It is possible to focus on more than one element.
 -printAll				Prints all plugins and features found in the specified folders.
+-reportPluginsNotContainedInFeatures			Report plugins not contained in features. Default is unset.

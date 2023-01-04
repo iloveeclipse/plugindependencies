@@ -35,7 +35,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -108,6 +111,9 @@ public class PluginTreeView extends ViewPart {
 
     private Action showErrors;
     private Action hideWorkspacePlugins;
+    private Action reportPluginsNotContainedInFeaturesAction;
+
+    private boolean reportPluginsNotContainedInFeatures;
 
     private boolean showErrorsOnly;
     private boolean isHideWorkspacePlugins;
@@ -120,11 +126,13 @@ public class PluginTreeView extends ViewPart {
 
     ITargetDefinition lastTargetDef;
 
+    private IJobChangeListener refreshHandler;
+
     @Override
     public void createPartControl(Composite parent) {
         Filter filter = new Filter();
         FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL
-                | SWT.V_SCROLL, filter, true) {
+                | SWT.V_SCROLL, filter, true, false) {
             @Override
             protected void updateToolbar(boolean visible) {
                 super.updateToolbar(visible);
@@ -133,6 +141,12 @@ public class PluginTreeView extends ViewPart {
             }
         };
 
+        refreshHandler = new JobChangeAdapter() {
+            @Override
+            public void done(IJobChangeEvent event) {
+                PlatformUI.getWorkbench().getDisplay().asyncExec(() -> refresh(new Object()));
+            }
+        };
         viewer = tree.getViewer();
         drillDownAdapter = new DrillDownAdapter(viewer);
         viewer.setContentProvider(new ViewContentProvider(this));
@@ -216,11 +230,7 @@ public class PluginTreeView extends ViewPart {
                 fillTargetMenu(manager);
             }
         });
-        dropDownMenu.add(showErrors);
-        dropDownMenu.add(showConsole);
-        dropDownMenu.add(hideWorkspacePlugins);
-        dropDownMenu.add(loadTarget);
-        dropDownMenu.add(reloadTargets);
+        dropDownMenu.add(new Separator());
     }
 
     private void fillTargetMenu(IMenuManager manager) {
@@ -228,6 +238,7 @@ public class PluginTreeView extends ViewPart {
         manager.add(showErrors);
         manager.add(showConsole);
         manager.add(hideWorkspacePlugins);
+        manager.add(reportPluginsNotContainedInFeaturesAction);
         manager.add(loadTarget);
         manager.add(reloadTargets);
         if (targetActions != null) {
@@ -309,6 +320,17 @@ public class PluginTreeView extends ViewPart {
 //        ImageDescriptor errImg = Activator.getImageDescriptor("icons/errorwarning_tab.gif");
 //        hideWorkspacePlugins.setImageDescriptor(errImg);
         hideWorkspacePlugins.setChecked(false);
+
+        reportPluginsNotContainedInFeaturesAction = new Action() {
+            @Override
+            public void run() {
+                boolean toggle = !isReportPluginsNotContainedInFeatures();
+                reportPluginsNotContainedInFeatures(toggle);
+            }
+        };
+        reportPluginsNotContainedInFeaturesAction.setText("Report Plug-ins Not Contained in Features");
+        reportPluginsNotContainedInFeaturesAction.setToolTipText("Report Plug-ins Not Contained in Features");
+        reportPluginsNotContainedInFeaturesAction.setChecked(false);
 
         loadTarget = new Action() {
             @Override
@@ -480,12 +502,26 @@ public class PluginTreeView extends ViewPart {
         isHideWorkspacePlugins = on;
         ViewContentProvider provider = getContentProvider();
         IWorkbenchSiteProgressService progressService = getProgressService();
-        progressService.schedule(provider.getJob(lastTargetDef));
-        refresh(new Object());
+        Job job = provider.getJob(lastTargetDef);
+        progressService.schedule(job);
+        job.addJobChangeListener(refreshHandler);
+    }
+
+    protected void reportPluginsNotContainedInFeatures(boolean on) {
+        reportPluginsNotContainedInFeatures = on;
+        ViewContentProvider provider = getContentProvider();
+        IWorkbenchSiteProgressService progressService = getProgressService();
+        Job job = provider.getJob(lastTargetDef);
+        progressService.schedule(job);
+        job.addJobChangeListener(refreshHandler);
     }
 
     boolean isHideWorkspacePlugins() {
         return isHideWorkspacePlugins;
+    }
+
+    boolean isReportPluginsNotContainedInFeatures() {
+        return reportPluginsNotContainedInFeatures;
     }
 
     void refresh(Object input) {

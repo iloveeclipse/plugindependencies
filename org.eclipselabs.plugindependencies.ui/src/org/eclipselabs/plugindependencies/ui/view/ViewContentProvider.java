@@ -236,6 +236,7 @@ public class ViewContentProvider implements ITreeContentProvider {
             CommandLineInterpreter parser = new CommandLineInterpreter();
             state = parser.getState();
             parser.setParseEarlyStartup(true);
+            parser.reportPluginsNotContainedInFeatures(view.isReportPluginsNotContainedInFeatures());
             parser.setPlatformSpecs(new PlatformSpecs(
                     Platform.getOS(),
                     Platform.getWS(),
