@@ -516,6 +516,15 @@ public class Plugin extends OSGIElement {
         } else {
             recursiveResolvedPlugins = Collections.unmodifiableSet(recursiveResolvedPlugins);
         }
+
+        if(isHost()) {
+            Set<Plugin> frs = getFragments();
+            for (Plugin fragment : frs) {
+                if(!fragment.isRecursiveResolved()) {
+                    fragment.setResolved(state);
+                }
+            }
+        }
     }
 
     /**
