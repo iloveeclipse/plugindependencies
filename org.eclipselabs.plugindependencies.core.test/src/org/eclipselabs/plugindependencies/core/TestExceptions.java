@@ -58,13 +58,7 @@ public class TestExceptions extends BaseTest {
         log.add("Error: [org.xpect 0.1.0.201408281304] plugin not found: org.eclipse.emf.ecore 2.7.0");
         log.add("Error: [org.xpect 0.1.0.201408281304] plugin not found: org.eclipse.emf.common 2.7.0");
         log.add("Error: [org.xpect 0.1.0.201408281304] plugin not found: org.eclipse.xtext.common.types 2.4.0");
-        log.add("Warning: [org.xpect 0.1.0.201408281304] more than one plugin found for org.objectweb.asm [3.0.0,6.0.0) *optional*\n"
-                + "\torg.objectweb.asm 3.3.1.v201105211655 "
-                + System.getProperty("user.dir")
-                + "/testdata_exceptions/plugins/org.objectweb.asm_3.3.1.v201105211655.jar\n"
-                + "\torg.objectweb.asm 5.0.1.v201404251740 "
-                + System.getProperty("user.dir")
-                + "/testdata_exceptions/plugins/org.objectweb.asm_5.0.1.v201404251740.jar\n");
+        log.add("Warning: [org.xpect 0.1.0.201408281304] more than one plugin found for org.objectweb.asm [3.0.0,6.0.0) *optional*");
         log.add("Error: [org.xpect 0.1.0.201408281304] package not found: org.apache.log4j ");
 
         assertEquals(fix(log.toString()), fix(orgExpect.getLog().toString()));
