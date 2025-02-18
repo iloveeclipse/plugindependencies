@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
+import static org.eclipselabs.plugindependencies.core.PlatformState.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -236,14 +236,14 @@ public class Plugin extends OSGIElement {
     public String getTargetDirectory() throws IOException {
         // lazy getter
         if (targetDir == null) {
-            File makefileLocal = new File(getPath() + "/Makefile.local");
+            File makefileLocal = new File(getPath() + "/build.properties");
             if (!makefileLocal.canRead()) {
-                return null;
+                return targetDir;
             }
             try (FileReader makefileReader = new FileReader(makefileLocal)) {
                 Properties props = new Properties();
                 props.load(makefileReader);
-                targetDir = props.getProperty("ECLIPSE_DEST");
+                targetDir = props.getProperty("bundleDestination");
             }
             if (targetDir == null) {
                 targetDir = OutputCreator.targetFolder;

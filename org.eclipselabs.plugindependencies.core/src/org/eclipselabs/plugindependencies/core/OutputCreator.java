@@ -21,9 +21,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 /**
  * @author obroesam
@@ -99,111 +102,142 @@ public class OutputCreator {
         return writeClassPathsToFile(plugin, resolvedPlugins);
     }
 
+    public static List<String> getRecursiveClasspaths(Plugin plugin, Set<Plugin> resolvedPlugins) throws IOException {
+        List<String> classpaths = new ArrayList<>();
+        Map<String, List<String>> cache = new HashMap<>();
+        for (Plugin resolvedPlugin : resolvedPlugins) {
+            List<String> resolvedPluginClasspaths = getClassPaths(resolvedPlugin, false, cache);
+            if (resolvedPluginClasspaths.isEmpty()) {
+                throw new IllegalStateException("can't resolve classpath for " + resolvedPlugin);
+            }
+            classpaths.addAll(resolvedPluginClasspaths);
+        }
+        List<String> pluginClasspaths = getClassPaths(plugin, true, cache);
+        classpaths.addAll(pluginClasspaths);
+        return classpaths;
+    }
+
     private static int writeClassPathsToFile(Plugin plugin, Set<Plugin> resolvedPlugins)
             throws IOException {
         StringBuilder classPathList = new StringBuilder();
+        Map<String, List<String>> cache = new HashMap<>();
         for (Plugin resolvedPlugin : resolvedPlugins) {
-            String classPaths = getClassPaths(resolvedPlugin, false);
-            if (classPaths == null) {
+            List<String> classPaths = getClassPaths(resolvedPlugin, false, cache);
+            if (classPaths.isEmpty()) {
                 resolvedPlugin.addErrorToLog("can't resolve classpath", plugin);
                 Logging.getLogger().error("can't resolve classpath for " + resolvedPlugin);
                 return RC_ANALYSIS_ERROR;
             }
-            classPathList.append(classPaths);
+            for (String classpathEntry : classPaths) {
+                classPathList.append(classpathEntry);
+                classPathList.append(System.lineSeparator());
+            }
         }
-        String classPaths = getClassPaths(plugin, true);
-        if (classPaths == null) {
-            Logging.getLogger().error("can't resolve classpath for " + plugin);
-            return RC_ANALYSIS_ERROR;
+        List<String> classPaths = getClassPaths(plugin, true, cache);
+        for (String classpathEntry : classPaths) {
+            classPathList.append(classpathEntry);
+            classPathList.append(System.lineSeparator());
         }
-        classPathList.append(classPaths);
         return writeToFile(plugin.getPath() + SEP + ".classpath.generated", classPathList);
     }
 
-    private static String getClassPaths(Plugin plugin, boolean pluginLocalPaths) throws IOException {
-        StringBuilder ret = new StringBuilder();
-        if(pluginLocalPaths){
+    private static List<String> getClassPaths(Plugin plugin, boolean pluginLocalPaths, Map<String, List<String>> cache) throws IOException {
+        List<String> classpaths = new ArrayList<>();
+        if (pluginLocalPaths) {
             // append possible libraries from the plugin itself
-            appendLocalClasspath(plugin, ret);
+            List<String> localClasspath = getLocalClasspath(plugin);
+            classpaths.addAll(localClasspath);
         } else {
-            String fullClassPaths = plugin.getFullClassPaths();
-            if (fullClassPaths == null) {
+            List<String> pluginClassapths = cache.get(plugin.getName());
+            if (pluginClassapths == null) {
+                pluginClassapths = new ArrayList<>();
                 String elementPath = plugin.getPath();
                 if (elementPath.contains(sourceFolder)) {
-                    String targetLocation = getTargetLocation(plugin);
-                    if (targetLocation == null) {
-                        return null;
+                    List<String> targetLocations = getTargetLocations(plugin);
+                    if (targetLocations.isEmpty()) {
+                        throw new IllegalStateException("No target location for plug-in: " + plugin);
                     }
-                    ret.append(targetLocation);
+                    pluginClassapths.addAll(targetLocations);
                 } else if (elementPath.endsWith(".jar")) {
-                    ret.append(elementPath + "\n");
+                    pluginClassapths.add(elementPath);
                 } else {
-                    appendLocalClasspath(plugin, ret);
+                    List<String> localClasspath = getLocalClasspath(plugin);
+                    pluginClassapths.addAll(localClasspath);
                 }
 
                 // the "sourceFolder" does not match the one from current plugin?
-                if(ret.length() == 0 && !elementPath.endsWith(".jar")){
-                    String targetLocation = getTargetLocation(plugin);
-                    if (targetLocation == null) {
-                        return null;
+                if (pluginClassapths.isEmpty() && !elementPath.endsWith(".jar")) {
+                    List<String> targetLocations = getTargetLocations(plugin);
+                    if (targetLocations.isEmpty()) {
+                        throw new IllegalStateException("No target location for plug-in: " + plugin);
                     }
-                    ret.append(targetLocation);
+                    pluginClassapths.addAll(targetLocations);
                 }
-                plugin.setFullClassPaths(ret.toString());
+                cache.put(plugin.getName(), pluginClassapths);
+                StringBuilder fullPluginClasspath = new StringBuilder();
+                for (String classpathEntry : pluginClassapths) {
+                    fullPluginClasspath.append(classpathEntry);
+                    fullPluginClasspath.append(System.lineSeparator());
+                }
+                plugin.setFullClassPaths(fullPluginClasspath.toString());
+                classpaths.addAll(pluginClassapths);
             } else {
-                ret.append(fullClassPaths);
+                classpaths.addAll(pluginClassapths);
             }
         }
-        return ret.toString();
+        return classpaths;
     }
 
-    private static void appendLocalClasspath(Plugin plugin, StringBuilder ret) {
+    private static List<String> getLocalClasspath(Plugin plugin) {
+        List<String> localClasspath = new ArrayList<>();
         for (String path : plugin.getBundleClassPath()) {
-            if(".".equals(path)){
+            if (".".equals(path)) {
                 // skip plugin itself, if it has no other dependencies
                 continue;
             }
-            if(isExternalPath(path)){
-                ret.append(path).append("\n");
+            if (isExternalPath(path)) {
+                localClasspath.add(path);
             } else {
-                ret.append(plugin.getPath()).append(SEP).append(path).append("\n");
+                String p = plugin.getPath() + SEP + path;
+                localClasspath.add(p);
             }
         }
+        return localClasspath;
     }
 
-    private static String getTargetLocation(Plugin plugin) throws IOException {
+    private static List<String> getTargetLocations(Plugin plugin) throws IOException {
         String versionForDummy = PlatformState.getBundleVersionForDummy();
-        StringBuilder ret = new StringBuilder();
         String targetDir = plugin.getTargetDirectory();
         if (targetDir == null) {
-            return plugin.getPath() + "\n";
+            return Arrays.asList(plugin.getPath());
         }
+        List<String> locations = new ArrayList<>();
         List<String> bundleClassPathList = plugin.getBundleClassPath();
 
         String pluginTargetFolder;
-        if(Paths.get(targetFolder).toFile().exists()){
+        if (Paths.get(targetFolder).toFile().exists()) {
             pluginTargetFolder = targetDir + SEP + plugin.getName() + "_" + versionForDummy;
         } else {
             pluginTargetFolder = eclipseFolder.toString() + SEP + targetDir + SEP + plugin.getName() + "_" + versionForDummy;
         }
 
         if (bundleClassPathList.isEmpty()) {
-            ret.append(pluginTargetFolder + ".jar" + "\n");
+            locations.add(pluginTargetFolder + ".jar");
         } else {
             for (String path : bundleClassPathList) {
-                if(isExternalPath(path)){
-                    ret.append(path + "\n");
+                if (isExternalPath(path)) {
+                    locations.add(path);
                 } else {
-                    if(path.equals(".")){
-                        ret.append(pluginTargetFolder).append(".jar").append("\n");
+                    if (path.equals(".")) {
+                        locations.add(pluginTargetFolder + ".jar");
                     } else {
-                        ret.append(pluginTargetFolder).append(SEP).append(path).append("\n");
+                        locations.add(pluginTargetFolder + SEP + path);
                     }
                 }
             }
         }
 
-        return ret.toString();
+        return locations;
     }
 
     private static boolean isExternalPath(String path) {
