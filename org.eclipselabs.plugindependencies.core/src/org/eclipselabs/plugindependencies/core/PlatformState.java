@@ -547,7 +547,7 @@ public class PlatformState {
         return rrp;
     }
 
-    Set<Plugin> computeCompilationDependencies(final Plugin root) {
+    public Set<Plugin> computeCompilationDependencies(final Plugin root) {
         computeAllDependenciesRecursive(root);
         return root.getVisibleOnCompilePlugins();
     }
