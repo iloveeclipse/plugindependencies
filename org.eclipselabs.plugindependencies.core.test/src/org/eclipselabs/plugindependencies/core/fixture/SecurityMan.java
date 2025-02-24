@@ -12,7 +12,6 @@
 package org.eclipselabs.plugindependencies.core.fixture;
 
 import java.io.File;
-import java.security.Permission;
 
 import org.eclipselabs.plugindependencies.core.MainClass;
 
@@ -20,36 +19,7 @@ import org.eclipselabs.plugindependencies.core.MainClass;
  * @author obroesam
  *
  */
-public class SecurityMan extends SecurityManager {
-    @Override
-    public void checkExit(int status) {
-        throw new SecurityException("" + status);
-    }
-
-    @Override
-    public void checkRead(String file) {
-        // DO NOTHING
-    }
-
-    @Override
-    public void checkWrite(String file) {
-        // DO NOTHING
-    }
-
-    @Override
-    public void checkDelete(String file) {
-        // DO NOTHING
-    }
-
-    @Override
-    public void checkPropertyAccess(String key) {
-        // DO NOTHING
-    }
-
-    @Override
-    public void checkPermission(Permission perm) {
-        // DO NOTHING
-    }
+public class SecurityMan {
 
     protected static String unFix(String s){
         if(s == null || File.separatorChar == '/'){
@@ -68,7 +38,7 @@ public class SecurityMan extends SecurityManager {
          */
         try {
             MainClass.main(args);
-        } catch (SecurityException e) {
+        } catch (Exception e) {
             // System.exit caught
             return Integer.parseInt(e.getMessage());
         }

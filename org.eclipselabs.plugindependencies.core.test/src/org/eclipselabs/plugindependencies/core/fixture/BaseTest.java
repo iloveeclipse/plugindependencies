@@ -8,6 +8,7 @@ package org.eclipselabs.plugindependencies.core.fixture;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -19,6 +20,11 @@ import org.junit.runners.MethodSorters;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BaseTest {
+
+    @BeforeClass
+    public static void setupClass() throws Exception {
+        System.setProperty("JUNIT_TESTS_RUNNING", "true");
+    }
 
     @Before
     public void setup() throws Exception {

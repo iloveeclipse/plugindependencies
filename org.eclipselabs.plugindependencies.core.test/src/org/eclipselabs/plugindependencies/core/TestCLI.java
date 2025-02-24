@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +44,6 @@ public class TestCLI extends BaseTest {
     public void setUp() throws Exception {
         Path tempDirPath = Files.createTempDirectory("testCLI");
         tempDir = tempDirPath.toFile();
-        System.setSecurityManager(new SecurityMan());
     }
 
     @Override

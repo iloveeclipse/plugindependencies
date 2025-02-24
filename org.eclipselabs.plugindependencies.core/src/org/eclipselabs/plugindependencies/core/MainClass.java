@@ -24,6 +24,10 @@ public class MainClass {
         if(name.contains("eclipse") || name.contains("osgi")){
             return;
         }
+        if(!System.getProperty("JUNIT_TESTS_RUNNING", "").isEmpty()) {
+            // propagate exit code to JUnit tests
+            throw new RuntimeException("" + status);
+        }
         System.exit(status);
     }
 

@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,9 +25,7 @@ import java.util.List;
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.eclipselabs.plugindependencies.core.fixture.SecurityMan;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -41,16 +40,6 @@ public class TestBuildFileGen extends BaseTest {
     private Path root;
     private File workspace;
     private File[] workspacePlugins;
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        System.setSecurityManager(new SecurityMan());
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        System.setSecurityManager(null);
-    }
 
     @Override
     @Before

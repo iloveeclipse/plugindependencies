@@ -25,9 +25,7 @@ import java.util.List;
 import org.eclipselabs.plugindependencies.core.fixture.BaseTest;
 import org.eclipselabs.plugindependencies.core.fixture.SecurityMan;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -43,17 +41,6 @@ public class TestBuildFileGen3 extends BaseTest {
     private Path pluginRootDir;
     private File[] pluginDirs;
     private Path root;
-
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        System.setSecurityManager(new SecurityMan());
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        System.setSecurityManager(null);
-    }
 
     @Override
     @Before
