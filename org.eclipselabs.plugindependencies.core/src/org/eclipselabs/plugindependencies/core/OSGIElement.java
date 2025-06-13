@@ -147,10 +147,13 @@ public abstract class OSGIElement extends NamedElement /* TODO implements Compar
             logStr.append(entry.getNameAndVersion() + optional);
             addWarningToLog(logStr.toString(), elements);
         } else if (setSize == 0 && optional.isEmpty()) {
+            String note = type + " not found: " + entry.getNameAndVersion() + optional;
             if(entry.getName().endsWith(".source") || entry.getName().endsWith(".sources")) {
-                addWarningToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
+                addWarningToLog(note, elements);
+            } else if(hasFilter() && isFiltered(entry)){
+                addWarningToLog("Filter is use, " + note, elements);
             } else {
-                addErrorToLog(type + " not found: " + entry.getNameAndVersion() + optional, elements);
+                addErrorToLog(note, elements);
             }
         }
     }

@@ -56,8 +56,10 @@ public class PlatformState {
 
     private Set<Plugin> plugins;
     private Set<Package> packages;
+    private Set<Capability> capabilities;
     private Set<Feature> features;
     private final Map<String, List<Package>> nameToPackages;
+    private final Map<String, List<Capability>> nameToCapabilities;
     private final Map<String, List<Plugin>> nameToPlugins;
     private final Map<String, List<Feature>> nameToFeatures;
     private String javaHome;
@@ -81,16 +83,18 @@ public class PlatformState {
      *
      */
     public PlatformState() {
-        this(new LinkedHashSet<Plugin>(), new LinkedHashSet<Package>(), new LinkedHashSet<Feature>());
+        this(new LinkedHashSet<Plugin>(), new LinkedHashSet<Package>(), new LinkedHashSet<Feature>(), new LinkedHashSet<Capability>());
     }
 
-    public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features) {
+    public PlatformState(Set<Plugin> plugins, Set<Package> packages, Set<Feature> features, Set<Capability> capabilities) {
         hiddenElements = new LinkedHashSet<>();
         platformSpecs = new PlatformSpecs(null, null, null);
         this.plugins = plugins == null? new LinkedHashSet<>() : plugins;
         this.packages = packages == null? new LinkedHashSet<>() : packages;
+        this.capabilities = capabilities == null? new LinkedHashSet<>() : capabilities;
         this.features = features == null? new LinkedHashSet<>() : features;
         nameToPackages = new LinkedHashMap<>();
+        nameToCapabilities = new LinkedHashMap<>();
         nameToPlugins = new LinkedHashMap<>();
         nameToFeatures = new LinkedHashMap<>();
         ignoredBundlesWithCycles = new LinkedHashSet<>();
@@ -107,6 +111,11 @@ public class PlatformState {
                 addPackage(pack);
             }
         }
+        if(!this.capabilities.isEmpty()){
+            for (Capability cap : this.capabilities) {
+                addCapability(cap);
+            }
+        }
         if(!this.features.isEmpty()){
             for (Feature feature : this.features) {
                 addFeature(feature);
@@ -120,6 +129,10 @@ public class PlatformState {
 
     public Set<Package> getPackages(){
         return packages;
+    }
+
+    public Set<Capability> getCapabilities(){
+        return capabilities;
     }
 
     public Set<Feature> getFeatures(){
@@ -192,6 +205,13 @@ public class PlatformState {
              */
             addPackage(exportedPackage).addExportPlugin(newOne);
         }
+        for (Capability providedCapability : newOne.getProvidedCapabilities()) {
+            /*
+             * Package is exported by another plugin, package has to be found in packages
+             * and plugin must be added to exportPlugins of package
+             */
+            addCapability(providedCapability).addProvidingPlugin(newOne);
+        }
         return oldOne != null? oldOne : newOne;
     }
 
@@ -238,6 +258,24 @@ public class PlatformState {
         if(list == null){
             list = new ArrayList<>();
             nameToPackages.put(newOne.getName(), list);
+        }
+        int existing = list.indexOf(newOne);
+        if(existing >= 0){
+            return list.get(existing);
+        }
+        list.add(newOne);
+        return newOne;
+    }
+
+    public Capability addCapability(Capability newOne){
+        if(!capabilities.contains(newOne)){
+            capabilities.add(newOne);
+        }
+
+        List<Capability> list = nameToCapabilities.get(newOne.getName());
+        if(list == null){
+            list = new ArrayList<>();
+            nameToCapabilities.put(newOne.getName(), list);
         }
         int existing = list.indexOf(newOne);
         if(existing >= 0){
@@ -295,10 +333,23 @@ public class PlatformState {
         return new LinkedHashSet<>(list);
     }
 
+    public Set<Capability> getCapabilities(String name){
+        List<Capability> list = nameToCapabilities.get(name);
+        if(list == null) {
+            if (packages.isEmpty()) {
+                return Collections.emptySet();
+            }
+            // For tests only
+            return Collections.unmodifiableSet(capabilities);
+        }
+        // XXX???
+        return new LinkedHashSet<>(list);
+    }
+
     public Set<Feature> getFeatures(String name){
         List<Feature> list = nameToFeatures.get(name);
         if(list == null) {
-            if (packages.isEmpty()) {
+            if (features.isEmpty()) {
                 return Collections.emptySet();
             }
             // For tests only
@@ -316,13 +367,31 @@ public class PlatformState {
         return list.get(0);
     }
 
+    public Capability getCapability(String name){
+        List<Capability> list = nameToCapabilities.get(name);
+        if(list == null || list.isEmpty() || list.size() > 1) {
+            return null;
+        }
+        return list.get(0);
+    }
+
     public Package createPackage(ManifestEntry entry){
         return createPackage(entry.getName(), entry.getVersion());
+    }
+
+    public Capability createCapability(ManifestEntry entry){
+        return createCapability(entry.getName(), entry.getVersion());
     }
 
     public Package createPackage(String name, String version) {
         Package pack = new Package(name, version);
         pack = addPackage(pack);
+        return pack;
+    }
+
+    public Capability createCapability(String name, String version) {
+        Capability pack = new Capability(name, version);
+        pack = addCapability(pack);
         return pack;
     }
 
@@ -408,6 +477,46 @@ public class PlatformState {
                         plugin.addWarningToLog("this plugin uses package '" + pack.getNameAndVersion() + "' contributed by multiple plugins", pack);
                     }
                 }
+            }
+        }
+        // validate same capability contributed by different plugins in same dependency chain
+        for (Capability cap : capabilities) {
+            if(cap.getProvidedBy().size() > 1){
+                Set<Plugin> providedBy = new HashSet<>(cap.getProvidedBy());
+
+                Iterator<Plugin> providedByIter = providedBy.iterator();
+                Set<Plugin> toRemove = new HashSet<>();
+                while (providedByIter.hasNext()) {
+                    Plugin p1 = providedByIter.next();
+                    // plugins which provide and require same capability are most likely
+                    // just forwarding that dependency to clients
+                    if(p1.getRequiredCapabilities().contains(cap)){
+                        providedByIter.remove();
+                        continue;
+                    }
+
+                    for (Plugin p2 : providedBy) {
+                        // ignore capabilities from same plugin with different version
+                        // ignore capabilities from fragments and hosts
+                        if(p1 != p2 && (p1.getName().equals(p2.getName()) || p1.isFragmentOrHost(p2))){
+                            toRemove.add(p2);
+                            toRemove.add(p1);
+                        }
+                    }
+                }
+                providedBy.removeAll(toRemove);
+
+//                if(providedBy.size() > 1){
+//                    cap.addWarningToLog("capability contributed by multiple, not related plugins", providedBy);
+//                    for (Plugin plugin : providedBy) {
+//                        plugin.addWarningToLog("this plugin is one of " + providedBy.size() + " plugins provideng capability '" + cap.getNameAndVersion() + "'", cap);
+//                    }
+//
+//                    Set<Plugin> requiredBy = cap.getRequiredBy();
+//                    for (Plugin plugin : requiredBy) {
+//                        plugin.addWarningToLog("this plugin requires capability '" + cap.getNameAndVersion() + "' contributed by multiple plugins", cap);
+//                    }
+//                }
             }
         }
         for (Plugin plugin : plugins) {
@@ -571,7 +680,11 @@ public class PlatformState {
         for (Package pack : getPackages()) {
             pack.parsingDone();
         }
+        for (Capability cap : getCapabilities()) {
+            cap.parsingDone();
+        }
         packages = Collections.unmodifiableSet(packages);
+        capabilities = Collections.unmodifiableSet(capabilities);
         plugins = Collections.unmodifiableSet(plugins);
         features = Collections.unmodifiableSet(features);
         dependenciesresolved = true;

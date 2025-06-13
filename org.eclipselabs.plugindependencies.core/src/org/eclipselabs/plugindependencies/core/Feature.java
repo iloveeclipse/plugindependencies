@@ -61,7 +61,9 @@ public class Feature extends OSGIElement {
 
     public void addIncludedPluginEntries(NodeList requiredplugins) {
         for (int i = 0; i < requiredplugins.getLength(); i++) {
-            this.includedPluginEntries.add(new ManifestEntry((Element)requiredplugins.item(i), "id"));
+            Element xmlElement = (Element)requiredplugins.item(i);
+            ManifestEntry manifestEntry = new ManifestEntry(xmlElement, "id");
+            this.includedPluginEntries.add(manifestEntry);
         }
     }
 

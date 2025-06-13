@@ -224,9 +224,13 @@ public class PluginParser {
 
         extractedPlugin.setRequiredPlugins(readAttribute(mf, "Require-Bundle"));
 
-        extractedPlugin.setImportedPackageEntries(readCompleteImport(mf));
+        extractedPlugin.setImportedPackageEntries(readImportPackage(mf));
+
+        extractedPlugin.setRequiredCapabilityEntries(readAttribute(mf, "Require-Capability"));
 
         extractedPlugin.setExportedPackages(readAttribute(mf, "Export-Package"), ps);
+
+        extractedPlugin.setProvidedCapabilities(readAttribute(mf, "Provide-Capability"), ps);
 
         extractedPlugin.setBundleClassPath(readAttribute(mf, "Bundle-ClassPath"));
 
@@ -237,7 +241,7 @@ public class PluginParser {
         return extractedPlugin;
     }
 
-    private static String readCompleteImport(Manifest mf) {
+    private static String readImportPackage(Manifest mf) {
         String imports = readAttribute(mf, "Import-Package");
         String dynImports = readDynamicImport(mf, "DynamicImport-Package");
         String completeImport = null;

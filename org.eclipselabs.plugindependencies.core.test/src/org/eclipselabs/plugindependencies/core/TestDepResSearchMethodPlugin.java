@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.StringUtil.*;
-import static org.junit.Assert.*;
+import static org.eclipselabs.plugindependencies.core.StringUtil.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,6 +40,8 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
 
     static Plugin systemBundle;
 
+    static Set<Capability> capabilitiesSet;
+
     DependencyResolver depres;
 
     @BeforeClass
@@ -58,6 +61,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
         pluginSet.add(systemBundle);
         packageSet = new LinkedHashSet<Package>();
         featureSet = new LinkedHashSet<Feature>();
+        capabilitiesSet = new LinkedHashSet<>();
     }
 
     @AfterClass
@@ -67,6 +71,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
         plugin2 = null;
         pluginSet = null;
         featureSet = null;
+        capabilitiesSet = null;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
 
     @Test
     public void testSearchPluginWrongPara() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         ManifestEntry entry;
 
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPluginSet(null, false).toString());
@@ -99,7 +104,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
 
     @Test
     public void testSearchPlugin() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         Set<Plugin> resultSet = new LinkedHashSet<Plugin>();
         ManifestEntry entry;
         resultSet.add(plugin1);
@@ -143,7 +148,7 @@ public class TestDepResSearchMethodPlugin extends BaseTest {
 
     @Test
     public void testSystemBundle() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         Set<Plugin> resultSet = new LinkedHashSet<>();
         resultSet.add(systemBundle);
         ManifestEntry entry = new ManifestEntry("org.eclipse.osgi", "");

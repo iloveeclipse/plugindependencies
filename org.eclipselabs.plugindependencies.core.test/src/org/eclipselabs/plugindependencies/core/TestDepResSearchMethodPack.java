@@ -44,6 +44,8 @@ public class TestDepResSearchMethodPack extends BaseTest {
 
     DependencyResolver depres;
 
+    Set<Capability> capabilitiesSet;
+
     @Before
     public void setUpBeforeClass() throws Exception {
         package1 = new Package("com.company.core", "3.4.5");
@@ -66,6 +68,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
         package3.addExportPlugin(plugin);
         pluginSet.add(plugin);
         featureSet = new LinkedHashSet<Feature>();
+        capabilitiesSet = new LinkedHashSet<>();
     }
 
     @After
@@ -76,6 +79,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
         package3 = null;
         pluginSet = null;
         featureSet = null;
+        capabilitiesSet = null;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
 
     @Test
     public void testSearchInJavaHomeJar() throws IOException {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         ManifestEntry entry = new ManifestEntry("javax.crypto", "");
         Package result = new Package("javax.crypto", "");
 
@@ -104,7 +108,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
 
     @Test
     public void testSearchPackage() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         Set<Package> resultSet = new LinkedHashSet<Package>();
         ManifestEntry entry;
 
@@ -145,7 +149,7 @@ public class TestDepResSearchMethodPack extends BaseTest {
     @Test
     public void testSearchPackageWrongPara() {
         ManifestEntry entry;
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
 
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInPackageSet(null).toString());
 

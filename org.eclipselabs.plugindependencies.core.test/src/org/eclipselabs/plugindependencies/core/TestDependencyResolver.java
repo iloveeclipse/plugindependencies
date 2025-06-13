@@ -39,7 +39,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
 
         p1.setExportedPackages("hello", ps);
         p2.setExportedPackages("hello", ps);
@@ -67,7 +67,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
@@ -93,7 +93,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello", ps);
         ps.computeAllDependenciesRecursive();
@@ -123,7 +123,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
@@ -152,7 +152,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
@@ -182,7 +182,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
@@ -222,7 +222,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello;version=\"0.5.0\"", ps);
         ps.computeAllDependenciesRecursive();
@@ -251,7 +251,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p1);
         plugins.add(p2);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Warning: [p2 1.0.0] plugin not found: p1.source 1.0.0]", p2.getLog().toString());
@@ -269,7 +269,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p1);
         plugins.add(p2);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p2 1.0.0]", p1.getLog().toString());
@@ -290,7 +290,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Error: [p1 1.0.0] Dependency cycle detected with p3 1.0.0]", p1.getLog().toString());
@@ -311,7 +311,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.setIgnoredBundlesWithCycles(plugins.stream().map(p -> p.getName()).collect(Collectors.toSet()));
         ps.computeAllDependenciesRecursive();
 
@@ -333,7 +333,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.setIgnoredBundlesWithCycles(plugins.stream().map(p -> p.getName()).filter(s -> !s.contains("p2")).collect(Collectors.toSet()));
         ps.computeAllDependenciesRecursive();
 
@@ -353,7 +353,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.computeAllDependenciesRecursive();
 
         assertEquals("[Error: [p1 1.0.0] Self-dependency cycle detected]", p1.getLog().toString());
@@ -371,7 +371,7 @@ public class TestDependencyResolver extends BaseTest {
         plugins.add(p2);
         plugins.add(p3);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         p1.setExportedPackages("hello1;version=\"0.5.0\"", ps);
         p2.setExportedPackages("hello2;version=\"0.5.0\"", ps);
         p3.setExportedPackages("hello3;version=\"0.5.0\"", ps);
@@ -396,7 +396,7 @@ public class TestDependencyResolver extends BaseTest {
         Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.add(p1);
 
-        PlatformState ps = new PlatformState(plugins, null, null);
+        PlatformState ps = new PlatformState(plugins, null, null, null);
         ps.addPlugin(p2);
         ps.computeAllDependenciesRecursive();
 

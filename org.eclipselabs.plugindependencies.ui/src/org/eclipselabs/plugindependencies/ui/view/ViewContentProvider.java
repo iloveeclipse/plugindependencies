@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.ui.view;
 
+import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.CAPABILITIES;
 import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.EARLY_STARTUP;
 import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.FEATURES;
 import static org.eclipselabs.plugindependencies.ui.view.TreePlugin.PACKAGES;
@@ -39,6 +40,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.ui.PlatformUI;
+import org.eclipselabs.plugindependencies.core.Capability;
 import org.eclipselabs.plugindependencies.core.CommandLineInterpreter;
 import org.eclipselabs.plugindependencies.core.Feature;
 import org.eclipselabs.plugindependencies.core.ManifestEntry;
@@ -168,6 +170,15 @@ public class ViewContentProvider implements ITreeContentProvider {
                 }
             }
         }
+        // Capabilities
+        TreeParent capabilities = new TreeParent(CAPABILITIES, invisibleRoot);
+        for (Capability cap : state.getCapabilities()) {
+            if(! errorsOnly || (cap.hasErrors() || cap.hasWarnings())) {
+                if(allowWorkspace || !isFromWorkspaceOnly(cap)) {
+                    capabilities.addChild(new TreeCapability(cap, capabilities));
+                }
+            }
+        }
         // Features
         TreeParent features = new TreeParent(FEATURES, invisibleRoot);
         for (Feature feature : state.getFeatures()) {
@@ -177,11 +188,12 @@ public class ViewContentProvider implements ITreeContentProvider {
                 }
             }
         }
-        if(!plugins.hasChildren() &&  !packages.hasChildren() && !features.hasChildren()) {
+        if(!plugins.hasChildren() &&  !packages.hasChildren() && !features.hasChildren() && !capabilities.hasChildren()) {
             return;
         }
         invisibleRoot.addChild(plugins);
         invisibleRoot.addChild(packages);
+        invisibleRoot.addChild(capabilities);
         invisibleRoot.addChild(features);
         // EarlyStartups
         TreeParent early = new TreeParent(EARLY_STARTUP, invisibleRoot);
@@ -200,6 +212,11 @@ public class ViewContentProvider implements ITreeContentProvider {
     private static boolean isFromWorkspaceOnly(Package pack) {
         Set<Plugin> exportedBy = pack.getExportedBy();
         return exportedBy.stream().allMatch(x -> x.isFromWorkspace());
+    }
+
+    private static boolean isFromWorkspaceOnly(Capability pack) {
+        Set<Plugin> providedBy = pack.getProvidedBy();
+        return providedBy.stream().allMatch(x -> x.isFromWorkspace());
     }
 
     private LoadTarget createResolveDependenciesJob() {

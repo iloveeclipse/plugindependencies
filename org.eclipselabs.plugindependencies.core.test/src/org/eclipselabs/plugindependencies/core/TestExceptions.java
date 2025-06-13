@@ -36,9 +36,10 @@ public class TestExceptions extends BaseTest {
         Set<Plugin> plugins = new LinkedHashSet<>();
         Set<Package> packages = new LinkedHashSet<>();
         Set<Feature> features = new LinkedHashSet<>();
+        Set<Capability> capabilities = new LinkedHashSet<>();
         String dir = "testdata_exceptions/plugins";
 
-        PlatformState state = new PlatformState(plugins, packages, features);
+        PlatformState state = new PlatformState(plugins, packages, features, capabilities);
         new PluginParser(state).createPluginsAndAddToSet(new File(dir));
         state.resolveDependencies();
         Plugin orgExpect = new Plugin("", "");

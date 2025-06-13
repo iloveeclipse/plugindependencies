@@ -141,10 +141,17 @@ public class FeatureParser {
                 String feat = e.getAttribute("feature").trim();
                 String plug = e.getAttribute("plugin").trim();
                 boolean optional = Boolean.parseBoolean(e.getAttribute("optional").trim());
+                ManifestEntry required = null;
                 if(feat.isEmpty() && !plug.isEmpty()) {
-                    addRequiredPlugin(e, ret, plug, optional);
+                    required = addRequiredPlugin(e, ret, plug, optional);
                 } else if(!feat.isEmpty() && plug.isEmpty()) {
-                    addRequiredFeature(e, ret, feat, optional);
+                    required = addRequiredFeature(e, ret, feat, optional);
+                }
+                if(required != null) {
+                    String filter = e.getAttribute("filter").trim();
+                    if(!filter.isEmpty()) {
+                        ret.addFilter(required, new Filter(filter));
+                    }
                 }
             }
             return ret;
@@ -152,9 +159,11 @@ public class FeatureParser {
         return null;
     }
 
-    private static void addRequiredFeature(Element e, Feature ret, String feat, boolean optional) {
+    private static ManifestEntry addRequiredFeature(Element e, Feature ret, String feat, boolean optional) {
         String version = createVersion(e);
-        ret.addRequiredFeatureEntry(new ManifestEntry(fixName(feat), fixVersion(version), optional));
+        ManifestEntry required = new ManifestEntry(fixName(feat), fixVersion(version), optional);
+        ret.addRequiredFeatureEntry(required);
+        return required;
     }
 
 //    <import plugin="bbb"/>
@@ -192,8 +201,10 @@ public class FeatureParser {
         return NamedElement.EMPTY_VERSION;
     }
 
-    private static void addRequiredPlugin(Element e, Feature ret, String plug, boolean optional) {
+    private static ManifestEntry addRequiredPlugin(Element e, Feature ret, String plug, boolean optional) {
         String version = createVersion(e);
-        ret.addRequiredPluginEntry(new ManifestEntry(fixName(plug), fixVersion(version), optional));
+        ManifestEntry required = new ManifestEntry(fixName(plug), fixVersion(version), optional);
+        ret.addRequiredPluginEntry(required);
+        return required;
     }
 }

@@ -116,6 +116,9 @@ public class StringUtil {
         if (versionString.charAt(0) == '\"') {
             versionEnd = versionString.lastIndexOf('\"');
             versionStart++;
+        } else if (versionString.indexOf(')') > 0) {
+            // filter:="(&(osgi.ee=JavaSE)(version=17))"
+            versionEnd = versionString.indexOf(')');
         } else {
             versionEnd = versionString.length();
         }

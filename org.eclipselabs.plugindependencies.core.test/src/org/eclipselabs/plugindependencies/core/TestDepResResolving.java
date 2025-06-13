@@ -60,6 +60,8 @@ public class TestDepResResolving  extends BaseTest {
 
     Set<Package> packageSet;
 
+    Set<Capability> capabilitiesSet;
+
     DependencyResolver depres;
 
     Package package1;
@@ -96,8 +98,9 @@ public class TestDepResResolving  extends BaseTest {
     public void setUp() throws Exception {
         pluginSet = new LinkedHashSet<Plugin>();
         packageSet = new LinkedHashSet<Package>();
+        capabilitiesSet = new LinkedHashSet<>();
         featureSet = new LinkedHashSet<Feature>();
-        PlatformState state = new PlatformState(pluginSet, packageSet, featureSet);
+        PlatformState state = new PlatformState(pluginSet, packageSet, featureSet, capabilitiesSet);
         FeatureParser.createFeaturesAndAddToSet(new File("testdata_dependencies/eclipse/features"), state);
         new PluginParser(state).createPluginsAndAddToSet(new File("testdata_dependencies/eclipse/plugins"));
         featureLeft = new Feature("org.example.left", "2.1.1.v20120113-1346");
@@ -141,6 +144,7 @@ public class TestDepResResolving  extends BaseTest {
         pluginSet = null;
         packageSet = null;
         featureSet = null;
+        capabilitiesSet = null;
         super.tearDown();
     }
 

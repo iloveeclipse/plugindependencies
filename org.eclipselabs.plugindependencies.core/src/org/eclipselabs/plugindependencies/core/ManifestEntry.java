@@ -31,6 +31,7 @@ public class ManifestEntry extends NamedElement {
     private final PlatformSpecs platformSpecs;
     private final boolean optional;
     private final boolean usesBundleVersion;
+    private String capabilityFilter;
 
     public ManifestEntry(String name, String vers) {
         super(fixName(name), fixVersion(vers));
@@ -57,6 +58,7 @@ public class ManifestEntry extends NamedElement {
         super(fixName(manifestEntries.get(0)), fixVersion(getVersion(manifestEntries)));
         attributes = createAttributes(manifestEntries);
         platformSpecs = readPlatformSpecs();
+        capabilityFilter = attribute("filter");
         optional = hasOptionalAttr();
         usesBundleVersion = attributesContain("bundle-version");
     }
@@ -76,14 +78,14 @@ public class ManifestEntry extends NamedElement {
     }
 
     private PlatformSpecs readPlatformSpecs() {
-        String filter = attribute("Eclipse-PlatformFilter");
-        if(filter == null) {
+        String platformFilter = attribute("Eclipse-PlatformFilter");
+        if(platformFilter == null) {
             return PlatformState.UNDEFINED_SPECS;
         }
         // Eclipse-PlatformFilter: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86_64))
-        String os = readLdapAttr(filter, "osgi.os");
-        String ws = readLdapAttr(filter, "osgi.ws");
-        String arch = readLdapAttr(filter, "osgi.arch");
+        String os = readLdapAttr(platformFilter, "osgi.os");
+        String ws = readLdapAttr(platformFilter, "osgi.ws");
+        String arch = readLdapAttr(platformFilter, "osgi.arch");
         return new PlatformSpecs(os, ws, arch);
     }
 
@@ -167,6 +169,10 @@ public class ManifestEntry extends NamedElement {
         return platformSpecs.matches(p);
     }
 
+    public String getCapabilityFilter() {
+        return capabilityFilter;
+    }
+
     /**
      *
      * @return never null, empty string if no version information is available, otherwise
@@ -174,6 +180,9 @@ public class ManifestEntry extends NamedElement {
      */
     private static String getVersion(List<String> manifestEntries) {
         for (String attr : manifestEntries) {
+            if (attr.startsWith("filter:=")) {
+                return EMPTY_VERSION;
+            }
             if (attr.contains("bundle-version=")) {
                 return StringUtil.extractBundleVersionOrRange(attr);
             }

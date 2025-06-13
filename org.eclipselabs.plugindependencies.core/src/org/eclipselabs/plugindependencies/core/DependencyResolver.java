@@ -36,8 +36,8 @@ public class DependencyResolver {
     /**
      * For tests only!
      */
-    public DependencyResolver(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet) {
-        this(new PlatformState(pluginSet, packageSet, featureSet));
+    public DependencyResolver(Set<Plugin> pluginSet, Set<Package> packageSet, Set<Feature> featureSet, Set<Capability> capabilities) {
+        this(new PlatformState(pluginSet, packageSet, featureSet, capabilities));
         state.resolveDependencies();
     }
 
@@ -73,6 +73,10 @@ public class DependencyResolver {
 
         for (ManifestEntry requiredPackage : startPlugin.getImportedPackageEntries()) {
             resolveRequiredPackage(startPlugin, requiredPackage);
+        }
+
+        for (ManifestEntry requiredCapability : startPlugin.getRequiredCapabilityEntries()) {
+            resolveRequiredCapability(startPlugin, requiredCapability);
         }
     }
 
@@ -191,6 +195,16 @@ public class DependencyResolver {
         return highestPackage;
     }
 
+    private static Capability getCapabilityWithHighestVersion(Set<Capability> capabilities) {
+        Capability highestCapability = capabilities.iterator().next();
+        for (Capability cap : capabilities) {
+            if (compareVersions(cap.getVersion(), highestCapability.getVersion()) > 0) {
+                highestCapability = cap;
+            }
+        }
+        return highestCapability;
+    }
+
     private void resolveRequiredPackage(Plugin startPlugin, ManifestEntry requiredPackage) {
         Set<Package> packages = searchInPackageSet(requiredPackage);
         if(packages.isEmpty()){
@@ -211,6 +225,39 @@ public class DependencyResolver {
             startPlugin.addImportedPackage(importedPackage);
         } else {
             startPlugin.writePackageErrorLog(requiredPackage, packages);
+        }
+    }
+
+    private void resolveRequiredCapability(Plugin startPlugin, ManifestEntry requiredCapabilityEntry) {
+        // required capability with same name might have different version and filters added
+        // so we need to create a new Capability instance with all extra data from the ManifestEntry
+        // Write a function to create new Capability instance with extra data from ManifestEntry
+        Capability requiredCapability = null;
+        if (requiredCapabilityEntry != null) {
+            requiredCapability = new Capability(requiredCapabilityEntry.getName(), requiredCapabilityEntry.getVersion());
+            Filter filter = new Filter(requiredCapabilityEntry.getCapabilityFilter());
+            startPlugin.getFilterMap().put(requiredCapability, filter);
+        }
+        Set<Capability> capabilities = searchInCapabilitiesSet(requiredCapability);
+//        TODO this could something coming from p2 metadata in the config area
+//        if(packages.isEmpty()){
+//            packages = searchInJavaHomeJar(requiredPackage);
+//            if(!packages.isEmpty()) {
+//                state.addPackage(packages.iterator().next());
+//            }
+//        }
+        int capabilitiesSize = capabilities.size();
+
+        if (requiredCapability != null) {
+            // TODO find *matching* capability (filter?)
+//            if (capabilitiesSize == 1) {
+//                requiredCapability = capabilities.iterator().next();
+//            } else {
+//                requiredCapability = getCapabilityWithHighestVersion(capabilities);
+//            }
+            startPlugin.addRequiredCapability(requiredCapability);
+        } else {
+            startPlugin.writeCapabilityErrorLog(requiredCapabilityEntry, capabilities);
         }
     }
 
@@ -238,10 +285,23 @@ public class DependencyResolver {
         if (requiredPackage == null) {
             return Collections.emptySet();
         }
-        Set<Package> ret = new LinkedHashSet<Package>();
+        Set<Package> ret = new LinkedHashSet<>();
         for (Package pack : state.getPackages(requiredPackage.getName())) {
             if (requiredPackage.isMatching(pack)) {
                 ret.add(pack);
+            }
+        }
+        return ret;
+    }
+
+    public Set<Capability> searchInCapabilitiesSet(Capability requiredCapability) {
+        if (requiredCapability == null) {
+            return Collections.emptySet();
+        }
+        Set<Capability> ret = new LinkedHashSet<>();
+        for (Capability cap : state.getCapabilities(requiredCapability.getName())) {
+            if (requiredCapability.getName().equals(cap.getName())) {
+                ret.add(cap);
             }
         }
         return ret;

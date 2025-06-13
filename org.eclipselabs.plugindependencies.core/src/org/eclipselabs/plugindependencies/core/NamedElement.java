@@ -11,7 +11,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,9 @@ public abstract class NamedElement {
     private boolean versionRange;
 
     protected final List<Problem> log;
+
+    private final Map<NamedElement, Filter> filterMap;
+
     public static final String PREFIX_ERROR = Logging.PREFIX_ERROR;
     public static final String PREFIX_WARN =  Logging.PREFIX_WARN;
 
@@ -68,6 +73,7 @@ public abstract class NamedElement {
             }
         }
         this.log = new ArrayList<>();
+        filterMap = new LinkedHashMap<>();
     }
 
     /**
@@ -243,7 +249,40 @@ public abstract class NamedElement {
         builder.append(name);
         builder.append(", version=");
         builder.append(versionStr);
+        if(hasFilter()) {
+            builder.append(", filters=").append(filterMap);
+        }
         builder.append("]");
         return builder.toString();
+    }
+
+    public Map<NamedElement, Filter> getFilterMap() {
+        return filterMap;
+    }
+
+    public boolean hasFilter() {
+        return !filterMap.isEmpty();
+    }
+
+    public boolean addFilter(NamedElement element, Filter filter) {
+        if (element == null || filter == null) {
+            return false;
+        }
+        if (filterMap.containsKey(element)) {
+            return false; // already exists
+        }
+        filterMap.put(element, filter);
+        return true;
+    }
+
+    public boolean isFiltered(NamedElement element) {
+        if (element == null || filterMap.isEmpty()) {
+            return false;
+        }
+        Filter filter = filterMap.get(element);
+        if (filter == null) {
+            return false; // no filter for this element
+        }
+        return filter.isMatching(element);
     }
 }

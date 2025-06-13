@@ -97,7 +97,7 @@ public class TestFeatureParser  extends BaseTest {
     @Test
     public void testReadFeatures() throws IOException, SAXException,
             ParserConfigurationException {
-        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>());
+        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>(), null);
         FeatureParser.createFeaturesAndAddToSet(new File(dirPath), state);
         assertEquals(compareFeatureSet, state.getFeatures());
 
@@ -118,7 +118,7 @@ public class TestFeatureParser  extends BaseTest {
     @Test
     public void testReadFeaturesWrongArguments() throws IOException, SAXException,
             ParserConfigurationException {
-        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>());
+        PlatformState state = new PlatformState(null, null, new LinkedHashSet<Feature>(), null);
         try {
             FeatureParser.createFeaturesAndAddToSet(null, state);
             fail();
@@ -127,7 +127,7 @@ public class TestFeatureParser  extends BaseTest {
         }
         assertTrue(state.getFeatures().isEmpty());
 
-        state = new PlatformState(null, null, new LinkedHashSet<Feature>());
+        state = new PlatformState(null, null, new LinkedHashSet<Feature>(), null);
         FeatureParser.createFeaturesAndAddToSet(new File("/folder/does/not/exist"), state);
         assertTrue(state.getFeatures().isEmpty());
     }

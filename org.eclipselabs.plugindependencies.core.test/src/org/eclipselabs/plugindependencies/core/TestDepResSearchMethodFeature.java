@@ -28,6 +28,8 @@ import org.junit.runners.MethodSorters;
 public class TestDepResSearchMethodFeature  extends BaseTest {
     static Set<Package> packageSet;
 
+    static Set<Capability> capabilitiesSet;
+
     static Set<Plugin> pluginSet;
 
     static Set<Feature> featureSet;
@@ -52,6 +54,7 @@ public class TestDepResSearchMethodFeature  extends BaseTest {
         featureSet.add(feature1);
         featureSet.add(feature2);
         packageSet = new LinkedHashSet<Package>();
+        capabilitiesSet = new LinkedHashSet<>();
         pluginSet = new LinkedHashSet<Plugin>();
     }
 
@@ -62,11 +65,12 @@ public class TestDepResSearchMethodFeature  extends BaseTest {
         feature2 = null;
         pluginSet = null;
         featureSet = null;
+        capabilitiesSet = null;
     }
 
     @Test
     public void testSearchFeatureWrongPara() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
         assertEquals(new LinkedHashSet<>().toString(), depres.searchInFeatureSet(null, true).toString());
 
         ManifestEntry featureEntry = new ManifestEntry("WrongElement", "");
@@ -75,7 +79,7 @@ public class TestDepResSearchMethodFeature  extends BaseTest {
 
     @Test
     public void testSearchFeature() {
-        depres = new DependencyResolver(pluginSet, packageSet, featureSet);
+        depres = new DependencyResolver(pluginSet, packageSet, featureSet, capabilitiesSet);
 
         Set<Feature> resultSet = new LinkedHashSet<>();
 

@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipselabs.plugindependencies.core.Capability;
 import org.eclipselabs.plugindependencies.core.Feature;
 import org.eclipselabs.plugindependencies.core.OSGIElement;
 import org.eclipselabs.plugindependencies.core.Package;
@@ -30,15 +31,18 @@ public class TreePlugin extends TreeParent {
     static final String COMPILE_DEPS = "Compilation dependencies";
     static final String EARLY_STARTUP = "EarlyStartup";
     static final String EXPORTS = "Exports";
+    static final String PROVIDES = "Provides Capability";
     static final String REEXPORTS = "Reexports";
     static final String REEXPORTS_BY = "Reexported by";
     static final String FEATURES = "Features";
     static final String IMPORTS = "Imports";
     static final String INCLUDED_IN = "Included in";
     static final String PACKAGES = "Packages";
+    static final String CAPABILITIES = "Capabilities";
     static final String PLUGINS = "Plugins";
     static final String REQUIRED_BY = "Required by";
     static final String REQUIRES = "Requires";
+    static final String REQUIRES_CAP = "Requires Capability";
 
     private final Plugin plugin;
 
@@ -98,6 +102,15 @@ public class TreePlugin extends TreeParent {
                 this.addChild(impPackages);
             }
 
+            // Required capabilities
+            TreeParent requiredCapabilites = new TreeParent(REQUIRES_CAP, this);
+            for (Capability cap : plugin.getRequiredCapabilities()) {
+                requiredCapabilites.addChild(new TreeCapability(cap, requiredCapabilites));
+            }
+            if (requiredCapabilites.hasChildren()) {
+                this.addChild(requiredCapabilites);
+            }
+
 
             // Exported Packages
             TreeParent expPackages = new TreeParent(EXPORTS, this);
@@ -106,6 +119,15 @@ public class TreePlugin extends TreeParent {
             }
             if (expPackages.hasChildren()) {
                 this.addChild(expPackages);
+            }
+
+            // Provided capabilities
+            TreeParent providedCapabilites = new TreeParent(PROVIDES, this);
+            for (Capability cap : plugin.getProvidedCapabilities()) {
+                providedCapabilites.addChild(new TreeCapability(cap, providedCapabilites));
+            }
+            if (providedCapabilites.hasChildren()) {
+                this.addChild(providedCapabilites);
             }
 
             // Re-exported plugins
@@ -134,11 +156,11 @@ public class TreePlugin extends TreeParent {
             TreeParent rresPlugins = new TreeParent(ALL_DEPS, this);
             Set<Package> allImpPack = new HashSet<>();
             for (Plugin plug : plugin.getRecursiveResolvedPlugins()) {
-            	rresPlugins.addChild(new TreePlugin(plug, rresPlugins));
+                rresPlugins.addChild(new TreePlugin(plug, rresPlugins));
                 allImpPack.addAll(plug.getImportedPackages());
             }
             for (Package pack : allImpPack) {
-            	rresPlugins.addChild(new TreePackage(pack, rresPlugins));
+                rresPlugins.addChild(new TreePackage(pack, rresPlugins));
             }
             if (rresPlugins.hasChildren()) {
                 this.addChild(rresPlugins);

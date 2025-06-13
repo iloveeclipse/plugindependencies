@@ -241,7 +241,7 @@ public class TestPluginParser  extends BaseTest {
     public void testReadManifests() throws IOException {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
-        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        PlatformState state = new PlatformState(pluginSet, packageSet, null, null);
         new PluginParser(state).createPluginsAndAddToSet(new File(dirPath));
         assertEquals(packages, packageSet);
         assertEquals(plugins.toString(), pluginSet.toString());
@@ -276,7 +276,7 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        PlatformState state = new PlatformState(pluginSet, packageSet, null, null);
         PluginParser pluginParser = new PluginParser(state);
         pluginParser.setParseEarlyStartup(true);
         pluginParser.createPluginsAndAddToSet(new File(dirPath));
@@ -402,7 +402,7 @@ public class TestPluginParser  extends BaseTest {
         packageSet = new LinkedHashSet<>();
 
         try {
-            PlatformState state = new PlatformState(pluginSet, packageSet, null);
+            PlatformState state = new PlatformState(pluginSet, packageSet, null, null);
             new PluginParser(state).createPluginsAndAddToSet(null);
             fail();
         } catch (NullPointerException e) {
@@ -415,7 +415,7 @@ public class TestPluginParser  extends BaseTest {
         pluginSet = new LinkedHashSet<>();
         packageSet = new LinkedHashSet<>();
 
-        PlatformState state = new PlatformState(pluginSet, packageSet, null);
+        PlatformState state = new PlatformState(pluginSet, packageSet, null, null);
         new PluginParser(state).createPluginsAndAddToSet(new File("/folder/does/not/exist"));
         assertTrue(pluginSet.isEmpty());
     }

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipselabs.plugindependencies.core;
 
-import static org.eclipselabs.plugindependencies.core.PlatformState.*;
+import static org.eclipselabs.plugindependencies.core.PlatformState.fixVersion;
 
 import java.io.File;
 import java.io.FileReader;
@@ -37,12 +37,15 @@ public class Plugin extends OSGIElement {
     private List<String> bundleClassPath;
 
     private List<ManifestEntry> importedPackageEntries;
+    private List<ManifestEntry> requiredCapabilityEntries;
 
     private Set<Package> exportedPackages;
+    private final Set<Capability> providedCapabilities;
 
     private Set<Package> reExportedPackages;
 
     private Set<Package> importedPackages;
+    private Set<Capability> requiredCapabilities;
 
     private Set<Plugin> fragments;
 
@@ -82,9 +85,12 @@ public class Plugin extends OSGIElement {
         this.manifest = manifest;
         isSingleton = singleton;
         this.importedPackageEntries = new ArrayList<>();
+        this.requiredCapabilityEntries = new ArrayList<>();
         this.exportedPackages = new LinkedHashSet<>();
+        this.providedCapabilities = new LinkedHashSet<>();
         this.reExportedPackages = new LinkedHashSet<>();
         this.importedPackages = new LinkedHashSet<>();
+        this.requiredCapabilities = new LinkedHashSet<>();
         this.fragments = new LinkedHashSet<>();
         this.visibleOnCompilePlugins = new LinkedHashSet<>();
         this.reexportedBy = new LinkedHashSet<>();
@@ -143,9 +149,18 @@ public class Plugin extends OSGIElement {
         return importedPackages;
     }
 
+    public Set<Capability> getRequiredCapabilities() {
+        return requiredCapabilities;
+    }
+
     public void addImportedPackage(Package importedPackage) {
         this.importedPackages.add(importedPackage);
         importedPackage.addImportedBy(this);
+    }
+
+    public void addRequiredCapability(Capability requiredCapability) {
+        this.requiredCapabilities.add(requiredCapability);
+        requiredCapability.addRequiredBy(this);
     }
 
     public List<ManifestEntry> getImportedPackageEntries() {
@@ -156,8 +171,29 @@ public class Plugin extends OSGIElement {
         importedPackageEntries = Collections.unmodifiableList(StringUtil.splitInManifestEntries(requPackages));
     }
 
+    public List<ManifestEntry> getRequiredCapabilityEntries() {
+        return requiredCapabilityEntries;
+    }
+
+    public void setRequiredCapabilityEntries(String reqCapabilities) {
+        // Found in jakarta.activation-api, version=2.1.3:
+        // osgi.extender;filter:="(&(osgi.extender=osgi.serviceloader.processor)(version>=1.0.0)(!(version>=2.0.0)))";resolution:=optional,osgi.serviceloader;filter:="(osgi.serviceloader=jakarta.activation.spi.MailcapRegistryProvider)";osgi.serviceloader="jakarta.activation.spi.MailcapRegistryProvider";cardinality:=multiple;resolution:=optional,osgi.serviceloader;filter:="(osgi.serviceloader=jakarta.activation.spi.MimeTypeRegistryProvider)";osgi.serviceloader="jakarta.activation.spi.MimeTypeRegistryProvider";cardinality:=multiple;resolution:=optional,osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+
+        // Found in jakarta.xml.bind-api, version=4.0.2;
+        // osgi.extender;filter:="(&(osgi.extender=osgi.serviceloader.processor)(version>=1.0.0)(!(version>=2.0.0)))";resolution:=optional,osgi.serviceloader;filter:="(osgi.serviceloader=jakarta.xml.bind.JAXBContextFactory)";osgi.serviceloader="jakarta.xml.bind.JAXBContextFactory";cardinality:=multiple;resolution:=optional,osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=11))"
+
+        // Found in junit-jupiter-api, version=5.12.2:
+        // org.junit.platform.engine;filter:="(&(org.junit.platform.engine=junit-jupiter)(version>=5.12.2)(!(version>=6)))";effective:=active,osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+        List<ManifestEntry> splitInManifestEntries = StringUtil.splitInManifestEntries(reqCapabilities);
+        requiredCapabilityEntries = Collections.unmodifiableList(splitInManifestEntries);
+    }
+
     public Set<Package> getExportedPackages() {
         return exportedPackages;
+    }
+
+    public Set<Capability> getProvidedCapabilities() {
+        return providedCapabilities;
     }
 
     public Set<Package> getReExportedPackages() {
@@ -185,6 +221,15 @@ public class Plugin extends OSGIElement {
                 pack.addSplitPlugin(this);
             }
             exportedPackages.add(pack);
+        }
+    }
+
+    public void setProvidedCapabilities(String providedCapabilityString, PlatformState state) {
+        List<ManifestEntry> entries = StringUtil.splitInManifestEntries(providedCapabilityString);
+        for (ManifestEntry entry : entries) {
+            Capability cap = state.createCapability(entry);
+            cap.addProvidingPlugin(this);
+            providedCapabilities.add(cap);
         }
     }
 
@@ -287,6 +332,25 @@ public class Plugin extends OSGIElement {
         return false;
     }
 
+    /**
+     * Searches the capability in required and returns if the capability is optional.
+     *
+     * @param capability
+     *            capability that should be checked for optional
+     * @return true if capability is optional
+     */
+    public boolean isOptional(Capability capability) {
+        if (requiredCapabilityEntries.isEmpty()) {
+            return false;
+        }
+        for (ManifestEntry entry : requiredCapabilityEntries) {
+            if (entry.isMatching(capability) && entry.isOptional()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void writePackageErrorLog(ManifestEntry requiredPackage, Set<Package> packages) {
         String rname = requiredPackage.getName();
         String rversion = requiredPackage.getVersion();
@@ -309,6 +373,29 @@ public class Plugin extends OSGIElement {
                 addWarningToLog(logEntry.toString(), requiredPackage);
             } else if(optional.isEmpty()){
                 addErrorToLog(logEntry.toString(), requiredPackage);
+            }
+        }
+    }
+
+    public void writeCapabilityErrorLog(ManifestEntry requiredCapability, Set<Capability> capabilities) {
+        String rname = requiredCapability.getName();
+        String rversion = requiredCapability.getVersion();
+        String optional = requiredCapability.isOptional() ? " *optional*" : "";
+        int capabilitiesSize = capabilities.size();
+
+        if (capabilitiesSize == 0 ) {
+            StringBuilder logEntry = new StringBuilder("capability not found: ");
+            logEntry.append(rname + " " + rversion + optional);
+            String capabilityFilter = requiredCapability.getCapabilityFilter();
+            if(capabilityFilter != null) {
+                logEntry.append(" " + capabilityFilter);
+                if(capabilityFilter.contains("osgi.ee")) {
+                    // TODO check for EE version
+                } else {
+                    addWarningToLog(logEntry.toString(), requiredCapability);
+                }
+            } else if(optional.isEmpty()){
+                addErrorToLog(logEntry.toString(), requiredCapability);
             }
         }
     }
@@ -439,6 +526,7 @@ public class Plugin extends OSGIElement {
         reExportedPackages = computeReexportedPackages();
         exportedPackages = exportedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(exportedPackages);
         importedPackages = importedPackages.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(importedPackages);
+        requiredCapabilities = requiredCapabilities.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(requiredCapabilities);
         reexportedBy = reexportedBy.isEmpty()? Collections.EMPTY_SET : Collections.unmodifiableSet(reexportedBy);
 
         for (Package rp : reExportedPackages) {
@@ -564,6 +652,9 @@ public class Plugin extends OSGIElement {
         // plus all plugins that contribute split packages to packages exported by all plugins we had already
         addPluginsForExportedPackages(this, visibleOnCompilePlugins);
 
+        // 4 plus plugins that host packages that are imported directly
+        addPluginsForRequiredCapabilities(this, visibleOnCompilePlugins);
+
         // paranoia
         visibleOnCompilePlugins.remove(this);
 
@@ -607,6 +698,27 @@ public class Plugin extends OSGIElement {
         // fragment inherits all dependencies from host
         if(p.isFragment() && p.getHost() != null){
             addPluginsForImportedPackages(p.getHost(), exporting);
+        }
+        // paranoia, to avoid cycles
+        exporting.remove(p);
+    }
+
+    // TODO throw away "duplicated" bundles with different versions, exporting same package
+    static void addPluginsForRequiredCapabilities(Plugin p, Set<Plugin> exporting) {
+        for (Capability required : p.getRequiredCapabilities()) {
+            Set<Plugin> exportedBy = required.getProvidedBy();
+            if(exportedBy.contains(p)){
+                // do not add dependencies for packages the plugin exports by itself
+                continue;
+            }
+            if(!exportedBy.isEmpty()) {
+                exporting.addAll(exportedBy);
+            }
+        }
+
+        // fragment inherits all dependencies from host
+        if(p.isFragment() && p.getHost() != null){
+            addPluginsForRequiredCapabilities(p.getHost(), exporting);
         }
         // paranoia, to avoid cycles
         exporting.remove(p);
@@ -705,6 +817,34 @@ public class Plugin extends OSGIElement {
                             + resolvedPackage.getVersion() + "\n");
                     out.append("\t\texported by:\n");
                     Set<Plugin> exportedBy = resolvedPackage.getExportedBy();
+                    if (exportedBy.size() == 0) {
+                        out.append("\t\tJRE System Library\n");
+
+                    } else {
+                        for (Plugin plug : exportedBy) {
+                            out.append("\t\t");
+                            out.append(plug.isFragment() ? "fragment: " : "plugin: ");
+                            out.append(plug.getName() + " " + plug.getVersion()
+                            + "\n\n");
+                        }
+                    }
+                }
+            }
+        }
+        for (ManifestEntry requiredCapability : getRequiredCapabilityEntries()) {
+            String sep = requiredCapability.getVersion().isEmpty()? "" : " ";
+            out.append("\t" + requiredCapability.getName() + sep + requiredCapability.getVersion());
+            if (requiredCapability.isOptional()) {
+                out.append(" *optional*");
+            }
+            out.append("\n");
+            for (Capability resolvedCapability : getRequiredCapabilities()) {
+                if (requiredCapability.isMatching(resolvedCapability)) {
+                    String sep2 = resolvedCapability.getVersion().isEmpty()? "" : " ";
+                    out.append("\t->capability: " + resolvedCapability.getName() + sep2
+                            + resolvedCapability.getVersion() + "\n");
+                    out.append("\t\tprovided by:\n");
+                    Set<Plugin> exportedBy = resolvedCapability.getProvidedBy();
                     if (exportedBy.size() == 0) {
                         out.append("\t\tJRE System Library\n");
 
