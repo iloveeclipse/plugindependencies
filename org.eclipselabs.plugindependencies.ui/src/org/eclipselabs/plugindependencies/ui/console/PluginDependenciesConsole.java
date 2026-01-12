@@ -29,10 +29,11 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipselabs.plugindependencies.core.PlatformState;
+import org.eclipselabs.plugindependencies.ui.Activator;
 
 public class PluginDependenciesConsole extends MessageConsole implements IPropertyChangeListener {
     private static final String CONSOLE_FONT = "PluginDependencies.consoleFont";
-    static PluginDependenciesConsole console;
+    static volatile PluginDependenciesConsole console;
 
     boolean disposed;
     private PlatformState state;
@@ -78,12 +79,7 @@ public class PluginDependenciesConsole extends MessageConsole implements IProper
 
     private void setConsoleFont() {
         if (Display.getCurrent() == null) {
-            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    setConsoleFont();
-                }
-            });
+            PlatformUI.getWorkbench().getDisplay().asyncExec(this::setConsoleFont);
         } else {
             ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
             Font font = theme.getFontRegistry().get(CONSOLE_FONT);
@@ -111,7 +107,7 @@ public class PluginDependenciesConsole extends MessageConsole implements IProper
                 }
             }
         } else {
-            console = new PluginDependenciesConsole("Plug-in Dependencies", null, true);
+            console = new PluginDependenciesConsole("Plug-in Dependencies", Activator.getImageDescriptor("icons/tree_mode.gif"), true);
         }
         if (!exists) {
             manager.addConsoles(new IConsole[] { console });
@@ -154,7 +150,7 @@ public class PluginDependenciesConsole extends MessageConsole implements IProper
         }
 
         @Override
-        public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+        public <T> T getAdapter(Class<T> adapter) {
             return null;
         }
     }
